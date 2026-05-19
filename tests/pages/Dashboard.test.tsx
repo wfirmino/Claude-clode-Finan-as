@@ -23,12 +23,16 @@ const mockTransactions = [
 ]
 
 function mockFrom(data: object[]) {
+  const resolved = { data, error: null }
   const chain: any = {
     select: vi.fn().mockReturnThis(),
-    order: vi.fn().mockResolvedValue({ data, error: null }),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
+    then: (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve),
+    catch: (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject),
   }
   vi.mocked(supabase.from).mockReturnValue(chain as any)
   return chain

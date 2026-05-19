@@ -16,7 +16,7 @@ export function useTransactions(filters: TransactionFilters = {}) {
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
-    let q = supabase.from('transactions').select('*, categories(*)').order('date', { ascending: false })
+    let q = supabase.from('transactions').select('*, categories(*)').order('date', { ascending: false }).limit(500)
     if (filters.startDate) q = q.gte('date', filters.startDate)
     if (filters.endDate) q = q.lte('date', filters.endDate)
     if (filters.type) q = q.eq('type', filters.type)

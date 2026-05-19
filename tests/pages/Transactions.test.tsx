@@ -26,18 +26,20 @@ const mockCategories = [
 ]
 
 function mockFrom(table: string) {
+  const data = table === 'categories' ? mockCategories : mockTransactions
+  const resolved = { data, error: null }
   const chain: any = {
     select: vi.fn().mockReturnThis(),
-    order: vi.fn().mockResolvedValue({
-      data: table === 'categories' ? mockCategories : mockTransactions,
-      error: null,
-    }),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     insert: vi.fn().mockResolvedValue({ error: null }),
     update: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
+    then: (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve),
+    catch: (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject),
   }
   return chain
 }

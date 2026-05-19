@@ -31,7 +31,8 @@ export function useCategories() {
 
   async function deleteCategory(id: string) {
     const { error } = await supabase.from('categories').delete().eq('id', id)
-    // ON DELETE SET NULL — no FK violation expected; guard against unexpected errors
+    // category_id FK is ON DELETE SET NULL, so 23503 won't fire via normal delete.
+    // Guard remains as a safety net if a future migration tightens the constraint.
     if (error?.code === '23503') {
       throw new Error('Não é possível excluir uma categoria com transações vinculadas.')
     }

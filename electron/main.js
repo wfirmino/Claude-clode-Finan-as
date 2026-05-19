@@ -19,6 +19,8 @@ function createWindow() {
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
 
   win.webContents.on('will-navigate', (event, url) => {
+    // In production all content is served from file:// — the empty array is intentional;
+    // the file:// check below is the actual production guard
     const allowedOrigins = isDev ? ['http://localhost:5173'] : []
     try {
       const { origin } = new URL(url)

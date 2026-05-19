@@ -113,9 +113,9 @@ export default function Goals() {
       </div>
 
       {modal.open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-40">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div role="presentation" className="fixed inset-0 bg-black/40 flex items-center justify-center z-40">
+          <div role="dialog" aria-modal="true" aria-labelledby="goal-modal-title" className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <h3 id="goal-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
               {modal.editing ? 'Editar Meta' : 'Nova Meta'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">

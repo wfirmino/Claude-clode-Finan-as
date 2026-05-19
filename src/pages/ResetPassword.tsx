@@ -19,6 +19,12 @@ export default function ResetPassword() {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (!success) return
+    const t = setTimeout(() => navigate('/login'), 2000)
+    return () => clearTimeout(t)
+  }, [success, navigate])
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (password !== confirm) {
@@ -31,7 +37,6 @@ export default function ResetPassword() {
       const { error } = await supabase.auth.updateUser({ password })
       if (error) throw error
       setSuccess(true)
-      setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {

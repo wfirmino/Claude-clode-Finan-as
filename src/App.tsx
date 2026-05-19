@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
@@ -22,21 +22,19 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login/*" element={user ? <Navigate to="/" replace /> : <Login />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route element={<ProtectedRoute user={user} />}>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/goals" element={<Goals />} />
-            <Route path="/reports" element={<Reports />} />
-          </Route>
+    <Routes>
+      <Route path="/login/*" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route element={<ProtectedRoute user={user} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/reports" element={<Reports />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }

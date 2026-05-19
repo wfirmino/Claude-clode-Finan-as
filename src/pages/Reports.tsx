@@ -17,10 +17,8 @@ function getPeriodDates(period: Period): { startDate: string; endDate: string } 
   if (period === 'quarter') {
     return { startDate: new Date(now.getFullYear(), now.getMonth() - 2, 1).toISOString().split('T')[0], endDate: end }
   }
-  if (period === 'year') {
-    return { startDate: new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0], endDate: end }
-  }
-  return { startDate: '', endDate: end }
+  // 'year' is the last named period; 'custom' is handled by the caller before reaching this function
+  return { startDate: new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0], endDate: end }
 }
 
 export default function Reports() {

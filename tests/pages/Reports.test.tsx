@@ -33,6 +33,7 @@ function mockFrom(data: object[]) {
   const chain: any = {
     select: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
     lte: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
