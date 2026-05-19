@@ -81,3 +81,8 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- indexes for common query patterns
+create index transactions_user_date on public.transactions (user_id, date desc);
+create index transactions_category on public.transactions (category_id);
+create index goals_user_deadline on public.goals (user_id, deadline);

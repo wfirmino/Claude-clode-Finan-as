@@ -55,4 +55,28 @@ describe('Categories page', () => {
     fireEvent.click(screen.getByRole('button', { name: /nova categoria/i }))
     expect(screen.getByRole('heading', { name: /nova categoria/i })).toBeInTheDocument()
   })
+
+  it('calls insert when form is submitted to create a category', async () => {
+    const chain = mockFrom(mockCategories)
+    render(<MemoryRouter><Categories /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Alimentação'))
+    fireEvent.click(screen.getByRole('button', { name: /nova categoria/i }))
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Transporte' } })
+    fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
+    await waitFor(() => {
+      expect(chain.insert).toHaveBeenCalled()
+    })
+  })
+
+  it('shows toast error when delete is blocked because category has transactions', async () => {
+    mockFrom(mockCategories, 1)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    render(<MemoryRouter><Categories /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Alimentação'))
+    const deleteButtons = screen.getAllByRole('button', { name: /excluir/i })
+    fireEvent.click(deleteButtons[0])
+    await waitFor(() => {
+      expect(screen.getByText(/não é possível excluir/i)).toBeInTheDocument()
+    })
+  })
 })

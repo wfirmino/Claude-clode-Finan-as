@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCategories } from '../hooks/useCategories'
 import type { Category } from '../types'
+import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
 
 const COLORS = ['#6366f1', '#22c55e', '#ef4444', '#f59e0b', '#3b82f6', '#ec4899', '#14b8a6']
@@ -40,7 +41,7 @@ export default function Categories() {
       }
       closeModal()
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 
@@ -50,7 +51,7 @@ export default function Categories() {
       await deleteCategory(id)
       setToast({ message: 'Categoria excluída.', type: 'success' })
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 

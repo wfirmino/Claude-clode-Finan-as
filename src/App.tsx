@@ -23,7 +23,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        <Route path="/login/*" element={user ? <Navigate to="/" replace /> : <Login />} />
         <Route element={<ProtectedRoute user={user} />}>
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />

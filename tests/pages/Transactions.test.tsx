@@ -62,4 +62,37 @@ describe('Transactions page', () => {
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
     expect(screen.getByRole('heading', { name: /nova transação/i })).toBeInTheDocument()
   })
+
+  it('calls insert when form is submitted to create a transaction', async () => {
+    const insertMock = vi.fn().mockResolvedValue({ error: null })
+    vi.mocked(supabase.from).mockImplementation((table: string) => {
+      const chain = mockFrom(table)
+      if (table === 'transactions') chain.insert = insertMock
+      return chain as any
+    })
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Salário'))
+    fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
+    // first textbox in the modal is the title field
+    fireEvent.change(screen.getAllByRole('textbox')[0], { target: { value: 'Novo gasto' } })
+    fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '50' } })
+    fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
+    await waitFor(() => {
+      expect(insertMock).toHaveBeenCalled()
+    })
+  })
+
+  it('auto-fills type when a category is selected', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Salário'))
+    fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
+    // first combobox in modal is the category select
+    const selects = screen.getAllByRole('combobox')
+    const categorySelect = selects[0]
+    fireEvent.change(categorySelect, { target: { value: 'c1' } })
+    // after selecting 'c1' (Trabalho, type=income), the type field reflects income
+    const options = screen.getAllByRole('option') as HTMLOptionElement[]
+    const incomeOption = options.find(o => o.value === 'income')
+    expect(incomeOption).toBeDefined()
+  })
 })

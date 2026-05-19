@@ -1,14 +1,19 @@
 import type { Transaction } from '../types'
 
+// Prefix cells that start with formula characters to prevent CSV injection in Excel/Sheets
+function sanitizeCell(value: string): string {
+  return /^[=+\-@]/.test(value) ? `'${value}` : value
+}
+
 export function buildCSVContent(transactions: Transaction[]): string {
   const headers = ['Data', 'Título', 'Tipo', 'Categoria', 'Valor', 'Observação']
   const rows = transactions.map(t => [
     t.date,
-    t.title,
+    sanitizeCell(t.title),
     t.type === 'income' ? 'Receita' : 'Despesa',
-    t.categories?.name ?? '',
+    sanitizeCell(t.categories?.name ?? ''),
     t.amount.toFixed(2),
-    t.notes ?? '',
+    sanitizeCell(t.notes ?? ''),
   ])
   return [headers, ...rows]
     .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))

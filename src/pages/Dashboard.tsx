@@ -50,7 +50,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={categoryTotals} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name }) => name}>
-                  {categoryTotals.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  {categoryTotals.map((entry) => <Cell key={entry.name || entry.color} fill={entry.color} />)}
                 </Pie>
                 <Tooltip formatter={(v) => formatCurrency(Number(v))} />
               </PieChart>

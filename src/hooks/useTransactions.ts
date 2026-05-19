@@ -22,7 +22,7 @@ export function useTransactions(filters: TransactionFilters = {}) {
     if (filters.startDate) q = q.gte('date', filters.startDate)
     if (filters.endDate) q = q.lte('date', filters.endDate)
     if (filters.type) q = q.eq('type', filters.type)
-    if (filters.categoryId) q = q.eq('category_id', filters.categoryId)
+    if (filters.categoryId !== undefined && filters.categoryId !== '') q = q.eq('category_id', filters.categoryId)
     const { data, error } = await q
     if (error) { setError(error.message); setLoading(false); return }
     setTransactions(data)

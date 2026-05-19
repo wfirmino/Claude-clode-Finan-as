@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -16,9 +16,24 @@ function createWindow() {
     title: 'FinanceApp',
   })
 
+  win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
+
+  win.webContents.on('will-navigate', (event, url) => {
+    const allowedOrigins = isDev ? ['http://localhost:5173'] : []
+    try {
+      const { origin } = new URL(url)
+      if (!allowedOrigins.includes(origin) && !url.startsWith('file://')) {
+        event.preventDefault()
+      }
+    } catch {
+      event.preventDefault()
+    }
+  })
+
   if (isDev) {
     win.loadURL('http://localhost:5173')
   } else {
+    Menu.setApplicationMenu(null)
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 }

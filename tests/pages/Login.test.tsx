@@ -32,7 +32,7 @@ describe('Login page', () => {
   })
 
   it('calls signInWithPassword on submit', async () => {
-    vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue({ data: { user: null, session: null }, error: null } as any)
+    vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue({ data: { user: null, session: null }, error: null } as unknown as Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>)
     renderLogin()
     fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'user@test.com' } })
     fireEvent.change(screen.getByLabelText(/senha/i), { target: { value: '123456' } })

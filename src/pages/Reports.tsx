@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { useTransactions } from '../hooks/useTransactions'
 import { calculateCategoryTotals } from '../utils/calculations'
@@ -27,12 +27,15 @@ export default function Reports() {
   const [period, setPeriod] = useState<Period>('month')
   const [custom, setCustom] = useState({ startDate: '', endDate: '' })
 
-  const today = new Date().toISOString().split('T')[0]
-  const dates = period === 'custom' ? custom : getPeriodDates(period)
-  const filters: TransactionFilters = {
-    startDate: dates.startDate || undefined,
-    endDate: dates.endDate || today,
-  }
+  const filters = useMemo<TransactionFilters>(() => {
+    const today = new Date().toISOString().split('T')[0]
+    const dates = period === 'custom' ? custom : getPeriodDates(period)
+    return {
+      startDate: dates.startDate || undefined,
+      endDate: dates.endDate || today,
+    }
+  }, [period, custom])
+
   const { transactions, loading } = useTransactions(filters)
 
   const categoryTotals = calculateCategoryTotals(transactions)
@@ -94,8 +97,8 @@ export default function Reports() {
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={100} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                    {categoryTotals.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
+                    {categoryTotals.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
                     ))}
                   </Bar>
                 </BarChart>

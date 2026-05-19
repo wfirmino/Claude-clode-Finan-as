@@ -48,14 +48,24 @@ export function calculateMonthlyTotals(transactions: Transaction[], months = 6):
 export function calculateCategoryTotals(transactions: Transaction[]): CategoryTotal[] {
   const map = new Map<string, CategoryTotal>()
   transactions
-    .filter(t => t.type === 'expense' && t.categories)
+    .filter(t => t.type === 'expense')
     .forEach(t => {
-      const cat = t.categories!
-      const existing = map.get(cat.id)
-      if (existing) {
-        existing.value += t.amount
+      if (t.categories) {
+        const cat = t.categories
+        const existing = map.get(cat.id)
+        if (existing) {
+          existing.value += t.amount
+        } else {
+          map.set(cat.id, { name: cat.name, value: t.amount, color: cat.color })
+        }
       } else {
-        map.set(cat.id, { name: cat.name, value: t.amount, color: cat.color })
+        // Expense whose category was deleted (ON DELETE SET NULL) — grouped into fallback bucket
+        const existing = map.get('__uncategorized__')
+        if (existing) {
+          existing.value += t.amount
+        } else {
+          map.set('__uncategorized__', { name: 'Sem categoria', value: t.amount, color: '#9ca3af' })
+        }
       }
     })
   return Array.from(map.values())

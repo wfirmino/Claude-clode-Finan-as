@@ -3,6 +3,7 @@ import { useGoals } from '../hooks/useGoals'
 import type { Goal } from '../types'
 import { calculateGoalProgress, isGoalAtRisk } from '../utils/calculations'
 import { formatCurrency, formatDate } from '../utils/formatters'
+import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
 
 interface FormState { title: string; target: string; current: string; deadline: string }
@@ -24,6 +25,10 @@ export default function Goals() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const values = { title: form.title, target: parseFloat(form.target), current: parseFloat(form.current), deadline: form.deadline }
+    if (values.current > values.target) {
+      setToast({ message: 'O valor atual não pode ser maior que o valor alvo.', type: 'error' })
+      return
+    }
     try {
       if (modal.editing) {
         await updateGoal(modal.editing.id, values)
@@ -34,7 +39,7 @@ export default function Goals() {
       }
       closeModal()
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 
@@ -44,7 +49,7 @@ export default function Goals() {
       await deleteGoal(id)
       setToast({ message: 'Meta excluída.', type: 'success' })
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 

@@ -3,6 +3,7 @@ import { useTransactions, type TransactionFilters } from '../hooks/useTransactio
 import { useCategories } from '../hooks/useCategories'
 import type { Transaction } from '../types'
 import { formatCurrency, formatDate } from '../utils/formatters'
+import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
 
 interface FormState {
@@ -70,7 +71,7 @@ export default function Transactions() {
       }
       closeModal()
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 
@@ -80,7 +81,7 @@ export default function Transactions() {
       await deleteTransaction(id)
       setToast({ message: 'Transação excluída.', type: 'success' })
     } catch (err) {
-      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
+      setToast({ message: getErrorMessage(err), type: 'error' })
     }
   }
 
@@ -109,7 +110,7 @@ export default function Transactions() {
         />
         <select
           value={filters.type ?? ''}
-          onChange={e => { setFilters(f => ({ ...f, type: (e.target.value as 'income' | 'expense') || undefined })); setPage(0) }}
+          onChange={e => { const v = e.target.value; setFilters(f => ({ ...f, type: (v === 'income' || v === 'expense') ? v : undefined })); setPage(0) }}
           className="rounded-lg border-gray-300 text-sm"
         >
           <option value="">Todos os tipos</option>
