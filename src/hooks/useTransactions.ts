@@ -16,6 +16,7 @@ export function useTransactions(filters: TransactionFilters = {}) {
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
+    setError(null)
     let q = supabase.from('transactions').select('*, categories(*)').order('date', { ascending: false }).limit(500)
     if (filters.startDate) q = q.gte('date', filters.startDate)
     if (filters.endDate) q = q.lte('date', filters.endDate)
@@ -30,7 +31,9 @@ export function useTransactions(filters: TransactionFilters = {}) {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createTransaction(values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
-    const { error } = await supabase.from('transactions').insert(values)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').insert({ ...values, user_id: user.id })
     if (error) throw error
     await fetchAll()
   }

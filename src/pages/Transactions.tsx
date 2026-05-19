@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useTransactions, type TransactionFilters } from '../hooks/useTransactions'
 import { useCategories } from '../hooks/useCategories'
 import type { Transaction } from '../types'
@@ -32,12 +32,13 @@ export default function Transactions() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const toastId = useRef(0)
 
   const paginated = transactions.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
   const totalPages = Math.ceil(transactions.length / PAGE_SIZE)
 
   function showToast(message: string, type: 'success' | 'error') {
-    setToast({ id: Date.now(), message, type })
+    setToast({ id: ++toastId.current, message, type })
   }
 
   function openCreate() {

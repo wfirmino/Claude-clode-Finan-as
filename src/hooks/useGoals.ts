@@ -9,6 +9,7 @@ export function useGoals() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
+    setError(null)
     const { data, error } = await supabase.from('goals').select('*').order('deadline')
     if (error) { setError(error.message); setLoading(false); return }
     setGoals(data)
@@ -18,7 +19,9 @@ export function useGoals() {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createGoal(values: Pick<Goal, 'title' | 'target' | 'current' | 'deadline'>) {
-    const { error } = await supabase.from('goals').insert(values)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('goals').insert({ ...values, user_id: user.id })
     if (error) throw error
     await fetchAll()
   }

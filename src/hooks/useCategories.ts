@@ -9,6 +9,7 @@ export function useCategories() {
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
+    setError(null)
     const { data, error } = await supabase.from('categories').select('*').order('name')
     if (error) { setError(error.message); setLoading(false); return }
     setCategories(data)
@@ -18,7 +19,9 @@ export function useCategories() {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createCategory(values: Pick<Category, 'name' | 'type' | 'color'>) {
-    const { error } = await supabase.from('categories').insert(values)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('categories').insert({ ...values, user_id: user.id })
     if (error) throw error
     await fetchAll()
   }

@@ -64,9 +64,22 @@ export default function Reports() {
           </button>
         ))}
         {period === 'custom' && (
-          <div className="flex gap-2">
-            <input type="date" value={custom.startDate} onChange={e => setCustom(c => ({ ...c, startDate: e.target.value }))} className="rounded-lg border-gray-300 text-sm" />
-            <input type="date" value={custom.endDate} onChange={e => setCustom(c => ({ ...c, endDate: e.target.value }))} className="rounded-lg border-gray-300 text-sm" />
+          <div className="flex gap-2 items-center">
+            <input
+              type="date"
+              value={custom.startDate}
+              max={custom.endDate || undefined}
+              onChange={e => setCustom(c => ({ ...c, startDate: e.target.value }))}
+              className="rounded-lg border-gray-300 text-sm"
+            />
+            <span className="text-gray-400 text-sm">até</span>
+            <input
+              type="date"
+              value={custom.endDate}
+              min={custom.startDate || undefined}
+              onChange={e => setCustom(c => ({ ...c, endDate: e.target.value }))}
+              className="rounded-lg border-gray-300 text-sm"
+            />
           </div>
         )}
       </div>

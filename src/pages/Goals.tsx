@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useGoals } from '../hooks/useGoals'
 import type { Goal } from '../types'
 import { calculateGoalProgress, isGoalAtRisk } from '../utils/calculations'
@@ -16,9 +16,10 @@ export default function Goals() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const toastId = useRef(0)
 
   function showToast(message: string, type: 'success' | 'error') {
-    setToast({ id: Date.now(), message, type })
+    setToast({ id: ++toastId.current, message, type })
   }
 
   function openCreate() { setForm(defaultForm); setModal({ open: true, editing: null }) }

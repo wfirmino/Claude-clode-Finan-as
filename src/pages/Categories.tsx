@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useCategories } from '../hooks/useCategories'
 import type { Category } from '../types'
 import { getErrorMessage } from '../utils/errors'
@@ -16,9 +16,10 @@ export default function Categories() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const toastId = useRef(0)
 
   function showToast(message: string, type: 'success' | 'error') {
-    setToast({ id: Date.now(), message, type })
+    setToast({ id: ++toastId.current, message, type })
   }
 
   function openCreate() {

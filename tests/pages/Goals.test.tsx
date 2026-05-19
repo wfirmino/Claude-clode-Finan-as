@@ -98,7 +98,7 @@ describe('Goals page', () => {
     })
   })
 
-  it('calls insert when valid form is submitted', async () => {
+  it('calls insert with user_id when valid form is submitted', async () => {
     const chain = mockFrom(mockGoals)
     render(<MemoryRouter><Goals /></MemoryRouter>)
     await waitFor(() => screen.getByText('Viagem'))
@@ -110,7 +110,9 @@ describe('Goals page', () => {
     fireEvent.change(screen.getByDisplayValue(''), { target: { value: futureDeadline } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {
-      expect(chain.insert).toHaveBeenCalled()
+      expect(chain.insert).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: 'u1', title: 'Nova meta' })
+      )
     })
   })
 })

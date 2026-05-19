@@ -85,7 +85,8 @@ export function isGoalAtRisk(goal: Goal): boolean {
   const daysLeft = Math.floor((deadline - now) / (1000 * 60 * 60 * 24))
   if (daysLeft <= 0) return goal.current < goal.target
   const totalDays = (deadline - created) / (1000 * 60 * 60 * 24)
-  const expectedProgress = totalDays > 0 ? 1 - daysLeft / totalDays : 1
+  if (totalDays <= 0) return false
+  const expectedProgress = 1 - daysLeft / totalDays
   const actualProgress = goal.target > 0 ? goal.current / goal.target : 1
   return daysLeft <= 30 && actualProgress < expectedProgress
 }

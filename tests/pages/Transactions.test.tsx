@@ -66,7 +66,7 @@ describe('Transactions page', () => {
     expect(screen.getByRole('heading', { name: /nova transação/i })).toBeInTheDocument()
   })
 
-  it('calls insert when form is submitted to create a transaction', async () => {
+  it('calls insert with user_id when form is submitted to create a transaction', async () => {
     const insertMock = vi.fn().mockResolvedValue({ error: null })
     vi.mocked(supabase.from).mockImplementation((table: string) => {
       const chain = mockFrom(table)
@@ -81,7 +81,9 @@ describe('Transactions page', () => {
     fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '50' } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {
-      expect(insertMock).toHaveBeenCalled()
+      expect(insertMock).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: 'u1', title: 'Novo gasto' })
+      )
     })
   })
 

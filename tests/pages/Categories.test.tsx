@@ -57,7 +57,7 @@ describe('Categories page', () => {
     expect(screen.getByRole('heading', { name: /nova categoria/i })).toBeInTheDocument()
   })
 
-  it('calls insert when form is submitted to create a category', async () => {
+  it('calls insert with user_id when form is submitted to create a category', async () => {
     const chain = mockFrom(mockCategories)
     render(<MemoryRouter><Categories /></MemoryRouter>)
     await waitFor(() => screen.getByText('Alimentação'))
@@ -65,7 +65,9 @@ describe('Categories page', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Transporte' } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {
-      expect(chain.insert).toHaveBeenCalled()
+      expect(chain.insert).toHaveBeenCalledWith(
+        expect.objectContaining({ user_id: 'u1', name: 'Transporte' })
+      )
     })
   })
 
