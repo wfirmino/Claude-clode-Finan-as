@@ -63,7 +63,7 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={monthly}>
               <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$${(v / 1000).toFixed(0)}k`} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => { const n = Number(v); return n >= 1000 ? `R$${(n / 1000).toFixed(0)}k` : `R$${n}` }} />
               <Tooltip formatter={(v) => formatCurrency(Number(v))} />
               <Legend />
               <Bar dataKey="income" name="Receita" fill="#22c55e" radius={[4, 4, 0, 0]} />

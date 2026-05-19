@@ -70,13 +70,17 @@ create policy "own goals delete" on public.goals for delete using (auth.uid() = 
 
 -- auto-create profile on signup
 create or replace function public.handle_new_user()
-returns trigger as $$
+returns trigger
+security definer
+set search_path = ''
+language plpgsql
+as $$
 begin
   insert into public.profiles (id, email)
   values (new.id, new.email);
   return new;
 end;
-$$ language plpgsql security definer;
+$$;
 
 create trigger on_auth_user_created
   after insert on auth.users

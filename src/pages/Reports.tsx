@@ -93,7 +93,7 @@ export default function Reports() {
               <p className="text-sm font-medium text-gray-700 mb-4">Despesas por categoria</p>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={categoryTotals} layout="vertical">
-                  <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => `R$${v}`} />
+                  <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => formatCurrency(Number(v))} />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={100} />
                   <Tooltip formatter={(v) => formatCurrency(Number(v))} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>

@@ -7,6 +7,7 @@ vi.mock('../../src/lib/supabase', () => ({
   supabase: {
     auth: {
       signInWithPassword: vi.fn(),
+      signUp: vi.fn(),
       resetPasswordForEmail: vi.fn(),
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
       onAuthStateChange: vi.fn().mockReturnValue({

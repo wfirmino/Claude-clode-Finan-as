@@ -25,6 +25,14 @@ export default function Goals() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const values = { title: form.title, target: parseFloat(form.target), current: parseFloat(form.current), deadline: form.deadline }
+    if (!isFinite(values.target) || values.target <= 0) {
+      setToast({ message: 'Informe um valor alvo numérico maior que zero.', type: 'error' })
+      return
+    }
+    if (!isFinite(values.current) || values.current < 0) {
+      setToast({ message: 'Informe um valor atual numérico válido.', type: 'error' })
+      return
+    }
     if (values.current > values.target) {
       setToast({ message: 'O valor atual não pode ser maior que o valor alvo.', type: 'error' })
       return
@@ -138,7 +146,7 @@ export default function Goals() {
         </div>
       )}
 
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && <Toast key={toast.message + toast.type} message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   )
 }
