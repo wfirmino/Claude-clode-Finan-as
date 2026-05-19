@@ -62,4 +62,28 @@ describe('Login page', () => {
     fireEvent.click(screen.getByText(/esqueci minha senha/i))
     expect(screen.getByRole('button', { name: /enviar/i })).toBeInTheDocument()
   })
+
+  it('calls signUp when submitting in signup mode', async () => {
+    vi.mocked(supabase.auth.signUp).mockResolvedValue({ data: { user: null, session: null }, error: null } as any)
+    renderLogin()
+    fireEvent.click(screen.getByText(/criar uma conta/i))
+    fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'new@test.com' } })
+    fireEvent.change(screen.getByLabelText(/senha/i), { target: { value: 'pass123' } })
+    fireEvent.click(screen.getByRole('button', { name: /criar conta/i }))
+    await waitFor(() => {
+      expect(supabase.auth.signUp).toHaveBeenCalledWith({ email: 'new@test.com', password: 'pass123' })
+    })
+  })
+
+  it('shows info message after successful signup', async () => {
+    vi.mocked(supabase.auth.signUp).mockResolvedValue({ data: { user: null, session: null }, error: null } as any)
+    renderLogin()
+    fireEvent.click(screen.getByText(/criar uma conta/i))
+    fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'new@test.com' } })
+    fireEvent.change(screen.getByLabelText(/senha/i), { target: { value: 'pass123' } })
+    fireEvent.click(screen.getByRole('button', { name: /criar conta/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/verifique seu e-mail/i)).toBeInTheDocument()
+    })
+  })
 })

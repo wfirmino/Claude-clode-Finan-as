@@ -24,13 +24,15 @@ export function useGoals() {
   }
 
   async function updateGoal(id: string, values: Pick<Goal, 'title' | 'target' | 'current' | 'deadline'>) {
-    const { error } = await supabase.from('goals').update(values).eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('goals').update(values).eq('id', id).eq('user_id', user?.id ?? '')
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteGoal(id: string) {
-    const { error } = await supabase.from('goals').delete().eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('goals').delete().eq('id', id).eq('user_id', user?.id ?? '')
     if (error) throw error
     await fetchAll()
   }

@@ -3,6 +3,7 @@ import { useCategories } from '../hooks/useCategories'
 import type { Category } from '../types'
 import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
+import Modal from '../components/Modal'
 
 const COLORS = ['#6366f1', '#22c55e', '#ef4444', '#f59e0b', '#3b82f6', '#ec4899', '#14b8a6']
 
@@ -10,10 +11,15 @@ interface FormState { name: string; type: 'income' | 'expense'; color: string }
 const defaultForm: FormState = { name: '', type: 'expense', color: '#6366f1' }
 
 export default function Categories() {
-  const { categories, loading, createCategory, updateCategory, deleteCategory } = useCategories()
+  const { categories, loading, error, createCategory, updateCategory, deleteCategory } = useCategories()
   const [modal, setModal] = useState<{ open: boolean; editing: Category | null }>({ open: false, editing: null })
   const [form, setForm] = useState<FormState>(defaultForm)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
+  const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+
+  function showToast(message: string, type: 'success' | 'error') {
+    setToast({ id: Date.now(), message, type })
+  }
 
   function openCreate() {
     setForm(defaultForm)
@@ -34,24 +40,24 @@ export default function Categories() {
     try {
       if (modal.editing) {
         await updateCategory(modal.editing.id, form)
-        setToast({ message: 'Categoria atualizada.', type: 'success' })
+        showToast('Categoria atualizada.', 'success')
       } else {
         await createCategory(form)
-        setToast({ message: 'Categoria criada.', type: 'success' })
+        showToast('Categoria criada.', 'success')
       }
       closeModal()
     } catch (err) {
-      setToast({ message: getErrorMessage(err), type: 'error' })
+      showToast(getErrorMessage(err), 'error')
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Excluir categoria?')) return
+    setConfirmDelete(null)
     try {
       await deleteCategory(id)
-      setToast({ message: 'Categoria excluída.', type: 'success' })
+      showToast('Categoria excluída.', 'success')
     } catch (err) {
-      setToast({ message: getErrorMessage(err), type: 'error' })
+      showToast(getErrorMessage(err), 'error')
     }
   }
 
@@ -66,6 +72,12 @@ export default function Categories() {
         </button>
       </div>
 
+      {error && (
+        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+          Erro ao carregar categorias: {error}
+        </div>
+      )}
+
       <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
         {categories.length === 0 && (
           <p className="p-6 text-sm text-gray-400 text-center">Nenhuma categoria cadastrada.</p>
@@ -79,67 +91,75 @@ export default function Categories() {
                 {cat.type === 'income' ? 'Receita' : 'Despesa'}
               </span>
             </div>
-            <div className="flex gap-2">
-              <button onClick={() => openEdit(cat)} className="text-sm text-indigo-600 hover:underline">Editar</button>
-              <button onClick={() => handleDelete(cat.id)} className="text-sm text-red-500 hover:underline">Excluir</button>
+            <div className="flex items-center gap-2">
+              {confirmDelete === cat.id ? (
+                <>
+                  <span className="text-sm text-gray-600">Confirmar exclusão?</span>
+                  <button onClick={() => handleDelete(cat.id)} className="text-sm text-red-600 font-medium hover:underline">Sim</button>
+                  <button onClick={() => setConfirmDelete(null)} className="text-sm text-gray-500 hover:underline">Não</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => openEdit(cat)} className="text-sm text-indigo-600 hover:underline">Editar</button>
+                  <button onClick={() => setConfirmDelete(cat.id)} className="text-sm text-red-500 hover:underline">Excluir</button>
+                </>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      {modal.open && (
-        <div role="presentation" className="fixed inset-0 bg-black/40 flex items-center justify-center z-40">
-          <div role="dialog" aria-modal="true" aria-labelledby="category-modal-title" className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <h3 id="category-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
-              {modal.editing ? 'Editar Categoria' : 'Nova Categoria'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input
-                  type="text"
-                  required
-                  value={form.name}
-                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                <select
-                  value={form.type}
-                  onChange={e => setForm(f => ({ ...f, type: e.target.value as 'income' | 'expense' }))}
-                  className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="expense">Despesa</option>
-                  <option value="income">Receita</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Cor</label>
-                <div className="flex gap-2 flex-wrap">
-                  {COLORS.map(c => (
-                    <button
-                      key={c}
-                      type="button"
-                      aria-label={`Selecionar cor ${c}`}
-                      onClick={() => setForm(f => ({ ...f, color: c }))}
-                      className={`w-7 h-7 rounded-full border-2 transition-all ${form.color === c ? 'border-gray-900 scale-110' : 'border-transparent'}`}
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">Salvar</button>
-              </div>
-            </form>
+      <Modal open={modal.open} onClose={closeModal} titleId="category-modal-title">
+        <h3 id="category-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
+          {modal.editing ? 'Editar Categoria' : 'Nova Categoria'}
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="cat-name" className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+            <input
+              id="cat-name"
+              type="text"
+              required
+              value={form.name}
+              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+            />
           </div>
-        </div>
-      )}
+          <div>
+            <label htmlFor="cat-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+            <select
+              id="cat-type"
+              value={form.type}
+              onChange={e => setForm(f => ({ ...f, type: e.target.value as 'income' | 'expense' }))}
+              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="expense">Despesa</option>
+              <option value="income">Receita</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+            <div className="flex gap-2 flex-wrap">
+              {COLORS.map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  aria-label={`Selecionar cor ${c}`}
+                  onClick={() => setForm(f => ({ ...f, color: c }))}
+                  className={`w-7 h-7 rounded-full border-2 transition-all ${form.color === c ? 'border-gray-900 scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">Salvar</button>
+          </div>
+        </form>
+      </Modal>
 
-      {toast && <Toast key={toast.message + toast.type} message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   )
 }

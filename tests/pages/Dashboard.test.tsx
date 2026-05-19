@@ -8,6 +8,7 @@ vi.mock('../../src/lib/supabase', () => ({
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -65,6 +66,25 @@ describe('Dashboard page', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => {
       expect(screen.getByText(/nenhuma transação registrada/i)).toBeInTheDocument()
+    })
+  })
+
+  it('shows error banner when fetch fails', async () => {
+    const resolved = { data: null, error: { message: 'Conexão recusada' } }
+    const chain: any = {
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      then: (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve),
+      catch: (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject),
+    }
+    vi.mocked(supabase.from).mockReturnValue(chain as any)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByText(/erro ao carregar transações/i)).toBeInTheDocument()
     })
   })
 

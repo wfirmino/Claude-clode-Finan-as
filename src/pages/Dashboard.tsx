@@ -12,7 +12,7 @@ import {
 import { formatCurrency, formatDate } from '../utils/formatters'
 
 export default function Dashboard() {
-  const { transactions, loading } = useTransactions()
+  const { transactions, loading, error } = useTransactions()
 
   const balance = useMemo(() => calculateBalance(transactions), [transactions])
   const { income, expense } = useMemo(() => calculateCurrentMonthTotals(transactions), [transactions])
@@ -25,6 +25,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       <h2 className="text-xl font-semibold text-gray-900">Dashboard</h2>
+
+      {error && (
+        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+          Erro ao carregar transações: {error}
+        </div>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">

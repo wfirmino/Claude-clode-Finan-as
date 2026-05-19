@@ -24,13 +24,15 @@ export function useCategories() {
   }
 
   async function updateCategory(id: string, values: Pick<Category, 'name' | 'type' | 'color'>) {
-    const { error } = await supabase.from('categories').update(values).eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('categories').update(values).eq('id', id).eq('user_id', user?.id ?? '')
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteCategory(id: string) {
-    const { error } = await supabase.from('categories').delete().eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('categories').delete().eq('id', id).eq('user_id', user?.id ?? '')
     // category_id FK is ON DELETE SET NULL, so 23503 won't fire via normal delete.
     // Guard remains as a safety net if a future migration tightens the constraint.
     if (error?.code === '23503') {

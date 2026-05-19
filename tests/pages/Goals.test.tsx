@@ -8,6 +8,7 @@ vi.mock('../../src/lib/supabase', () => ({
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -81,6 +82,19 @@ describe('Goals page', () => {
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {
       expect(screen.getByText(/valor atual não pode ser maior/i)).toBeInTheDocument()
+    })
+  })
+
+  it('deletes a goal after inline confirmation', async () => {
+    const chain = mockFrom(mockGoals)
+    render(<MemoryRouter><Goals /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Viagem'))
+    const deleteButtons = screen.getAllByRole('button', { name: /excluir/i })
+    fireEvent.click(deleteButtons[0])
+    expect(screen.getByRole('button', { name: /^sim$/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /^sim$/i }))
+    await waitFor(() => {
+      expect(chain.delete).toHaveBeenCalled()
     })
   })
 

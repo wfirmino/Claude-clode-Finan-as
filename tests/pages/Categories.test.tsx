@@ -8,6 +8,7 @@ vi.mock('../../src/lib/supabase', () => ({
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -72,13 +73,17 @@ describe('Categories page', () => {
     // First call returns categories list; subsequent delete call returns FK violation
     const chain = mockFrom(mockCategories)
     chain.delete = vi.fn().mockReturnValue({
-      eq: vi.fn().mockResolvedValue({ error: { code: '23503', message: 'FK violation' } }),
+      eq: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: { code: '23503', message: 'FK violation' } }),
+      }),
     })
-    vi.spyOn(window, 'confirm').mockReturnValue(true)
     render(<MemoryRouter><Categories /></MemoryRouter>)
     await waitFor(() => screen.getByText('Alimentação'))
+    // click Excluir → shows inline confirm
     const deleteButtons = screen.getAllByRole('button', { name: /excluir/i })
     fireEvent.click(deleteButtons[0])
+    // click Sim to confirm
+    fireEvent.click(screen.getByRole('button', { name: /^sim$/i }))
     await waitFor(() => {
       expect(screen.getByText(/não é possível excluir/i)).toBeInTheDocument()
     })

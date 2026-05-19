@@ -8,6 +8,7 @@ vi.mock('../../src/lib/supabase', () => ({
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -81,6 +82,28 @@ describe('Transactions page', () => {
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {
       expect(insertMock).toHaveBeenCalled()
+    })
+  })
+
+  it('deletes a transaction after inline confirmation', async () => {
+    const deleteMock = vi.fn().mockReturnValue({
+      eq: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
+    })
+    vi.mocked(supabase.from).mockImplementation((table: string) => {
+      const chain = mockFrom(table)
+      if (table === 'transactions') chain.delete = deleteMock
+      return chain as any
+    })
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByText('Salário'))
+    const deleteButtons = screen.getAllByRole('button', { name: /excluir/i })
+    fireEvent.click(deleteButtons[0])
+    expect(screen.getByRole('button', { name: /^sim$/i })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /^sim$/i }))
+    await waitFor(() => {
+      expect(deleteMock).toHaveBeenCalled()
     })
   })
 

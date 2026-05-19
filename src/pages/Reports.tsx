@@ -34,7 +34,7 @@ export default function Reports() {
     }
   }, [period, custom])
 
-  const { transactions, loading } = useTransactions(filters)
+  const { transactions, loading, error } = useTransactions(filters)
 
   const categoryTotals = useMemo(() => calculateCategoryTotals(transactions), [transactions])
   const totalExpense = useMemo(() => transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0), [transactions])
@@ -70,6 +70,12 @@ export default function Reports() {
           </div>
         )}
       </div>
+
+      {error && (
+        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+          Erro ao carregar transações: {error}
+        </div>
+      )}
 
       {loading ? <p className="text-sm text-gray-400">Carregando...</p> : (
         <>
