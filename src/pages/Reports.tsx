@@ -88,7 +88,7 @@ export default function Reports() {
                 <BarChart data={categoryTotals} layout="vertical">
                   <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => `R$${v}`} />
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={100} />
-                  <Tooltip formatter={(v: number) => formatCurrency(v)} />
+                  <Tooltip formatter={(v) => formatCurrency(Number(v))} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                     {categoryTotals.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />

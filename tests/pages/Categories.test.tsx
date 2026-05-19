@@ -28,7 +28,7 @@ function mockFrom(data: any[], countResult = 0) {
     insert: vi.fn().mockResolvedValue({ error: null }),
     delete: vi.fn().mockReturnThis(),
   }
-  chain.select.mockImplementation((cols: string, opts?: any) => {
+  chain.select.mockImplementation((_cols: string, opts?: any) => {
     if (opts?.count) return { ...chain, then: (cb: any) => cb({ count: countResult, error: null }) }
     return chain
   })
