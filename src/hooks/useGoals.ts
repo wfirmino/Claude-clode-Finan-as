@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Goal } from '../types'
 
@@ -7,15 +7,15 @@ export function useGoals() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => { fetchAll() }, [])
-
-  async function fetchAll() {
+  const fetchAll = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase.from('goals').select('*').order('deadline')
     if (error) { setError(error.message); setLoading(false); return }
     setGoals(data)
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createGoal(values: Pick<Goal, 'title' | 'target' | 'current' | 'deadline'>) {
     const { error } = await supabase.from('goals').insert(values)

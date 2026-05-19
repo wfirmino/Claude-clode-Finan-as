@@ -38,9 +38,9 @@ export default function Reports() {
 
   const { transactions, loading } = useTransactions(filters)
 
-  const categoryTotals = calculateCategoryTotals(transactions)
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+  const categoryTotals = useMemo(() => calculateCategoryTotals(transactions), [transactions])
+  const totalExpense = useMemo(() => transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0), [transactions])
+  const totalIncome = useMemo(() => transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0), [transactions])
 
   return (
     <div className="space-y-6">

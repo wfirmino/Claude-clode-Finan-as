@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Category } from '../types'
 
@@ -7,15 +7,15 @@ export function useCategories() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => { fetchAll() }, [])
-
-  async function fetchAll() {
+  const fetchAll = useCallback(async () => {
     setLoading(true)
     const { data, error } = await supabase.from('categories').select('*').order('name')
     if (error) { setError(error.message); setLoading(false); return }
     setCategories(data)
     setLoading(false)
-  }
+  }, [])
+
+  useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createCategory(values: Pick<Category, 'name' | 'type' | 'color'>) {
     const { error } = await supabase.from('categories').insert(values)
@@ -31,7 +31,7 @@ export function useCategories() {
 
   async function deleteCategory(id: string) {
     const { error } = await supabase.from('categories').delete().eq('id', id)
-    // Postgres FK violation code when ON DELETE RESTRICT blocks the delete
+    // ON DELETE SET NULL — no FK violation expected; guard against unexpected errors
     if (error?.code === '23503') {
       throw new Error('Não é possível excluir uma categoria com transações vinculadas.')
     }

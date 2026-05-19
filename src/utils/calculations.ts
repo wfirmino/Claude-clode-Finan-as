@@ -78,6 +78,8 @@ export function calculateGoalProgress(goal: Goal): number {
 
 export function isGoalAtRisk(goal: Goal): boolean {
   const now = Date.now()
+  // deadline is a DATE column ("YYYY-MM-DD") — parse as local midnight to avoid UTC off-by-one
+  // created_at is a TIMESTAMPTZ column (full ISO string with tz) — new Date() is correct here
   const deadline = parseDateLocal(goal.deadline).getTime()
   const created = new Date(goal.created_at).getTime()
   const daysLeft = (deadline - now) / (1000 * 60 * 60 * 24)

@@ -35,7 +35,7 @@ export default function Transactions() {
   const totalPages = Math.ceil(transactions.length / PAGE_SIZE)
 
   function openCreate() {
-    setForm(defaultForm)
+    setForm({ ...defaultForm, date: new Date().toISOString().split('T')[0] })
     setModal({ open: true, editing: null })
   }
 
@@ -139,8 +139,8 @@ export default function Transactions() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {['Data', 'Título', 'Categoria', 'Tipo', 'Valor', ''].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                {['Data', 'Título', 'Categoria', 'Tipo', 'Valor', 'Ações'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">{h !== 'Ações' ? h : ''}</th>
                 ))}
               </tr>
             </thead>

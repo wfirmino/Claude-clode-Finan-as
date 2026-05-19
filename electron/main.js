@@ -30,10 +30,11 @@ function createWindow() {
     }
   })
 
+  Menu.setApplicationMenu(null)
+
   if (isDev) {
     win.loadURL('http://localhost:5173')
   } else {
-    Menu.setApplicationMenu(null)
     win.loadFile(path.join(__dirname, '../dist/index.html'))
   }
 }
