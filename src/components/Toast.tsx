@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface Props {
   message: string
@@ -7,10 +7,13 @@ interface Props {
 }
 
 export default function Toast({ message, type = 'success', onClose }: Props) {
+  const onCloseRef = useRef(onClose)
+  useEffect(() => { onCloseRef.current = onClose })
+
   useEffect(() => {
-    const timer = setTimeout(onClose, 3500)
+    const timer = setTimeout(() => onCloseRef.current(), 3500)
     return () => clearTimeout(timer)
-  }, [onClose])
+  }, [])
 
   const bg = type === 'error' ? 'bg-red-500' : 'bg-green-500'
 

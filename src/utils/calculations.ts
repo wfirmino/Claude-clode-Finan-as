@@ -68,7 +68,7 @@ export function calculateGoalProgress(goal: Goal): number {
 
 export function isGoalAtRisk(goal: Goal): boolean {
   const now = Date.now()
-  const deadline = new Date(goal.deadline).getTime()
+  const deadline = parseDateLocal(goal.deadline).getTime()
   const created = new Date(goal.created_at).getTime()
   const daysLeft = (deadline - now) / (1000 * 60 * 60 * 24)
   if (daysLeft <= 0) return goal.current < goal.target

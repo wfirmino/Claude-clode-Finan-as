@@ -109,7 +109,7 @@ export default function Transactions() {
         />
         <select
           value={filters.type ?? ''}
-          onChange={e => { setFilters(f => ({ ...f, type: (e.target.value as any) || undefined })); setPage(0) }}
+          onChange={e => { setFilters(f => ({ ...f, type: (e.target.value as 'income' | 'expense') || undefined })); setPage(0) }}
           className="rounded-lg border-gray-300 text-sm"
         >
           <option value="">Todos os tipos</option>

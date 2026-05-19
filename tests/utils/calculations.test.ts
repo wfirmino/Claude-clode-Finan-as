@@ -105,4 +105,24 @@ describe('isGoalAtRisk', () => {
     }
     expect(isGoalAtRisk(goal)).toBe(false)
   })
+  it('returns true when deadline is past and goal is incomplete', () => {
+    const past = new Date()
+    past.setDate(past.getDate() - 1)
+    const goal: Goal = {
+      id: '1', user_id: 'u1', title: 'Meta', target: 1000, current: 500,
+      deadline: past.toISOString().split('T')[0],
+      created_at: '2026-01-01',
+    }
+    expect(isGoalAtRisk(goal)).toBe(true)
+  })
+  it('returns false when deadline is past and goal is complete', () => {
+    const past = new Date()
+    past.setDate(past.getDate() - 1)
+    const goal: Goal = {
+      id: '1', user_id: 'u1', title: 'Meta', target: 1000, current: 1000,
+      deadline: past.toISOString().split('T')[0],
+      created_at: '2026-01-01',
+    }
+    expect(isGoalAtRisk(goal)).toBe(false)
+  })
 })
