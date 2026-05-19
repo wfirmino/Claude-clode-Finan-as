@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Transaction } from '../types'
 
 export interface TransactionFilters {
   startDate?: string
   endDate?: string
-  type?: 'income' | 'expense' | ''
+  type?: 'income' | 'expense'
   categoryId?: string
 }
 
@@ -14,9 +14,7 @@ export function useTransactions(filters: TransactionFilters = {}) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => { fetchAll() }, [filters.startDate, filters.endDate, filters.type, filters.categoryId])
-
-  async function fetchAll() {
+  const fetchAll = useCallback(async () => {
     setLoading(true)
     let q = supabase.from('transactions').select('*, categories(*)').order('date', { ascending: false })
     if (filters.startDate) q = q.gte('date', filters.startDate)
@@ -27,7 +25,9 @@ export function useTransactions(filters: TransactionFilters = {}) {
     if (error) { setError(error.message); setLoading(false); return }
     setTransactions(data)
     setLoading(false)
-  }
+  }, [filters.startDate, filters.endDate, filters.type, filters.categoryId])
+
+  useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createTransaction(values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
     const { error } = await supabase.from('transactions').insert(values)

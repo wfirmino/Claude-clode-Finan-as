@@ -19,7 +19,7 @@ create table public.categories (
 create table public.transactions (
   id uuid default gen_random_uuid() primary key,
   user_id uuid references public.profiles(id) on delete cascade not null,
-  category_id uuid references public.categories(id) on delete set null,
+  category_id uuid references public.categories(id) on delete restrict,
   title text not null,
   amount numeric(12, 2) not null check (amount > 0),
   type text not null check (type in ('income', 'expense')),

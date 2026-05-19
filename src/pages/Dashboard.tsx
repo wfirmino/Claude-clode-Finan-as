@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { useTransactions } from '../hooks/useTransactions'
@@ -11,16 +12,15 @@ import {
 import { formatCurrency, formatDate } from '../utils/formatters'
 
 export default function Dashboard() {
-  // TODO: limit to ~6-month window once data volume grows; balance requires all-time so a server aggregate will be needed
   const { transactions, loading } = useTransactions()
 
-  if (loading) return <p className="text-sm text-gray-400">Carregando...</p>
+  const balance = useMemo(() => calculateBalance(transactions), [transactions])
+  const { income, expense } = useMemo(() => calculateCurrentMonthTotals(transactions), [transactions])
+  const monthly = useMemo(() => calculateMonthlyTotals(transactions, 6), [transactions])
+  const categoryTotals = useMemo(() => calculateCategoryTotals(filterCurrentMonth(transactions)), [transactions])
+  const recent = useMemo(() => transactions.slice(0, 5), [transactions])
 
-  const balance = calculateBalance(transactions)
-  const { income, expense } = calculateCurrentMonthTotals(transactions)
-  const monthly = calculateMonthlyTotals(transactions, 6)
-  const categoryTotals = calculateCategoryTotals(filterCurrentMonth(transactions))
-  const recent = transactions.slice(0, 5)
+  if (loading) return <p className="text-sm text-gray-400">Carregando...</p>
 
   return (
     <div className="space-y-8">
@@ -50,7 +50,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={categoryTotals} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name }) => name}>
-                  {categoryTotals.map((entry) => <Cell key={entry.name || entry.color} fill={entry.color} />)}
+                  {categoryTotals.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
                 </Pie>
                 <Tooltip formatter={(v) => formatCurrency(Number(v))} />
               </PieChart>

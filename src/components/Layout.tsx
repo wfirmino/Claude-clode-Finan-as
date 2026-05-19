@@ -14,7 +14,11 @@ export default function Layout() {
   const navigate = useNavigate()
 
   async function handleSignOut() {
-    await signOut()
+    try {
+      await signOut()
+    } catch {
+      // signOut error is non-fatal — clear local state and redirect regardless
+    }
     navigate('/login')
   }
 

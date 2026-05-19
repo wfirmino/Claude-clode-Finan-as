@@ -122,6 +122,7 @@ export default function Categories() {
                     <button
                       key={c}
                       type="button"
+                      aria-label={`Selecionar cor ${c}`}
                       onClick={() => setForm(f => ({ ...f, color: c }))}
                       className={`w-7 h-7 rounded-full border-2 transition-all ${form.color === c ? 'border-gray-900 scale-110' : 'border-transparent'}`}
                       style={{ backgroundColor: c }}

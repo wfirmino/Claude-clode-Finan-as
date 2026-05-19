@@ -69,7 +69,11 @@ describe('Categories page', () => {
   })
 
   it('shows toast error when delete is blocked because category has transactions', async () => {
-    mockFrom(mockCategories, 1)
+    // First call returns categories list; subsequent delete call returns FK violation
+    const chain = mockFrom(mockCategories)
+    chain.delete = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ error: { code: '23503', message: 'FK violation' } }),
+    })
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     render(<MemoryRouter><Categories /></MemoryRouter>)
     await waitFor(() => screen.getByText('Alimentação'))

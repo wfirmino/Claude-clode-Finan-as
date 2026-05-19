@@ -53,9 +53,14 @@ export default function Transactions() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const amount = parseFloat(form.amount)
+    if (isNaN(amount) || amount <= 0) {
+      setToast({ message: 'Informe um valor numérico maior que zero.', type: 'error' })
+      return
+    }
     const values = {
       title: form.title,
-      amount: parseFloat(form.amount),
+      amount,
       category_id: form.category_id || null,
       type: form.type,
       date: form.date,

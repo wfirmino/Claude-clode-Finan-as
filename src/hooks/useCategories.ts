@@ -30,12 +30,11 @@ export function useCategories() {
   }
 
   async function deleteCategory(id: string) {
-    const { count } = await supabase
-      .from('transactions')
-      .select('*', { count: 'exact', head: true })
-      .eq('category_id', id) as { count: number | null; error: unknown }
-    if ((count ?? 0) > 0) throw new Error('Não é possível excluir uma categoria com transações vinculadas.')
     const { error } = await supabase.from('categories').delete().eq('id', id)
+    // Postgres FK violation code when ON DELETE RESTRICT blocks the delete
+    if (error?.code === '23503') {
+      throw new Error('Não é possível excluir uma categoria com transações vinculadas.')
+    }
     if (error) throw error
     await fetchAll()
   }
