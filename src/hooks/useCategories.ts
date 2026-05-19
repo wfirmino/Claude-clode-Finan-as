@@ -33,7 +33,7 @@ export function useCategories() {
     const { count } = await supabase
       .from('transactions')
       .select('*', { count: 'exact', head: true })
-      .eq('category_id', id) as any
+      .eq('category_id', id) as { count: number | null; error: unknown }
     if ((count ?? 0) > 0) throw new Error('Não é possível excluir uma categoria com transações vinculadas.')
     const { error } = await supabase.from('categories').delete().eq('id', id)
     if (error) throw error

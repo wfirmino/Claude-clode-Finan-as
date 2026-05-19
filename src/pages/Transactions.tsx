@@ -69,8 +69,8 @@ export default function Transactions() {
         setToast({ message: 'Transação criada.', type: 'success' })
       }
       closeModal()
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 
@@ -79,8 +79,8 @@ export default function Transactions() {
     try {
       await deleteTransaction(id)
       setToast({ message: 'Transação excluída.', type: 'success' })
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 

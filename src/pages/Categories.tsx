@@ -39,8 +39,8 @@ export default function Categories() {
         setToast({ message: 'Categoria criada.', type: 'success' })
       }
       closeModal()
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 
@@ -49,8 +49,8 @@ export default function Categories() {
     try {
       await deleteCategory(id)
       setToast({ message: 'Categoria excluída.', type: 'success' })
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 

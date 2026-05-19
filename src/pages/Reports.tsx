@@ -27,8 +27,12 @@ export default function Reports() {
   const [period, setPeriod] = useState<Period>('month')
   const [custom, setCustom] = useState({ startDate: '', endDate: '' })
 
+  const today = new Date().toISOString().split('T')[0]
   const dates = period === 'custom' ? custom : getPeriodDates(period)
-  const filters: TransactionFilters = { startDate: dates.startDate || undefined, endDate: dates.endDate || undefined }
+  const filters: TransactionFilters = {
+    startDate: dates.startDate || undefined,
+    endDate: dates.endDate || today,
+  }
   const { transactions, loading } = useTransactions(filters)
 
   const categoryTotals = calculateCategoryTotals(transactions)

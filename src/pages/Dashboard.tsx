@@ -11,6 +11,7 @@ import {
 import { formatCurrency, formatDate } from '../utils/formatters'
 
 export default function Dashboard() {
+  // TODO: limit to ~6-month window once data volume grows; balance requires all-time so a server aggregate will be needed
   const { transactions, loading } = useTransactions()
 
   if (loading) return <p className="text-sm text-gray-400">Carregando...</p>

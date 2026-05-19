@@ -33,8 +33,8 @@ export default function Goals() {
         setToast({ message: 'Meta criada.', type: 'success' })
       }
       closeModal()
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 
@@ -43,8 +43,8 @@ export default function Goals() {
     try {
       await deleteGoal(id)
       setToast({ message: 'Meta excluída.', type: 'success' })
-    } catch (err: any) {
-      setToast({ message: err.message, type: 'error' })
+    } catch (err) {
+      setToast({ message: err instanceof Error ? err.message : 'Erro inesperado.', type: 'error' })
     }
   }
 
