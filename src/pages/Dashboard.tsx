@@ -6,6 +6,7 @@ import {
   calculateCurrentMonthTotals,
   calculateMonthlyTotals,
   calculateCategoryTotals,
+  parseDateLocal,
 } from '../utils/calculations'
 import { formatCurrency, formatDate } from '../utils/formatters'
 
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const monthly = calculateMonthlyTotals(transactions, 6)
   const now = new Date()
   const currentMonthTransactions = transactions.filter(t => {
-    const d = new Date(t.date)
+    const d = parseDateLocal(t.date)
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
   })
   const categoryTotals = calculateCategoryTotals(currentMonthTransactions)
