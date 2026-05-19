@@ -12,12 +12,16 @@ export function parseDateLocal(dateStr: string): Date {
   return new Date(year, month - 1, day)
 }
 
-export function calculateCurrentMonthTotals(transactions: Transaction[]): { income: number; expense: number } {
+export function filterCurrentMonth(transactions: Transaction[]): Transaction[] {
   const now = new Date()
-  const filtered = transactions.filter(t => {
+  return transactions.filter(t => {
     const d = parseDateLocal(t.date)
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
   })
+}
+
+export function calculateCurrentMonthTotals(transactions: Transaction[]): { income: number; expense: number } {
+  const filtered = filterCurrentMonth(transactions)
   return {
     income: filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0),
     expense: filtered.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0),
