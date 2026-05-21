@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useInstallments, getNextDueDate, getStatus, type Installment, type InstallmentInput } from '../hooks/useInstallments'
-import { formatCurrency, formatDate } from '../utils/formatters'
+import { formatCurrency } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Modal from '../components/Modal'
 import Toast from '../components/Toast'

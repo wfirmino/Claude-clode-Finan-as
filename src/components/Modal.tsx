@@ -25,7 +25,7 @@ export default function Modal({ open, onClose, titleId, children }: ModalProps) 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') { onCloseRef.current(); return }
       if (e.key !== 'Tab') return
-      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE))
+      const focusable = Array.from(dialog!.querySelectorAll<HTMLElement>(FOCUSABLE))
       if (focusable.length === 0) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
