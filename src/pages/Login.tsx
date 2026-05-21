@@ -33,10 +33,11 @@ export default function Login() {
         await resetPassword(email)
         setInfo('E-mail de redefinição enviado. Verifique sua caixa de entrada.')
       }
-    } catch {
-      if (mode === 'login') setError('E-mail ou senha incorretos.')
-      else if (mode === 'signup') setError('Não foi possível criar a conta.')
-      else setError('Não foi possível enviar o e-mail.')
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      if (mode === 'login') setError(`E-mail ou senha incorretos. (${msg})`)
+      else if (mode === 'signup') setError(`Não foi possível criar a conta. (${msg})`)
+      else setError(`Não foi possível enviar o e-mail. (${msg})`)
     } finally {
       setLoading(false)
     }
