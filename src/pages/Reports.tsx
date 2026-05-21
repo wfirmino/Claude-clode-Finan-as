@@ -90,6 +90,12 @@ export default function Reports() {
         </div>
       )}
 
+      {transactions.length >= 500 && !loading && (
+        <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+          Mostrando os 500 registros mais recentes. Os totais do período podem estar incompletos.
+        </div>
+      )}
+
       {loading ? <p className="text-sm text-gray-400">Carregando...</p> : (
         <>
           {/* Totals */}

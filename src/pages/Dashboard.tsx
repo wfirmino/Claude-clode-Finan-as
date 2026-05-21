@@ -32,6 +32,12 @@ export default function Dashboard() {
         </div>
       )}
 
+      {transactions.length >= 500 && (
+        <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+          Saldo calculado sobre os 500 registros mais recentes. Histórico completo pode divergir.
+        </div>
+      )}
+
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4">
         {[

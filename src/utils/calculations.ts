@@ -8,7 +8,9 @@ export function calculateBalance(transactions: Transaction[]): number {
 }
 
 export function parseDateLocal(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number)
+  const parts = (dateStr ?? '').split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return new Date(NaN)
+  const [year, month, day] = parts
   return new Date(year, month - 1, day)
 }
 

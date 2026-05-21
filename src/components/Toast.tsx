@@ -18,8 +18,19 @@ export default function Toast({ message, type = 'success', onClose }: Props) {
   const bg = type === 'error' ? 'bg-red-500' : 'bg-green-500'
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 px-5 py-3 rounded-lg text-white text-sm shadow-lg ${bg}`}>
-      {message}
+    <div
+      role="alert"
+      aria-live="assertive"
+      className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-lg text-white text-sm shadow-lg ${bg}`}
+    >
+      <span>{message}</span>
+      <button
+        onClick={onClose}
+        aria-label="Fechar notificação"
+        className="ml-1 opacity-75 hover:opacity-100 transition-opacity leading-none"
+      >
+        ✕
+      </button>
     </div>
   )
 }

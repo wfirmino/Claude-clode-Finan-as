@@ -16,6 +16,7 @@ export default function Categories() {
   const [form, setForm] = useState<FormState>(defaultForm)
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const toastId = useRef(0)
 
   function showToast(message: string, type: 'success' | 'error') {
@@ -38,6 +39,8 @@ export default function Categories() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       if (modal.editing) {
         await updateCategory(modal.editing.id, form)
@@ -49,6 +52,8 @@ export default function Categories() {
       closeModal()
     } catch (err) {
       showToast(getErrorMessage(err), 'error')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -155,7 +160,9 @@ export default function Categories() {
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-            <button type="submit" className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">Salvar</button>
+            <button type="submit" disabled={submitting} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60">
+              {submitting ? 'Salvando...' : 'Salvar'}
+            </button>
           </div>
         </form>
       </Modal>

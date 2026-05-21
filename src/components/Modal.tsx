@@ -11,18 +11,22 @@ interface ModalProps {
 
 export default function Modal({ open, onClose, titleId, children }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
     if (!open) return
     const dialog = dialogRef.current
     if (!dialog) return
 
-    const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE))
-    focusable[0]?.focus()
+    document.body.style.overflow = 'hidden'
+    dialog.querySelectorAll<HTMLElement>(FOCUSABLE)[0]?.focus()
 
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') { onClose(); return }
-      if (e.key !== 'Tab' || focusable.length === 0) return
+      if (e.key === 'Escape') { onCloseRef.current(); return }
+      if (e.key !== 'Tab') return
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE))
+      if (focusable.length === 0) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
       if (e.shiftKey) {
@@ -33,8 +37,11 @@ export default function Modal({ open, onClose, titleId, children }: ModalProps) 
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [open, onClose])
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [open])
 
   if (!open) return null
 

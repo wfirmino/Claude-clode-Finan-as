@@ -10,6 +10,7 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [ready, setReady] = useState(false)
+  const [timedOut, setTimedOut] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -18,6 +19,12 @@ export default function ResetPassword() {
     })
     return () => subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    if (ready) return
+    const t = setTimeout(() => setTimedOut(true), 15000)
+    return () => clearTimeout(t)
+  }, [ready])
 
   useEffect(() => {
     if (!success) return
@@ -50,7 +57,14 @@ export default function ResetPassword() {
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Nova senha</h1>
 
         {!ready ? (
-          <p className="text-sm text-gray-400">Aguardando confirmação do link de redefinição...</p>
+          <div className="space-y-3">
+            {timedOut ? (
+              <p className="text-sm text-red-500">Link inválido ou expirado.</p>
+            ) : (
+              <p className="text-sm text-gray-400">Aguardando confirmação do link de redefinição...</p>
+            )}
+            <a href="/login" className="block text-sm text-indigo-600 hover:underline">← Voltar ao login</a>
+          </div>
         ) : success ? (
           <p className="text-sm text-green-600">Senha alterada com sucesso. Redirecionando...</p>
         ) : (

@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/transactions', label: 'Transações', end: false },
+  { to: '/installments', label: 'Parcelamentos', end: false },
   { to: '/categories', label: 'Categorias', end: false },
   { to: '/goals', label: 'Metas', end: false },
   { to: '/reports', label: 'Relatórios', end: false },
@@ -28,7 +29,7 @@ export default function Layout() {
         <div className="px-6 py-5 border-b border-gray-200">
           <span className="text-lg font-bold text-indigo-600">FinanceApp</span>
         </div>
-        <nav className="flex-1 p-4 space-y-1">
+        <nav aria-label="Navegação principal" className="flex-1 p-4 space-y-1">
           {navItems.map(item => (
             <NavLink
               key={item.to}
@@ -51,7 +52,7 @@ export default function Layout() {
             onClick={handleSignOut}
             className="w-full px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded-lg transition-colors text-left"
           >
-            Sair
+            Sair da conta
           </button>
         </div>
       </aside>

@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
+import Installments from './pages/Installments'
 import Categories from './pages/Categories'
 import Goals from './pages/Goals'
 import Reports from './pages/Reports'
@@ -23,18 +24,25 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/login/*" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<ProtectedRoute user={user} />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/installments" element={<Installments />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/reports" element={<Reports />} />
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={
+        <div className="flex flex-col items-center justify-center h-screen text-center">
+          <p className="text-4xl font-bold text-gray-300 mb-2">404</p>
+          <p className="text-gray-500 mb-4">Página não encontrada</p>
+          <a href="/" className="text-indigo-600 text-sm hover:underline">Voltar ao início</a>
+        </div>
+      } />
     </Routes>
   )
 }
