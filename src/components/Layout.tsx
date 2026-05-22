@@ -1,5 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import TopNav from './TopNav'
 
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
@@ -15,17 +16,14 @@ export default function Layout() {
   const navigate = useNavigate()
 
   async function handleSignOut() {
-    try {
-      await signOut()
-    } catch {
-      // signOut error is non-fatal — clear local state and redirect regardless
-    }
+    try { await signOut() } catch {}
     navigate('/login')
   }
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <aside className="w-56 shrink-0 bg-white border-r border-gray-200 flex flex-col">
+      {/* Sidebar — desktop only */}
+      <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-gray-200 flex-col">
         <div className="px-6 py-5 border-b border-gray-200">
           <span className="text-lg font-bold text-indigo-600">FinanceApp</span>
         </div>
@@ -56,9 +54,26 @@ export default function Layout() {
           </button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto p-8">
-        <Outlet />
-      </main>
+
+      {/* Main area */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        {/* Header + TopNav — mobile only */}
+        <div className="md:hidden bg-white border-b border-gray-200">
+          <div className="flex items-center justify-between px-4 py-3">
+            <span className="text-base font-bold text-indigo-600">FinanceApp</span>
+            <button
+              onClick={handleSignOut}
+              className="text-xs text-gray-500 hover:text-gray-700"
+            >
+              Sair
+            </button>
+          </div>
+          <TopNav />
+        </div>
+        <main className="flex-1 overflow-auto p-4 md:p-8">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
