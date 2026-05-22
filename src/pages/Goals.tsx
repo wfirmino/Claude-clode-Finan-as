@@ -149,7 +149,7 @@ export default function Goals() {
             <label htmlFor="goal-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
             <input id="goal-title" type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="goal-target" className="block text-sm font-medium text-gray-700 mb-1">Valor alvo (R$)</label>
               <input id="goal-target" type="number" required min="0.01" step="0.01" value={form.target} onChange={e => setForm(f => ({ ...f, target: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />

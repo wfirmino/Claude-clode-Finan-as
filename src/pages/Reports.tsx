@@ -99,7 +99,7 @@ export default function Reports() {
       {loading ? <p className="text-sm text-gray-400">Carregando...</p> : (
         <>
           {/* Totals */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white rounded-xl border border-gray-200 p-5">
               <p className="text-xs font-medium text-gray-500 uppercase mb-1">Total de Receitas</p>
               <p className="text-2xl font-bold text-green-600">{formatCurrency(totalIncome)}</p>
