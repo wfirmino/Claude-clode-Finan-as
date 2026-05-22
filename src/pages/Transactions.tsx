@@ -8,6 +8,7 @@ import Toast from '../components/Toast'
 import Modal from '../components/Modal'
 import CategoryPicker from '../components/CategoryPicker'
 import TransactionSheet from '../components/TransactionSheet'
+import MobileFilterSheet, { type MobileFilters } from '../components/MobileFilterSheet'
 
 interface FormState {
   title: string
@@ -117,7 +118,7 @@ export default function Transactions() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [sheetTx, setSheetTx] = useState<Transaction | null>(null)
-  const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
   const toastId = useRef(0)
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
@@ -152,6 +153,15 @@ export default function Transactions() {
     ? (customStartDate || customEndDate ? `${customStartDate || '…'} → ${customEndDate || '…'}` : 'Período personalizado')
     : (DATE_PRESETS.find(p => p.key === datePreset)?.label ?? 'Este mês')
   const selectedSortLabel = SORT_OPTIONS.find(s => s.key === sortBy)?.label ?? 'Data (mais recentes)'
+
+  function handleMobileFiltersApply(f: MobileFilters) {
+    setDatePreset(f.datePreset)
+    setCustomStartDate(f.customStartDate)
+    setCustomEndDate(f.customEndDate)
+    setTypeFilter(f.typeFilter)
+    setCategoryFilter(f.categoryFilter)
+    setPage(0)
+  }
 
   function showToast(message: string, type: 'success' | 'error') {
     setToast({ id: ++toastId.current, message, type })
@@ -264,7 +274,7 @@ export default function Transactions() {
 
       {/* Mobile filter button — hidden on desktop */}
       <button
-        onClick={() => setShowMobileFilters(v => !v)}
+        onClick={() => setFilterSheetOpen(true)}
         className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white mb-3"
       >
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,41 +287,6 @@ export default function Transactions() {
           </span>
         )}
       </button>
-      {showMobileFilters && (
-        <div className="md:hidden flex flex-col gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <select
-            value={datePreset}
-            onChange={e => { setDatePreset(e.target.value as DatePreset); setPage(0) }}
-            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
-          >
-            {DATE_PRESETS.map(p => <option key={p.key} value={p.key}>{p.label}</option>)}
-          </select>
-          <select
-            value={typeFilter}
-            onChange={e => { setTypeFilter(e.target.value as '' | 'income' | 'expense'); setPage(0) }}
-            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
-          >
-            <option value="">Todos os tipos</option>
-            <option value="income">Receita</option>
-            <option value="expense">Despesa</option>
-          </select>
-          <select
-            value={categoryFilter}
-            onChange={e => { setCategoryFilter(e.target.value); setPage(0) }}
-            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
-          >
-            <option value="">Todas as categorias</option>
-            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <select
-            value={sortBy}
-            onChange={e => { setSortBy(e.target.value as SortBy); setPage(0) }}
-            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
-          >
-            {SORT_OPTIONS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
-          </select>
-        </div>
-      )}
 
       {error && (
         <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
@@ -645,6 +620,14 @@ export default function Transactions() {
           )}
         </div>
       )}
+
+      <MobileFilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        current={{ datePreset, customStartDate, customEndDate, typeFilter, categoryFilter }}
+        onApply={handleMobileFiltersApply}
+        categories={categories}
+      />
 
       <TransactionSheet
         transaction={sheetTx}
