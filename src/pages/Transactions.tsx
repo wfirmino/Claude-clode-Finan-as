@@ -7,6 +7,7 @@ import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
 import Modal from '../components/Modal'
 import CategoryPicker from '../components/CategoryPicker'
+import TransactionSheet from '../components/TransactionSheet'
 
 interface FormState {
   title: string
@@ -115,6 +116,7 @@ export default function Transactions() {
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [sheetTx, setSheetTx] = useState<Transaction | null>(null)
   const toastId = useRef(0)
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
@@ -488,11 +490,53 @@ export default function Transactions() {
         </div>
       </div>
 
+      {/* Mobile card list — hidden on desktop */}
+      {!loading && (
+        <div className="md:hidden space-y-3 mb-4">
+          {paginated.length === 0 && (
+            <p className="text-sm text-gray-400 text-center py-8">Nenhuma transação encontrada</p>
+          )}
+          {paginated.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setSheetTx(t)}
+              className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 space-y-2"
+            >
+              <div className="flex justify-between items-center text-xs text-gray-400">
+                <span>{formatDate(t.date)}</span>
+                <span>⋮</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-lg flex-shrink-0">
+                  {t.type === 'income' ? '💰' : '💸'}
+                </div>
+                <span className="text-sm font-semibold text-gray-900">{t.title}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${t.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-indigo-50 text-indigo-700'}`}>
+                  {t.categories?.name ?? '—'}
+                </span>
+                <span className={`text-sm font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                  {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+                </span>
+              </div>
+            </button>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-2">
+              <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="text-sm text-indigo-600 disabled:opacity-40">← Anterior</button>
+              <span className="text-sm text-gray-500">{page + 1} / {totalPages}</span>
+              <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="text-sm text-indigo-600 disabled:opacity-40">Próxima →</button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Transaction table */}
       {loading ? (
         <p className="text-sm text-gray-400 py-4">Carregando...</p>
       ) : (
-        <div className="rounded-xl border border-gray-200 overflow-hidden">
+        <div className="hidden md:block rounded-xl border border-gray-200 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
@@ -549,6 +593,13 @@ export default function Transactions() {
           )}
         </div>
       )}
+
+      <TransactionSheet
+        transaction={sheetTx}
+        onClose={() => setSheetTx(null)}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+      />
 
       <Modal open={modal.open} onClose={closeModal} titleId="transaction-modal-title">
         <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
