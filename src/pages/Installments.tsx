@@ -182,16 +182,16 @@ export default function Installments() {
   return (
     <div className="bg-white min-h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">Parcelamentos</h2>
-          <p className="text-sm text-gray-400 mt-0.5">Gerencie suas compras parceladas</p>
+          <p className="hidden md:block text-sm text-gray-400 mt-0.5">Gerencie suas compras parceladas</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-1.5 px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          className="flex-shrink-0 flex items-center gap-1.5 px-3 md:px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
         >
-          <span className="text-base leading-none">+</span> Novo Parcelamento
+          <span className="text-base leading-none">+</span><span className="hidden md:inline ml-1">Novo Parcelamento</span>
         </button>
       </div>
 
@@ -202,7 +202,7 @@ export default function Installments() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-red-50 rounded-xl border border-red-100 px-5 py-4">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,7 +225,7 @@ export default function Installments() {
           <p className="text-xs text-green-500 mt-1">valor quitado</p>
         </div>
 
-        <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4">
+        <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4 col-span-2 md:col-span-1">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -278,54 +278,78 @@ export default function Installments() {
           {/* Mobile cards */}
           {!loading && (
             <div className="md:hidden space-y-3 mb-4">
-              {installments.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-8">Nenhum parcelamento cadastrado.</p>
-              )}
               {installments.map(inst => {
                 const status = getStatus(inst)
-                const nextDue = getNextDueDate(inst)
+                const nextDue = status !== 'quitado' ? getNextDueDate(inst) : null
+                const progress = Math.min((inst.paid_installments / inst.total_installments) * 100, 100)
+                const remaining = inst.total_installments - inst.paid_installments
                 return (
-                  <div key={inst.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
-                    <div className="flex justify-between items-start">
-                      <span className="text-sm font-semibold text-gray-900">{inst.name}</span>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_STYLE[status]}`}>
+                  <div key={inst.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+                    {/* Top: name + status */}
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0">
+                        <span className="text-sm font-semibold text-gray-900 block truncate">{inst.name}</span>
+                        {inst.category && (
+                          <span className="text-xs text-gray-400">{inst.category}</span>
+                        )}
+                      </div>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${STATUS_STYLE[status]}`}>
                         {STATUS_LABEL[status]}
                       </span>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Parcela: <strong className="text-gray-800">{formatCurrency(inst.installment_amount)}</strong></span>
-                      <span>{inst.paid_installments}/{inst.total_installments} pagas</span>
+
+                    {/* Amount + parcelas */}
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="font-bold text-gray-900">{formatCurrency(inst.installment_amount)}<span className="text-xs font-normal text-gray-400">/parcela</span></span>
+                      <span className="text-xs text-gray-500">{inst.paid_installments}/{inst.total_installments} pagas</span>
                     </div>
-                    {nextDue && (
-                      <div className="text-xs text-gray-400">Próximo vencimento: {nextDue}</div>
-                    )}
-                    <div className="flex gap-3 pt-1">
-                      {status !== 'quitado' && (
-                        <button
-                          onClick={() => handlePayNext(inst)}
-                          className="text-xs font-semibold text-indigo-600 hover:underline"
-                        >
-                          Marcar pago
-                        </button>
-                      )}
-                      <button
-                        onClick={() => openEdit(inst)}
-                        className="text-xs font-semibold text-indigo-600 hover:underline"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(inst.id)}
-                        className="text-xs font-semibold text-red-500 hover:underline"
-                      >
-                        Excluir
-                      </button>
+
+                    {/* Progress bar */}
+                    <div className="space-y-1">
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${status === 'quitado' ? 'bg-gray-400' : 'bg-indigo-500'}`}
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400">
+                        {nextDue ? (
+                          <span>Próx. venc.: <span className="text-gray-600 font-medium">{nextDue.toLocaleDateString('pt-BR')}</span></span>
+                        ) : <span />}
+                        {status !== 'quitado' && <span>{remaining} restante{remaining !== 1 ? 's' : ''}</span>}
+                      </div>
                     </div>
-                    {confirmDelete === inst.id && (
-                      <div className="flex items-center gap-2 pt-1">
+
+                    {/* Actions */}
+                    {confirmDelete === inst.id ? (
+                      <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-600">Confirmar exclusão?</span>
                         <button onClick={() => handleDelete(inst.id)} className="text-xs font-medium text-red-600 hover:underline">Sim</button>
                         <button onClick={() => setConfirmDelete(null)} className="text-xs text-gray-500 hover:underline">Não</button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-3 pt-0.5">
+                        {status !== 'quitado' && (
+                          <button
+                            onClick={() => handlePayNext(inst)}
+                            disabled={payingId === inst.id}
+                            className="flex-1 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-lg disabled:opacity-60 active:bg-indigo-700"
+                          >
+                            {payingId === inst.id ? 'Pagando...' : 'Pagar parcela'}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => openEdit(inst)}
+                          className="px-4 py-2 text-xs font-semibold text-indigo-600 border border-indigo-200 rounded-lg active:bg-indigo-50"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(inst.id)}
+                          className="px-4 py-2 text-xs font-semibold text-red-500 border border-red-100 rounded-lg active:bg-red-50"
+                        >
+                          Excluir
+                        </button>
                       </div>
                     )}
                   </div>
