@@ -39,13 +39,13 @@ export default function Dashboard() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900' : 'text-red-600' },
           { label: 'Receitas do mês', value: income, color: 'text-green-600' },
           { label: 'Despesas do mês', value: expense, color: 'text-red-600' },
-        ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-5">
+        ].map((card, i) => (
+          <div key={card.label} className={`bg-white rounded-xl border border-gray-200 p-5 ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{card.label}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
           </div>
@@ -53,7 +53,7 @@ export default function Dashboard() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <p className="text-sm font-medium text-gray-700 mb-4">Gastos por categoria (mês atual)</p>
           {categoryTotals.length === 0 ? (
