@@ -274,8 +274,69 @@ export default function Installments() {
           <p className="text-sm text-gray-300 mt-1">Clique em "Novo Parcelamento" para começar</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {installments.map(inst => {
+        <>
+          {/* Mobile cards */}
+          {!loading && (
+            <div className="md:hidden space-y-3 mb-4">
+              {installments.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-8">Nenhum parcelamento cadastrado.</p>
+              )}
+              {installments.map(inst => {
+                const status = getStatus(inst)
+                const nextDue = getNextDueDate(inst)
+                return (
+                  <div key={inst.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <span className="text-sm font-semibold text-gray-900">{inst.name}</span>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_STYLE[status]}`}>
+                        {STATUS_LABEL[status]}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>Parcela: <strong className="text-gray-800">{formatCurrency(inst.installment_amount)}</strong></span>
+                      <span>{inst.paid_installments}/{inst.total_installments} pagas</span>
+                    </div>
+                    {nextDue && (
+                      <div className="text-xs text-gray-400">Próximo vencimento: {nextDue}</div>
+                    )}
+                    <div className="flex gap-3 pt-1">
+                      {status !== 'quitado' && (
+                        <button
+                          onClick={() => handlePayNext(inst)}
+                          className="text-xs font-semibold text-indigo-600 hover:underline"
+                        >
+                          Marcar pago
+                        </button>
+                      )}
+                      <button
+                        onClick={() => openEdit(inst)}
+                        className="text-xs font-semibold text-indigo-600 hover:underline"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(inst.id)}
+                        className="text-xs font-semibold text-red-500 hover:underline"
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                    {confirmDelete === inst.id && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <span className="text-xs text-gray-600">Confirmar exclusão?</span>
+                        <button onClick={() => handleDelete(inst.id)} className="text-xs font-medium text-red-600 hover:underline">Sim</button>
+                        <button onClick={() => setConfirmDelete(null)} className="text-xs text-gray-500 hover:underline">Não</button>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Desktop cards */}
+          <div className="hidden md:block space-y-3">
+            {installments.map(inst => {
             const status = getStatus(inst)
             const nextDue = status !== 'quitado' ? getNextDueDate(inst) : null
             const progress = Math.min((inst.paid_installments / inst.total_installments) * 100, 100)
@@ -382,7 +443,8 @@ export default function Installments() {
               </div>
             )
           })}
-        </div>
+          </div>
+        </>
       )}
 
       {/* Modal */}
