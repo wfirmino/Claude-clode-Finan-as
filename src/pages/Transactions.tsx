@@ -117,6 +117,7 @@ export default function Transactions() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [sheetTx, setSheetTx] = useState<Transaction | null>(null)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const toastId = useRef(0)
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
@@ -243,8 +244,8 @@ export default function Transactions() {
   return (
     <div className="bg-white min-h-full">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <div className="relative">
+      <div className="flex items-center gap-2 mb-3 md:mb-6">
+        <div className="relative flex-1">
           <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -253,13 +254,64 @@ export default function Transactions() {
             placeholder="Buscar transações..."
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(0) }}
-            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-56"
+            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-full"
           />
         </div>
-        <button onClick={openCreate} className="ml-auto flex items-center gap-1.5 px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-          <span className="text-base leading-none">+</span> Nova Transação
+        <button onClick={openCreate} className="flex-shrink-0 flex items-center gap-1.5 px-3 md:px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+          <span className="text-base leading-none">+</span><span className="hidden md:inline ml-1">Nova Transação</span>
         </button>
       </div>
+
+      {/* Mobile filter button — hidden on desktop */}
+      <button
+        onClick={() => setShowMobileFilters(v => !v)}
+        className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white mb-3"
+      >
+        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+        </svg>
+        Filtros
+        {(typeFilter !== '' || categoryFilter !== '') && (
+          <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">
+            {[typeFilter !== '', categoryFilter !== ''].filter(Boolean).length}
+          </span>
+        )}
+      </button>
+      {showMobileFilters && (
+        <div className="md:hidden flex flex-col gap-2 mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <select
+            value={datePreset}
+            onChange={e => { setDatePreset(e.target.value as DatePreset); setPage(0) }}
+            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
+          >
+            {DATE_PRESETS.map(p => <option key={p.key} value={p.key}>{p.label}</option>)}
+          </select>
+          <select
+            value={typeFilter}
+            onChange={e => { setTypeFilter(e.target.value as '' | 'income' | 'expense'); setPage(0) }}
+            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
+          >
+            <option value="">Todos os tipos</option>
+            <option value="income">Receita</option>
+            <option value="expense">Despesa</option>
+          </select>
+          <select
+            value={categoryFilter}
+            onChange={e => { setCategoryFilter(e.target.value); setPage(0) }}
+            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
+          >
+            <option value="">Todas as categorias</option>
+            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <select
+            value={sortBy}
+            onChange={e => { setSortBy(e.target.value as SortBy); setPage(0) }}
+            className="w-full rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2 bg-white"
+          >
+            {SORT_OPTIONS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+          </select>
+        </div>
+      )}
 
       {error && (
         <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
@@ -268,7 +320,7 @@ export default function Transactions() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
 
         <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
           <div className="flex items-center gap-2 mb-2">
@@ -292,7 +344,7 @@ export default function Transactions() {
           <p className="text-xs text-red-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
         </div>
 
-        <div className={`rounded-xl border px-5 py-4 ${balance >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+        <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
           <div className="flex items-center gap-2 mb-2">
             <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -310,8 +362,8 @@ export default function Transactions() {
         </div>
       )}
 
-      {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-3 mb-5">
+      {/* Filter bar — hidden on mobile (use filter button above instead) */}
+      <div className="hidden md:flex flex-wrap items-center gap-3 mb-5">
         {/* Date preset */}
         <div className="relative">
           <button
