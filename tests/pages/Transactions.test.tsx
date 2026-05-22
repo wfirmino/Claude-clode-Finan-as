@@ -54,14 +54,14 @@ describe('Transactions page', () => {
   it('renders transactions in table', async () => {
     render(<MemoryRouter><Transactions /></MemoryRouter>)
     await waitFor(() => {
-      expect(screen.getByText('Salário')).toBeInTheDocument()
-      expect(screen.getByText('Mercado')).toBeInTheDocument()
+      expect(screen.getAllByText('Salário')[0]).toBeInTheDocument()
+      expect(screen.getAllByText('Mercado')[0]).toBeInTheDocument()
     })
   })
 
   it('opens modal when "Nova Transação" is clicked', async () => {
     render(<MemoryRouter><Transactions /></MemoryRouter>)
-    await waitFor(() => screen.getByText('Salário'))
+    await waitFor(() => screen.getAllByText('Salário')[0])
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
     expect(screen.getByRole('heading', { name: /nova transação/i })).toBeInTheDocument()
   })
@@ -74,7 +74,7 @@ describe('Transactions page', () => {
       return chain as any
     })
     render(<MemoryRouter><Transactions /></MemoryRouter>)
-    await waitFor(() => screen.getByText('Salário'))
+    await waitFor(() => screen.getAllByText('Salário')[0])
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
     // first textbox in the modal is the title field
     fireEvent.change(screen.getAllByRole('textbox')[0], { target: { value: 'Novo gasto' } })
@@ -99,7 +99,7 @@ describe('Transactions page', () => {
       return chain as any
     })
     render(<MemoryRouter><Transactions /></MemoryRouter>)
-    await waitFor(() => screen.getByText('Salário'))
+    await waitFor(() => screen.getAllByText('Salário')[0])
     const deleteButtons = screen.getAllByRole('button', { name: /excluir/i })
     fireEvent.click(deleteButtons[0])
     expect(screen.getByRole('button', { name: /^sim$/i })).toBeInTheDocument()
@@ -111,7 +111,7 @@ describe('Transactions page', () => {
 
   it('auto-fills type when a category is selected', async () => {
     render(<MemoryRouter><Transactions /></MemoryRouter>)
-    await waitFor(() => screen.getByText('Salário'))
+    await waitFor(() => screen.getAllByText('Salário')[0])
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
     // first combobox in modal is the category select
     const selects = screen.getAllByRole('combobox')
