@@ -22,8 +22,8 @@ const mockTransactions = [
   { id: 't2', user_id: 'u1', category_id: 'c2', title: 'Mercado', amount: 300, type: 'expense', date: `${currentMonth}-05`, notes: null, created_at: '', categories: { id: 'c2', user_id: 'u1', name: 'Alimentação', type: 'expense', color: '#ef4444', created_at: '' } },
 ]
 
-function mockFrom(data: object[]) {
-  const resolved = { data, error: null }
+function mockFrom(data: object[], count: number | null = null) {
+  const resolved = { data, error: null, count }
   const chain: any = {
     select: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
@@ -94,5 +94,21 @@ describe('Dashboard page', () => {
       const link = screen.getByRole('link', { name: /ver todas/i })
       expect(link).toHaveAttribute('href', '/transactions')
     })
+  })
+
+  it('shows truncation warning when server count exceeds fetched rows', async () => {
+    mockFrom(mockTransactions, 5000)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByText(/o limite do servidor foi atingido/i)).toBeInTheDocument()
+      expect(screen.getByText(/saldo calculado sobre/i)).toBeInTheDocument()
+    })
+  })
+
+  it('does not show truncation warning when all rows are fetched', async () => {
+    mockFrom(mockTransactions, mockTransactions.length)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => screen.getByText(/saldo atual/i))
+    expect(screen.queryByText(/o limite do servidor foi atingido/i)).not.toBeInTheDocument()
   })
 })

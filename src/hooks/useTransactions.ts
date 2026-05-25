@@ -28,7 +28,7 @@ export function useTransactions(filters: TransactionFilters = {}) {
     const { data, error, count } = await q
     if (error) { setError(error.message); setLoading(false); return }
     setTransactions(data)
-    setTotalCount(count)
+    setTotalCount(count ?? null)
     setLoading(false)
   }, [filters.startDate, filters.endDate, filters.type, filters.categoryId, filters.noLimit])
 
