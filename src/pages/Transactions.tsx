@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo } from 'react'
 import { useTransactions, type TransactionFilters } from '../hooks/useTransactions'
 import { useCategories } from '../hooks/useCategories'
-import type { Transaction } from '../types'
+import type { Transaction, DatePreset } from '../types'
 import { formatCurrency, formatDate } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
@@ -27,7 +27,6 @@ const defaultForm: FormState = {
 
 const PAGE_SIZE = 10
 
-type DatePreset = '' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'last6months' | 'thisYear' | 'lastYear' | 'custom'
 type SortBy = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc'
 
 const DATE_PRESETS: { key: DatePreset; label: string }[] = [

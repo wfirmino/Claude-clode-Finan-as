@@ -41,13 +41,18 @@ describe('TransactionSheet', () => {
     expect(onClose).toHaveBeenCalledOnce()
   })
 
-  it('chama onDelete e onClose ao clicar em Excluir', () => {
+  it('chama onDelete e onClose após confirmação de exclusão', () => {
     const onDelete = vi.fn()
     const onClose = vi.fn()
     render(
       <TransactionSheet transaction={mockTx} onClose={onClose} onEdit={vi.fn()} onDelete={onDelete} />
     )
+    // first click shows confirmation
     fireEvent.click(screen.getByText(/Excluir/))
+    expect(onDelete).not.toHaveBeenCalled()
+    expect(screen.getByText('Sim')).toBeInTheDocument()
+    // second click (confirm) calls onDelete and onClose
+    fireEvent.click(screen.getByText('Sim'))
     expect(onDelete).toHaveBeenCalledWith('t1')
     expect(onClose).toHaveBeenCalledOnce()
   })

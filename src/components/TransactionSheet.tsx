@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import type { Transaction } from '../types'
 import { formatCurrency, formatDate } from '../utils/formatters'
 
@@ -9,13 +10,22 @@ interface Props {
 }
 
 export default function TransactionSheet({ transaction, onClose, onEdit, onDelete }: Props) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  useEffect(() => { setConfirmDelete(false) }, [transaction?.id])
+
   if (!transaction) return null
+
+  function handleClose() {
+    setConfirmDelete(false)
+    onClose()
+  }
 
   return (
     <>
       <div
         className="fixed inset-0 bg-black/40 z-40"
-        onClick={onClose}
+        onClick={handleClose}
         aria-hidden="true"
       />
       <div
@@ -31,17 +41,35 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
           <span className="text-sm font-bold text-gray-900">Detalhes da Transação</span>
           <div className="flex gap-4">
             <button
-              onClick={() => { onEdit(transaction); onClose() }}
+              onClick={() => { onEdit(transaction); handleClose() }}
               className="text-sm font-semibold text-indigo-600"
             >
               ✏️ Editar
             </button>
-            <button
-              onClick={() => { onDelete(transaction.id); onClose() }}
-              className="text-sm font-semibold text-red-500"
-            >
-              🗑 Excluir
-            </button>
+            {confirmDelete ? (
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-500">Confirmar exclusão?</span>
+                <button
+                  onClick={() => { onDelete(transaction.id); handleClose() }}
+                  className="text-sm font-semibold text-red-600"
+                >
+                  Sim
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  className="text-sm font-medium text-gray-400"
+                >
+                  Não
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="text-sm font-semibold text-red-500"
+              >
+                🗑 Excluir
+              </button>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100">
@@ -55,7 +83,10 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
             </p>
           </div>
         </div>
-        <div className="divide-y divide-gray-50 pb-8">
+        <div
+          className="divide-y divide-gray-50"
+          style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
+        >
           <div className="flex justify-between items-center px-5 py-3 text-sm">
             <span className="text-gray-400">📅 Data</span>
             <span className="font-medium text-gray-800">{formatDate(transaction.date)}</span>

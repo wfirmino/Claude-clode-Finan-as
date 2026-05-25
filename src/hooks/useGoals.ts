@@ -19,25 +19,25 @@ export function useGoals() {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createGoal(values: Pick<Goal, 'title' | 'target' | 'current' | 'deadline'>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('goals').insert({ ...values, user_id: user.id })
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('goals').insert({ ...values, user_id: session.user.id })
     if (error) throw error
     await fetchAll()
   }
 
   async function updateGoal(id: string, values: Pick<Goal, 'title' | 'target' | 'current' | 'deadline'>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('goals').update(values).eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('goals').update(values).eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteGoal(id: string) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('goals').delete().eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('goals').delete().eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }

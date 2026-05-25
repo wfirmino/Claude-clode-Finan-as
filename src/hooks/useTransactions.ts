@@ -7,52 +7,56 @@ export interface TransactionFilters {
   endDate?: string
   type?: 'income' | 'expense'
   categoryId?: string
+  noLimit?: boolean
 }
 
 export function useTransactions(filters: TransactionFilters = {}) {
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [totalCount, setTotalCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchAll = useCallback(async () => {
     setLoading(true)
     setError(null)
-    let q = supabase.from('transactions').select('*, categories(*)').order('date', { ascending: false }).limit(500)
+    let q = supabase.from('transactions').select('*, categories(*)', { count: 'exact' }).order('date', { ascending: false })
+    if (!filters.noLimit) q = q.limit(500)
     if (filters.startDate) q = q.gte('date', filters.startDate)
     if (filters.endDate) q = q.lte('date', filters.endDate)
     if (filters.type) q = q.eq('type', filters.type)
     if (filters.categoryId) q = q.eq('category_id', filters.categoryId)
-    const { data, error } = await q
+    const { data, error, count } = await q
     if (error) { setError(error.message); setLoading(false); return }
     setTransactions(data)
+    setTotalCount(count)
     setLoading(false)
-  }, [filters.startDate, filters.endDate, filters.type, filters.categoryId])
+  }, [filters.startDate, filters.endDate, filters.type, filters.categoryId, filters.noLimit])
 
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createTransaction(values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').insert({ ...values, user_id: user.id })
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').insert({ ...values, user_id: session.user.id })
     if (error) throw error
     await fetchAll()
   }
 
   async function updateTransaction(id: string, values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').update(values).eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').update(values).eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteTransaction(id: string) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }
 
-  return { transactions, loading, error, createTransaction, updateTransaction, deleteTransaction, refetch: fetchAll }
+  return { transactions, totalCount, loading, error, createTransaction, updateTransaction, deleteTransaction, refetch: fetchAll }
 }

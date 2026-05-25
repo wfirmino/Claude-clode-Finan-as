@@ -6,9 +6,8 @@ import Goals from '../../src/pages/Goals'
 vi.mock('../../src/lib/supabase', () => ({
   supabase: {
     auth: {
-      getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
+      getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: 'u1' } } } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -41,7 +40,10 @@ function mockFrom(data: object[]) {
 }
 
 describe('Goals page', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: { user: { id: 'u1' } } } } as any)
+  })
 
   it('renders list of goals', async () => {
     mockFrom(mockGoals)

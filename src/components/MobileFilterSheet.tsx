@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import type { Category } from '../types'
-
-type DatePreset = '' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'last6months' | 'thisYear' | 'lastYear' | 'custom'
+import type { Category, DatePreset } from '../types'
 
 const DATE_PRESETS: { key: DatePreset; label: string }[] = [
   { key: 'thisMonth', label: 'Este mês' },
@@ -188,7 +186,7 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
         </div>
 
         {/* Bottom actions */}
-        <div className="flex gap-3 px-5 py-4 border-t border-gray-100 flex-shrink-0">
+        <div className="flex gap-3 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-gray-100 flex-shrink-0">
           <button
             onClick={onClose}
             className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 active:bg-gray-200 transition-colors"

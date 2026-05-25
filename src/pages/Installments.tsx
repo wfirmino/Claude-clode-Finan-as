@@ -83,7 +83,7 @@ export default function Installments() {
       const status = getStatus(inst)
       totalPago += inst.installment_amount * inst.paid_installments
       if (status !== 'quitado') {
-        totalAberto += inst.installment_amount * (inst.total_installments - inst.paid_installments)
+        totalAberto += inst.total_amount - (inst.installment_amount * inst.paid_installments)
         ativos++
       }
     }

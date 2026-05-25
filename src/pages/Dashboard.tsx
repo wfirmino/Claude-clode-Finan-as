@@ -12,7 +12,7 @@ import {
 import { formatCurrency, formatDate } from '../utils/formatters'
 
 export default function Dashboard() {
-  const { transactions, loading, error } = useTransactions()
+  const { transactions, totalCount, loading, error } = useTransactions({ noLimit: true })
 
   const balance = useMemo(() => calculateBalance(transactions), [transactions])
   const { income, expense } = useMemo(() => calculateCurrentMonthTotals(transactions), [transactions])
@@ -32,9 +32,9 @@ export default function Dashboard() {
         </div>
       )}
 
-      {transactions.length >= 500 && (
+      {totalCount !== null && transactions.length < totalCount && (
         <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
-          Saldo calculado sobre os 500 registros mais recentes. Histórico completo pode divergir.
+          Saldo calculado sobre {transactions.length.toLocaleString('pt-BR')} de {totalCount.toLocaleString('pt-BR')} transações. O limite do servidor foi atingido — o saldo pode divergir do total real.
         </div>
       )}
 

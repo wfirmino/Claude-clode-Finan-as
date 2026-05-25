@@ -16,7 +16,7 @@ export default function Layout() {
   const navigate = useNavigate()
 
   async function handleSignOut() {
-    try { await signOut() } catch {}
+    try { await signOut() } catch (err) { console.error('Sign out error:', err) }
     navigate('/login')
   }
 

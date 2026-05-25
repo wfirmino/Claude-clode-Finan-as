@@ -52,25 +52,25 @@ export function useInstallments() {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createInstallment(values: InstallmentInput) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('installments').insert({ ...values, user_id: user.id })
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('installments').insert({ ...values, user_id: session.user.id })
     if (error) throw error
     await fetchAll()
   }
 
   async function updateInstallment(id: string, values: Partial<InstallmentInput>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('installments').update(values).eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('installments').update(values).eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteInstallment(id: string) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('installments').delete().eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('installments').delete().eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }

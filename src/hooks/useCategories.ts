@@ -19,26 +19,26 @@ export function useCategories() {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createCategory(values: Pick<Category, 'name' | 'type' | 'color'>): Promise<string> {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { data, error } = await supabase.from('categories').insert({ ...values, user_id: user.id }).select('id').single()
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { data, error } = await supabase.from('categories').insert({ ...values, user_id: session.user.id }).select('id').single()
     if (error) throw error
     await fetchAll()
     return data.id
   }
 
   async function updateCategory(id: string, values: Pick<Category, 'name' | 'type' | 'color'>) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('categories').update(values).eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('categories').update(values).eq('id', id).eq('user_id', session.user.id)
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteCategory(id: string) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('categories').delete().eq('id', id).eq('user_id', user.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('categories').delete().eq('id', id).eq('user_id', session.user.id)
     // category_id FK is ON DELETE SET NULL, so 23503 won't fire via normal delete.
     // Guard remains as a safety net if a future migration tightens the constraint.
     if (error?.code === '23503') {

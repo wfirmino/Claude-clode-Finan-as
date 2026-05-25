@@ -6,9 +6,8 @@ import Transactions from '../../src/pages/Transactions'
 vi.mock('../../src/lib/supabase', () => ({
   supabase: {
     auth: {
-      getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
+      getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: 'u1' } } } }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'u1' } } }),
     },
     from: vi.fn(),
   },
@@ -48,6 +47,7 @@ function mockFrom(table: string) {
 describe('Transactions page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: { user: { id: 'u1' } } } } as any)
     vi.mocked(supabase.from).mockImplementation((table: string) => mockFrom(table) as any)
   })
 
@@ -76,10 +76,9 @@ describe('Transactions page', () => {
     render(<MemoryRouter><Transactions /></MemoryRouter>)
     await waitFor(() => screen.getAllByText('Salário')[0])
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
-    // first textbox in the modal is the title field
-    fireEvent.change(screen.getAllByRole('textbox')[0], { target: { value: 'Novo gasto' } })
+    fireEvent.change(screen.getByLabelText(/título/i), { target: { value: 'Novo gasto' } })
     fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '50' } })
-    fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /criar transação/i }))
     await waitFor(() => {
       expect(insertMock).toHaveBeenCalledWith(
         expect.objectContaining({ user_id: 'u1', title: 'Novo gasto' })

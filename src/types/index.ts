@@ -41,3 +41,5 @@ export interface CategoryTotal {
   value: number
   color: string
 }
+
+export type DatePreset = '' | 'last30' | 'last90' | 'thisMonth' | 'lastMonth' | 'last6months' | 'thisYear' | 'lastYear' | 'custom'
