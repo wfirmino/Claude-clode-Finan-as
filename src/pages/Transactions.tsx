@@ -1,7 +1,8 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { useTransactions, type TransactionFilters } from '../hooks/useTransactions'
 import { useCategories } from '../hooks/useCategories'
-import type { Transaction, DatePreset } from '../types'
+import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
+import type { Transaction, DatePreset, Perfil } from '../types'
 import { formatCurrency, formatDate } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
@@ -9,21 +10,71 @@ import Modal from '../components/Modal'
 import CategoryPicker from '../components/CategoryPicker'
 import TransactionSheet from '../components/TransactionSheet'
 import MobileFilterSheet, { type MobileFilters } from '../components/MobileFilterSheet'
+import ProfileTabs from '../components/ProfileTabs'
+import EmpresarialSummary from '../components/EmpresarialSummary'
+import KommoSummary from '../components/KommoSummary'
 
-interface FormState {
+// ─── Form types ───────────────────────────────────────────────────────────────
+
+interface FormStatePessoal {
+  perfil: 'pessoal'
   title: string
   amount: string
-  category_id: string        // ID de categoria existente do usuário, ou '' se pendente/nenhuma
-  category_display_name: string  // nome exibido no picker
+  category_id: string
+  category_display_name: string
   type: 'income' | 'expense'
   date: string
   notes: string
 }
 
-const defaultForm: FormState = {
-  title: '', amount: '', category_id: '', category_display_name: '', type: 'expense',
-  date: new Date().toISOString().split('T')[0], notes: '',
+interface FormStateEmpresarial {
+  perfil: 'empresarial'
+  nome_cliente: string
+  nome_empresa: string
+  amount: string          // faturamento (valor total)
+  divisao_socio: string
+  type: 'income' | 'expense'
+  date: string
+  category_id: string
+  category_display_name: string
 }
+
+interface FormStateKommo {
+  perfil: 'kommo'
+  nome_cliente: string
+  nome_empresa: string
+  plano: string           // '3'|'6'|'9'|'12'|'24'
+  num_usuarios: string
+  valor_total_assinatura: string
+  valor_liquido: string
+  divisao_socio_pct: string
+  date: string
+}
+
+type FormState = FormStatePessoal | FormStateEmpresarial | FormStateKommo
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function defaultFormForPerfil(perfil: Perfil): FormState {
+  const today = new Date().toISOString().split('T')[0]
+  if (perfil === 'pessoal') {
+    return { perfil: 'pessoal', title: '', amount: '', category_id: '', category_display_name: '', type: 'expense', date: today, notes: '' }
+  }
+  if (perfil === 'empresarial') {
+    return { perfil: 'empresarial', nome_cliente: '', nome_empresa: '', amount: '', divisao_socio: '', type: 'income', date: today, category_id: '', category_display_name: '' }
+  }
+  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', divisao_socio_pct: '', date: today }
+}
+
+function calcKommo(vt: number, vl: number, pct: number) {
+  const taxa = vt - vl
+  const bruta = vt * 0.35
+  const liquida = bruta - taxa
+  const socio = liquida * pct / 100
+  return { taxa, kommo65: vt * 0.65, bruta, liquida, socio, final: liquida - socio }
+}
+
+// ─── Constants ───────────────────────────────────────────────────────────────
 
 const PAGE_SIZE = 10
 
@@ -46,6 +97,8 @@ const SORT_OPTIONS: { key: SortBy; label: string }[] = [
   { key: 'amount-desc', label: 'Valor (maior primeiro)' },
   { key: 'amount-asc', label: 'Valor (menor primeiro)' },
 ]
+
+const PLANOS = ['3', '6', '9', '12', '24']
 
 function getDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
   const today = new Date()
@@ -84,7 +137,14 @@ function getDateRange(preset: DatePreset): { startDate?: string; endDate?: strin
   }
 }
 
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function Transactions() {
+  // Profile
+  const [activePerfil, setActivePerfil] = useState<Perfil>('pessoal')
+  const currentMes = new Date().toISOString().slice(0, 7)
+
+  // Filters
   const [datePreset, setDatePreset] = useState<DatePreset>('thisMonth')
   const [showDateDropdown, setShowDateDropdown] = useState(false)
   const [customPanelOpen, setCustomPanelOpen] = useState(false)
@@ -98,6 +158,9 @@ export default function Transactions() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
 
+  // Reset page when profile changes
+  useEffect(() => { setPage(0) }, [activePerfil])
+
   const filters = useMemo<TransactionFilters>(() => {
     const range = datePreset === 'custom'
       ? { startDate: customStartDate || undefined, endDate: customEndDate || undefined }
@@ -106,13 +169,17 @@ export default function Transactions() {
       ...range,
       type: (typeFilter === 'income' || typeFilter === 'expense') ? typeFilter : undefined,
       categoryId: categoryFilter || undefined,
+      perfil: activePerfil,
     }
-  }, [datePreset, customStartDate, customEndDate, typeFilter, categoryFilter])
+  }, [datePreset, customStartDate, customEndDate, typeFilter, categoryFilter, activePerfil])
 
   const { transactions, loading, error, createTransaction, updateTransaction, deleteTransaction } = useTransactions(filters)
   const { categories, createCategory } = useCategories()
+  const { prolabore, saveProlabore } = useEmpresarialConfig()
+
+  // Modal state
   const [modal, setModal] = useState<{ open: boolean; editing: Transaction | null }>({ open: false, editing: null })
-  const [form, setForm] = useState<FormState>(defaultForm)
+  const [form, setForm] = useState<FormState>(defaultFormForPerfil('pessoal'))
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -167,70 +234,158 @@ export default function Transactions() {
   }
 
   function openCreate() {
-    setForm({ ...defaultForm, date: new Date().toISOString().split('T')[0] })
+    setForm(defaultFormForPerfil(activePerfil))
     setModal({ open: true, editing: null })
   }
 
   function openEdit(t: Transaction) {
-    setForm({
-      title: t.title,
-      amount: String(t.amount),
-      category_id: t.category_id ?? '',
-      category_display_name: t.categories?.name ?? '',
-      type: t.type,
-      date: t.date,
-      notes: t.notes ?? '',
-    })
+    const perfil: Perfil = t.perfil ?? 'pessoal'
+    if (perfil === 'empresarial') {
+      setForm({
+        perfil: 'empresarial',
+        nome_cliente: t.nome_cliente ?? t.title,
+        nome_empresa: t.nome_empresa ?? '',
+        amount: String(t.amount),
+        divisao_socio: String(t.divisao_socio ?? ''),
+        type: t.type,
+        date: t.date,
+        category_id: t.category_id ?? '',
+        category_display_name: t.categories?.name ?? '',
+      })
+    } else if (perfil === 'kommo') {
+      setForm({
+        perfil: 'kommo',
+        nome_cliente: t.nome_cliente ?? t.title,
+        nome_empresa: t.nome_empresa ?? '',
+        plano: String(t.plano ?? 12),
+        num_usuarios: String(t.num_usuarios ?? ''),
+        valor_total_assinatura: String(t.valor_total_assinatura ?? t.amount),
+        valor_liquido: String(t.valor_liquido ?? ''),
+        divisao_socio_pct: String(t.divisao_socio_pct ?? ''),
+        date: t.date,
+      })
+    } else {
+      setForm({
+        perfil: 'pessoal',
+        title: t.title,
+        amount: String(t.amount),
+        category_id: t.category_id ?? '',
+        category_display_name: t.categories?.name ?? '',
+        type: t.type,
+        date: t.date,
+        notes: t.notes ?? '',
+      })
+    }
     setModal({ open: true, editing: t })
   }
 
   function closeModal() { setModal({ open: false, editing: null }) }
 
   function handleCategorySelect(name: string, catId: string, suggestedType?: 'income' | 'expense') {
-    setForm(f => ({
-      ...f,
-      category_id: catId,
-      category_display_name: name,
-      type: suggestedType ?? f.type,
-    }))
+    setForm(f => {
+      if (f.perfil === 'pessoal') {
+        return { ...f, category_id: catId, category_display_name: name, type: suggestedType ?? f.type }
+      }
+      if (f.perfil === 'empresarial') {
+        return { ...f, category_id: catId, category_display_name: name }
+      }
+      return f
+    })
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (submitting) return
-    const amount = parseFloat(form.amount)
-    if (isNaN(amount) || amount <= 0) {
-      showToast('Informe um valor numérico maior que zero.', 'error')
-      return
-    }
     setSubmitting(true)
     try {
-      // Resolve category: if pending name, find existing or create new
-      let resolvedCategoryId: string | null = form.category_id || null
-      if (!resolvedCategoryId && form.category_display_name) {
-        const existing = categories.find(c => c.name.toLowerCase() === form.category_display_name.toLowerCase())
-        if (existing) {
-          resolvedCategoryId = existing.id
-        } else {
-          resolvedCategoryId = await createCategory({ name: form.category_display_name, type: form.type, color: '#6366f1' })
+      if (form.perfil === 'pessoal') {
+        const amount = parseFloat(form.amount)
+        if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
+        let resolvedCategoryId: string | null = form.category_id || null
+        if (!resolvedCategoryId && form.category_display_name) {
+          const existing = categories.find(c => c.name.toLowerCase() === form.category_display_name.toLowerCase())
+          if (existing) {
+            resolvedCategoryId = existing.id
+          } else {
+            resolvedCategoryId = await createCategory({ name: form.category_display_name, type: form.type, color: '#6366f1' })
+          }
         }
-      }
-
-      const values = {
-        title: form.title,
-        amount,
-        category_id: resolvedCategoryId,
-        type: form.type,
-        date: form.date,
-        notes: form.notes || null,
-      }
-
-      if (modal.editing) {
-        await updateTransaction(modal.editing.id, values)
-        showToast('Transação atualizada.', 'success')
+        const values = {
+          title: form.title,
+          amount,
+          category_id: resolvedCategoryId,
+          type: form.type,
+          date: form.date,
+          notes: form.notes || null,
+          perfil: 'pessoal' as const,
+        }
+        if (modal.editing) {
+          await updateTransaction(modal.editing.id, values)
+          showToast('Transação atualizada.', 'success')
+        } else {
+          await createTransaction(values)
+          showToast('Transação criada.', 'success')
+        }
+      } else if (form.perfil === 'empresarial') {
+        const amount = parseFloat(form.amount)
+        if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
+        if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
+        let resolvedCategoryId: string | null = form.category_id || null
+        if (!resolvedCategoryId && form.category_display_name) {
+          const existing = categories.find(c => c.name.toLowerCase() === form.category_display_name.toLowerCase())
+          if (existing) {
+            resolvedCategoryId = existing.id
+          } else {
+            resolvedCategoryId = await createCategory({ name: form.category_display_name, type: form.type, color: '#6366f1' })
+          }
+        }
+        const values = {
+          title: form.nome_cliente,
+          amount,
+          category_id: resolvedCategoryId,
+          type: form.type,
+          date: form.date,
+          perfil: 'empresarial' as const,
+          nome_cliente: form.nome_cliente,
+          nome_empresa: form.nome_empresa || null,
+          divisao_socio: parseFloat(form.divisao_socio) || null,
+        }
+        if (modal.editing) {
+          await updateTransaction(modal.editing.id, values)
+          showToast('Transação atualizada.', 'success')
+        } else {
+          await createTransaction(values)
+          showToast('Transação criada.', 'success')
+        }
       } else {
-        await createTransaction(values)
-        showToast('Transação criada.', 'success')
+        // Kommo
+        const vt = parseFloat(form.valor_total_assinatura)
+        const vl = parseFloat(form.valor_liquido)
+        if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
+        if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
+        if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
+        const values = {
+          title: form.nome_cliente,
+          amount: vt,
+          type: 'income' as const,
+          date: form.date,
+          perfil: 'kommo' as const,
+          nome_cliente: form.nome_cliente,
+          nome_empresa: form.nome_empresa || null,
+          plano: parseInt(form.plano) || null,
+          num_usuarios: parseInt(form.num_usuarios) || null,
+          valor_total_assinatura: vt,
+          valor_liquido: vl,
+          divisao_socio_pct: parseFloat(form.divisao_socio_pct) || null,
+          category_id: null,
+        }
+        if (modal.editing) {
+          await updateTransaction(modal.editing.id, values)
+          showToast('Transação atualizada.', 'success')
+        } else {
+          await createTransaction(values)
+          showToast('Transação criada.', 'success')
+        }
       }
       closeModal()
     } catch (err) {
@@ -250,8 +405,38 @@ export default function Transactions() {
     }
   }
 
+  // ─── Kommo live calc ───
+  const kommoCalc = useMemo(() => {
+    if (form.perfil !== 'kommo') return null
+    const vt = parseFloat(form.valor_total_assinatura)
+    const vl = parseFloat(form.valor_liquido)
+    const pct = parseFloat(form.divisao_socio_pct) || 0
+    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0) {
+      return calcKommo(vt, vl, pct)
+    }
+    return null
+  }, [form])
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <div className="bg-white min-h-full">
+      {/* Profile tabs */}
+      <ProfileTabs active={activePerfil} onChange={p => { setActivePerfil(p); setPage(0) }} />
+
+      {/* Monthly summaries */}
+      {activePerfil === 'empresarial' && (
+        <EmpresarialSummary
+          transactions={transactions}
+          mes={currentMes}
+          prolabore={prolabore}
+          onSaveProlabore={saveProlabore}
+        />
+      )}
+      {activePerfil === 'kommo' && (
+        <KommoSummary transactions={transactions} mes={currentMes} />
+      )}
+
       {/* Header */}
       <div className="flex items-center gap-2 mb-3 md:mb-6">
         <div className="relative flex-1">
@@ -295,7 +480,6 @@ export default function Transactions() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-
         <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -430,16 +614,18 @@ export default function Transactions() {
           )}
         </div>
 
-        {/* Type filter */}
-        <select
-          value={typeFilter}
-          onChange={e => { setTypeFilter(e.target.value as '' | 'income' | 'expense'); setPage(0) }}
-          className="rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2"
-        >
-          <option value="">Todos os tipos</option>
-          <option value="income">Receita</option>
-          <option value="expense">Despesa</option>
-        </select>
+        {/* Type filter — only shown for pessoal */}
+        {activePerfil === 'pessoal' && (
+          <select
+            value={typeFilter}
+            onChange={e => { setTypeFilter(e.target.value as '' | 'income' | 'expense'); setPage(0) }}
+            className="rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2"
+          >
+            <option value="">Todos os tipos</option>
+            <option value="income">Receita</option>
+            <option value="expense">Despesa</option>
+          </select>
+        )}
 
         {/* Category filter */}
         <div className="relative">
@@ -635,45 +821,181 @@ export default function Transactions() {
         onDelete={handleDelete}
       />
 
+      {/* ─── Modal ─────────────────────────────────────────────────────────── */}
       <Modal open={modal.open} onClose={closeModal} titleId="transaction-modal-title">
         <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
           {modal.editing ? 'Editar Transação' : 'Nova Transação'}
         </h3>
+
+        {/* Perfil selector — only when creating */}
+        {!modal.editing && (
+          <div className="flex gap-2 mb-4">
+            {(['pessoal', 'empresarial', 'kommo'] as Perfil[]).map(p => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setForm(defaultFormForPerfil(p))}
+                className={`flex-1 py-1.5 text-xs font-medium rounded-lg border transition-colors capitalize ${form.perfil === p ? 'bg-indigo-600 text-white border-indigo-600' : 'text-gray-600 border-gray-300 hover:bg-gray-50'}`}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="tx-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-            <input id="tx-title" type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
-            <CategoryPicker
-              userCategories={categories}
-              displayName={form.category_display_name}
-              onChange={handleCategorySelect}
-              transactionType={form.type}
-            />
-          </div>
-          <div>
-            <label htmlFor="tx-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-            <select id="tx-type" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value as 'income' | 'expense' }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-              <option value="expense">Despesa</option>
-              <option value="income">Receita</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="tx-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
-              <input id="tx-amount" type="number" required min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-            </div>
-            <div>
-              <label htmlFor="tx-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-              <input id="tx-date" type="date" required value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-            </div>
-          </div>
-          <div>
-            <label htmlFor="tx-notes" className="block text-sm font-medium text-gray-700 mb-1">Observação (opcional)</label>
-            <textarea id="tx-notes" value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={2} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
+          {/* ── Pessoal form ── */}
+          {form.perfil === 'pessoal' && (
+            <>
+              <div>
+                <label htmlFor="tx-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                <input id="tx-title" type="text" required value={form.title} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, title: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <CategoryPicker
+                  userCategories={categories}
+                  displayName={form.category_display_name}
+                  onChange={handleCategorySelect}
+                  transactionType={form.type}
+                />
+              </div>
+              <div>
+                <label htmlFor="tx-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                <select id="tx-type" value={form.type} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                  <option value="expense">Despesa</option>
+                  <option value="income">Receita</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="tx-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
+                  <input id="tx-amount" type="number" required min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label htmlFor="tx-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                  <input id="tx-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="tx-notes" className="block text-sm font-medium text-gray-700 mb-1">Observação (opcional)</label>
+                <textarea id="tx-notes" value={form.notes} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, notes: e.target.value } : f)} rows={2} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+            </>
+          )}
+
+          {/* ── Empresarial form ── */}
+          {form.perfil === 'empresarial' && (
+            <>
+              <div>
+                <label htmlFor="emp-nome-cliente" className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
+                <input id="emp-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+              <div>
+                <label htmlFor="emp-nome-empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da empresa</label>
+                <input id="emp-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <CategoryPicker
+                  userCategories={categories}
+                  displayName={form.category_display_name}
+                  onChange={handleCategorySelect}
+                  transactionType={form.type}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="emp-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor total (R$)</label>
+                  <input id="emp-amount" type="number" required min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label htmlFor="emp-divisao" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (R$)</label>
+                  <input id="emp-divisao" type="number" min="0" step="0.01" value={form.divisao_socio} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, divisao_socio: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="emp-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                  <select id="emp-type" value={form.type} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="income">Receita</option>
+                    <option value="expense">Despesa</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="emp-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                  <input id="emp-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ── Kommo form ── */}
+          {form.perfil === 'kommo' && (
+            <>
+              <div>
+                <label htmlFor="kommo-nome-cliente" className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
+                <input id="kommo-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+              <div>
+                <label htmlFor="kommo-nome-empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da empresa</label>
+                <input id="kommo-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
+                  <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 mb-1">Nº de usuários</label>
+                  <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor total assinatura (R$)</label>
+                  <input id="kommo-vt" type="number" required min="0.01" step="0.01" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido (R$)</label>
+                  <input id="kommo-vl" type="number" required min="0.01" step="0.01" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
+                  <input id="kommo-socio-pct" type="number" min="0" max="100" step="0.01" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+                <div>
+                  <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                  <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                </div>
+              </div>
+
+              {/* Live calculation panel */}
+              {kommoCalc && (
+                <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1.5">
+                  <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
+                  {[
+                    ['Taxa maquininha', kommoCalc.taxa],
+                    ['Kommo 65%', kommoCalc.kommo65],
+                    ['Comissão bruta 35%', kommoCalc.bruta],
+                    ['Comissão líquida', kommoCalc.liquida],
+                    ['Parte do sócio', kommoCalc.socio],
+                    ['Valor final (seu)', kommoCalc.final],
+                  ].map(([label, value]) => (
+                    <div key={label as string} className="flex justify-between text-xs">
+                      <span className="text-gray-600">{label as string}</span>
+                      <span className="font-medium tabular-nums text-purple-700">{formatCurrency(value as number)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-600 rounded-lg transition-colors">Cancelar</button>
             <button type="submit" disabled={submitting} className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-60">

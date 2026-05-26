@@ -28,6 +28,7 @@ const mockCategories = [
 function mockFrom(table: string) {
   const data = table === 'categories' ? mockCategories : mockTransactions
   const resolved = { data, error: null }
+  const singleResolved = { data: null, error: null }
   const chain: any = {
     select: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
@@ -38,17 +39,23 @@ function mockFrom(table: string) {
     insert: vi.fn().mockResolvedValue({ error: null }),
     update: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockResolvedValue({ error: null }),
+    single: vi.fn().mockResolvedValue(singleResolved),
     then: (resolve: (v: unknown) => void) => Promise.resolve(resolved).then(resolve),
     catch: (reject: (e: unknown) => void) => Promise.resolve(resolved).catch(reject),
   }
   return chain
 }
 
+function setupMock() {
+  vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: { user: { id: 'u1' } } } } as any)
+  vi.mocked(supabase.from).mockImplementation((table: string) => mockFrom(table) as any)
+}
+
 describe('Transactions page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(supabase.auth.getSession).mockResolvedValue({ data: { session: { user: { id: 'u1' } } } } as any)
-    vi.mocked(supabase.from).mockImplementation((table: string) => mockFrom(table) as any)
+    setupMock()
   })
 
   it('renders transactions in table', async () => {
@@ -120,5 +127,73 @@ describe('Transactions page', () => {
     const options = screen.getAllByRole('option') as HTMLOptionElement[]
     const incomeOption = options.find(o => o.value === 'income')
     expect(incomeOption).toBeDefined()
+  })
+})
+
+describe('Profile tabs in Transactions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMock()
+  })
+
+  it('renders three profile tabs', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /pessoal/i })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /empresarial/i })).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: /kommo/i })).toBeInTheDocument()
+    })
+  })
+
+  it('pessoal tab is active by default', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByRole('tab', { name: /pessoal/i })).toHaveAttribute('aria-selected', 'true')
+    })
+  })
+
+  it('switching to empresarial shows EmpresarialSummary', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('tab', { name: /empresarial/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /empresarial/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/resumo empresarial/i)).toBeInTheDocument()
+    })
+  })
+
+  it('switching to kommo shows KommoSummary', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('tab', { name: /kommo/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /kommo/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/resumo kommo/i)).toBeInTheDocument()
+    })
+  })
+})
+
+describe('Dynamic form by perfil', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    setupMock()
+  })
+
+  it('pessoal form shows title field', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('tab', { name: /pessoal/i }))
+    fireEvent.click(screen.getAllByRole('button').find(b => b.textContent?.includes('+'))!)
+    await waitFor(() => {
+      expect(screen.getByLabelText(/título/i)).toBeInTheDocument()
+    })
+  })
+
+  it('empresarial form shows nome do cliente', async () => {
+    render(<MemoryRouter><Transactions /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('tab', { name: /empresarial/i }))
+    fireEvent.click(screen.getByRole('tab', { name: /empresarial/i }))
+    await waitFor(() => screen.getAllByRole('button').find(b => b.textContent?.includes('+')))
+    fireEvent.click(screen.getAllByRole('button').find(b => b.textContent?.includes('+'))!)
+    await waitFor(() => {
+      expect(screen.getByLabelText(/nome do cliente/i)).toBeInTheDocument()
+    })
   })
 })
