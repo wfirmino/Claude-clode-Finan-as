@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Comparação de Abordagens — Schema Perfis</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; padding: 32px; color: #1e293b; }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .subtitle { font-size: 13px; color: #64748b; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .card { background: white; border-radius: 16px; padding: 24px; border: 2px solid #e2e8f0; position: relative; }
+  .card.recommended { border-color: #6366f1; }
+  .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #6366f1; color: white; font-size: 11px; font-weight: 700; padding: 3px 12px; border-radius: 99px; white-space: nowrap; }
+  .option-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; margin-bottom: 6px; }
+  .option-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 16px; }
+  .schema-box { background: #0f172a; border-radius: 10px; padding: 14px 16px; font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 11px; line-height: 1.7; color: #94a3b8; margin-bottom: 16px; }
+  .schema-box .table { color: #818cf8; font-weight: 700; }
+  .schema-box .col { color: #34d399; }
+  .schema-box .type { color: #fbbf24; }
+  .schema-box .comment { color: #475569; }
+  .pros-cons { display: flex; flex-direction: column; gap: 8px; }
+  .item { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; line-height: 1.5; }
+  .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; margin-top: 14px; margin-bottom: 6px; }
+  .query-box { background: #0f172a; border-radius: 8px; padding: 10px 12px; font-family: monospace; font-size: 10.5px; line-height: 1.6; color: #94a3b8; margin-top: 12px; }
+  .query-box .kw { color: #818cf8; }
+  .query-box .str { color: #34d399; }
+  .summary-row { display: flex; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
+  .pill { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+  .pill.green { background: #dcfce7; color: #16a34a; }
+  .pill.yellow { background: #fef9c3; color: #a16207; }
+  .pill.red { background: #fee2e2; color: #dc2626; }
+</style>
+</head>
+<body>
+<h1>Comparação de Abordagens — Schema para Perfis</h1>
+<p class="subtitle">Escolha como os dados de Pessoal, Empresarial e Kommo serão armazenados no banco</p>
+
+<div class="grid">
+
+  <!-- OPÇÃO A -->
+  <div class="card recommended">
+    <div class="badge">✦ Recomendado</div>
+    <div class="option-label">Opção A</div>
+    <div class="option-title">Colunas adicionais na tabela transactions</div>
+
+    <div class="schema-box">
+<span class="comment">-- tabela atual + novos campos</span>
+<br><span class="table">transactions</span>
+<br>&nbsp; id, user_id, title
+<br>&nbsp; amount, type, date, notes
+<br>&nbsp; <span class="col">perfil</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">text</span> <span class="comment">-- novo</span>
+<br>&nbsp; <span class="col">nome_cliente</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">text?</span>
+<br>&nbsp; <span class="col">nome_empresa</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">text?</span>
+<br>&nbsp; <span class="col">divisao_socio</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">numeric?</span>
+<br>&nbsp; <span class="col">plano</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">int?</span>
+<br>&nbsp; <span class="col">num_usuarios</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">int?</span>
+<br>&nbsp; <span class="col">valor_liquido</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">numeric?</span>
+<br>&nbsp; <span class="col">divisao_pct</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">numeric?</span>
+<br>&nbsp; <span class="col">prolabore</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">numeric?</span>
+<br>
+<br><span class="comment">-- tabela para pró-labore mensal</span>
+<br><span class="table">empresarial_config</span>
+<br>&nbsp; <span class="col">user_id, mes</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">text</span>
+<br>&nbsp; <span class="col">prolabore</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">numeric</span>
+    </div>
+
+    <div class="section-label">Query — filtrar perfil Kommo</div>
+    <div class="query-box">
+<span class="kw">select</span> * <span class="kw">from</span> transactions
+<br><span class="kw">where</span> perfil = <span class="str">'kommo'</span>
+<br>&nbsp;&nbsp;<span class="kw">and</span> user_id = auth.uid()
+    </div>
+
+    <div class="pros-cons" style="margin-top:14px;">
+      <div class="section-label">Prós e contras</div>
+      <div class="item"><span class="icon">✅</span> Uma tabela, queries simples e diretas</div>
+      <div class="item"><span class="icon">✅</span> Hooks existentes funcionam com pequenos ajustes</div>
+      <div class="item"><span class="icon">✅</span> TypeScript tipado campo a campo</div>
+      <div class="item"><span class="icon">⚠️</span> ~10 colunas nullable (aceitável para 3 perfis fixos)</div>
+    </div>
+
+    <div class="summary-row">
+      <span class="pill green">Simples</span>
+      <span class="pill green">Rápido</span>
+      <span class="pill green">Tipado</span>
+    </div>
+  </div>
+
+  <!-- OPÇÃO B -->
+  <div class="card">
+    <div class="option-label">Opção B</div>
+    <div class="option-title">Coluna JSONB metadata</div>
+
+    <div class="schema-box">
+<span class="comment">-- schema enxuto</span>
+<br><span class="table">transactions</span>
+<br>&nbsp; id, user_id, title
+<br>&nbsp; amount, type, date, notes
+<br>&nbsp; <span class="col">perfil</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">text</span>
+<br>&nbsp; <span class="col">metadata</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="type">jsonb</span>
+<br>
+<br><span class="comment">-- exemplos de metadata</span>
+<br><span class="comment">-- Empresarial:</span>
+<br>{ nome_cliente: "...",
+<br>&nbsp;&nbsp;divisao_socio: 500 }
+<br>
+<br><span class="comment">-- Kommo:</span>
+<br>{ plano: 12,
+<br>&nbsp;&nbsp;num_usuarios: 3,
+<br>&nbsp;&nbsp;divisao_pct: 50 }
+    </div>
+
+    <div class="section-label">Query — soma campo de JSONB</div>
+    <div class="query-box">
+<span class="kw">select</span>
+<br>&nbsp; <span class="kw">sum</span>((metadata->>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">'divisao_socio'</span>)::numeric)
+<br><span class="kw">from</span> transactions
+<br><span class="kw">where</span> perfil = <span class="str">'empresarial'</span>
+    </div>
+
+    <div class="pros-cons" style="margin-top:14px;">
+      <div class="section-label">Prós e contras</div>
+      <div class="item"><span class="icon">✅</span> Schema enxuto, fácil de evoluir</div>
+      <div class="item"><span class="icon">✅</span> Novos campos sem nova migration</div>
+      <div class="item"><span class="icon">⚠️</span> Queries com cast explícito (menos ergonômico)</div>
+      <div class="item"><span class="icon">❌</span> Sem type safety no TypeScript sem mapeamento manual</div>
+      <div class="item"><span class="icon">❌</span> Mais difícil de indexar e filtrar</div>
+    </div>
+
+    <div class="summary-row">
+      <span class="pill green">Flexível</span>
+      <span class="pill yellow">Queries verbosas</span>
+      <span class="pill red">Sem tipos</span>
+    </div>
+  </div>
+
+  <!-- OPÇÃO C -->
+  <div class="card">
+    <div class="option-label">Opção C</div>
+    <div class="option-title">Tabelas separadas por perfil</div>
+
+    <div class="schema-box">
+<span class="comment">-- 3 tabelas independentes</span>
+<br><span class="table">transactions_pessoal</span>
+<br>&nbsp; id, user_id, title
+<br>&nbsp; amount, type, date, notes
+<br>
+<br><span class="table">transactions_empresarial</span>
+<br>&nbsp; id, user_id
+<br>&nbsp; <span class="col">nome_cliente</span>, <span class="col">nome_empresa</span>
+<br>&nbsp; <span class="col">faturamento</span>, <span class="col">divisao_socio</span>
+<br>&nbsp; type, date, notes
+<br>
+<br><span class="table">transactions_kommo</span>
+<br>&nbsp; id, user_id
+<br>&nbsp; <span class="col">nome_cliente</span>, <span class="col">nome_empresa</span>
+<br>&nbsp; <span class="col">plano</span>, <span class="col">num_usuarios</span>
+<br>&nbsp; <span class="col">valor_total</span>, <span class="col">valor_liquido</span>
+<br>&nbsp; <span class="col">divisao_pct</span>, date
+    </div>
+
+    <div class="section-label">Query — ver todas as transações</div>
+    <div class="query-box">
+<span class="kw">select</span> * <span class="kw">from</span> transactions_pessoal
+<span class="kw">union all</span>
+<span class="kw">select</span> ...<span class="kw">from</span> transactions_empresarial
+<span class="kw">union all</span>
+<span class="kw">select</span> ...<span class="kw">from</span> transactions_kommo
+    </div>
+
+    <div class="pros-cons" style="margin-top:14px;">
+      <div class="section-label">Prós e contras</div>
+      <div class="item"><span class="icon">✅</span> Schema perfeitamente limpo por perfil</div>
+      <div class="item"><span class="icon">❌</span> Quebra todos os hooks e páginas existentes</div>
+      <div class="item"><span class="icon">❌</span> UNION ALL obrigatório para visão consolidada</div>
+      <div class="item"><span class="icon">❌</span> 3× mais migrations, RLS policies e hooks</div>
+      <div class="item"><span class="icon">❌</span> Muito trabalho extra sem benefício real</div>
+    </div>
+
+    <div class="summary-row">
+      <span class="pill green">Schema limpo</span>
+      <span class="pill red">Complexo</span>
+      <span class="pill red">Quebra tudo</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
