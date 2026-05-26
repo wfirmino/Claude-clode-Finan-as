@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import type { Transaction } from '../types'
+import type { Transaction, Perfil } from '../types'
 
 export interface TransactionFilters {
   startDate?: string
@@ -8,6 +8,7 @@ export interface TransactionFilters {
   type?: 'income' | 'expense'
   categoryId?: string
   noLimit?: boolean
+  perfil?: Perfil
 }
 
 export function useTransactions(filters: TransactionFilters = {}) {
@@ -25,12 +26,13 @@ export function useTransactions(filters: TransactionFilters = {}) {
     if (filters.endDate) q = q.lte('date', filters.endDate)
     if (filters.type) q = q.eq('type', filters.type)
     if (filters.categoryId) q = q.eq('category_id', filters.categoryId)
+    if (filters.perfil) q = q.eq('perfil', filters.perfil)
     const { data, error, count } = await q
     if (error) { setError(error.message); setLoading(false); return }
     setTransactions(data)
     setTotalCount(count ?? null)
     setLoading(false)
-  }, [filters.startDate, filters.endDate, filters.type, filters.categoryId, filters.noLimit])
+  }, [filters.startDate, filters.endDate, filters.type, filters.categoryId, filters.noLimit, filters.perfil])
 
   useEffect(() => { fetchAll() }, [fetchAll])
 
