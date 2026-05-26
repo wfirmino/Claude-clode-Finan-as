@@ -348,7 +348,7 @@ export default function Transactions() {
           perfil: 'empresarial' as const,
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
-          divisao_socio: parseFloat(form.divisao_socio) || null,
+          divisao_socio: (() => { const v = parseFloat(form.divisao_socio); return isNaN(v) ? null : v })(),
         }
         if (modal.editing) {
           await updateTransaction(modal.editing.id, values)
@@ -364,6 +364,10 @@ export default function Transactions() {
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
         if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
+        if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
+        const rawPlano = parseInt(form.plano)
+        const rawNumUsuarios = parseInt(form.num_usuarios)
+        const rawDivisaoSocioPct = parseFloat(form.divisao_socio_pct)
         const values = {
           title: form.nome_cliente,
           amount: vt,
@@ -372,11 +376,11 @@ export default function Transactions() {
           perfil: 'kommo' as const,
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
-          plano: parseInt(form.plano) || null,
-          num_usuarios: parseInt(form.num_usuarios) || null,
+          plano: isNaN(rawPlano) ? null : rawPlano,
+          num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
           valor_total_assinatura: vt,
           valor_liquido: vl,
-          divisao_socio_pct: parseFloat(form.divisao_socio_pct) || null,
+          divisao_socio_pct: isNaN(rawDivisaoSocioPct) ? null : rawDivisaoSocioPct,
           category_id: null,
         }
         if (modal.editing) {
@@ -411,7 +415,7 @@ export default function Transactions() {
     const vt = parseFloat(form.valor_total_assinatura)
     const vl = parseFloat(form.valor_liquido)
     const pct = parseFloat(form.divisao_socio_pct) || 0
-    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0) {
+    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0 && vl < vt) {
       return calcKommo(vt, vl, pct)
     }
     return null
