@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { Transaction } from '../types'
 import { formatCurrency } from '../utils/formatters'
 
@@ -12,6 +12,10 @@ interface Props {
 export default function EmpresarialSummary({ transactions, mes, prolabore: initialProlabore, onSaveProlabore }: Props) {
   const [prolaboreInput, setProlaboreInput] = useState(String(initialProlabore))
   const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    setProlaboreInput(String(initialProlabore))
+  }, [initialProlabore])
 
   const { faturamento, totalSocio, despesaMEI, lucro } = useMemo(() => {
     const txsMes = transactions.filter(t => t.date.startsWith(mes))
