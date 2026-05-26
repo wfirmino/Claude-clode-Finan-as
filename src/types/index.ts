@@ -7,6 +7,8 @@ export interface Category {
   created_at: string
 }
 
+export type Perfil = 'pessoal' | 'empresarial' | 'kommo'
+
 export interface Transaction {
   id: string
   user_id: string
@@ -18,6 +20,22 @@ export interface Transaction {
   notes: string | null
   created_at: string
   categories?: Category
+  // Perfil
+  perfil?: Perfil
+  nome_cliente?: string | null
+  nome_empresa?: string | null
+  divisao_socio?: number | null
+  plano?: number | null
+  num_usuarios?: number | null
+  valor_total_assinatura?: number | null
+  valor_liquido?: number | null
+  divisao_socio_pct?: number | null
+}
+
+export interface EmpresarialConfig {
+  user_id: string
+  mes: string
+  prolabore: number
 }
 
 export interface Goal {
