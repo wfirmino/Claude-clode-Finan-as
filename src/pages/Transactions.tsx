@@ -109,7 +109,7 @@ function parseBR(value: string): number {
 // Converte número do banco (6734.74) para string pt-BR (6734,74) para usar no form
 function numToStr(n: number | null | undefined): string {
   if (n == null) return ''
-  return String(n).replace('.', ',')
+  return n.toFixed(2).replace('.', ',')
 }
 
 function getDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
