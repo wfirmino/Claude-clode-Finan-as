@@ -52,7 +52,7 @@ export default function Modal({ open, onClose, titleId, children }: ModalProps) 
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md px-6 py-5 max-h-[90vh] overflow-y-auto"
       >
         {children}
       </div>

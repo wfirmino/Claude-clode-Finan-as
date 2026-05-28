@@ -69,10 +69,18 @@ function defaultFormForPerfil(perfil: Perfil): FormState {
 }
 
 function calcKommo(vt: number, vl: number, vk: number, pct: number) {
-  const taxa = vt - vl
-  const liquida = vl - vk
-  const socio = liquida * pct / 100
-  return { taxa, valorKommo: vk, liquida, socio, final: liquida - socio }
+  const c = (n: number) => Math.round(n * 100)
+  const taxaC = c(vt) - c(vl)
+  const liquidaC = c(vl) - c(vk)
+  const socioC = Math.round(liquidaC * pct / 100)
+  const finalC = liquidaC - socioC
+  return {
+    taxa: taxaC / 100,
+    valorKommo: vk,
+    liquida: liquidaC / 100,
+    socio: socioC / 100,
+    final: finalC / 100,
+  }
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -853,13 +861,13 @@ export default function Transactions() {
 
       {/* ─── Modal ─────────────────────────────────────────────────────────── */}
       <Modal open={modal.open} onClose={closeModal} titleId="transaction-modal-title">
-        <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 mb-3">
           {modal.editing ? 'Editar Transação' : 'Nova Transação'}
         </h3>
 
         {/* Perfil selector — only when creating */}
         {!modal.editing && (
-          <div className="flex gap-2 mb-4">
+          <div className="flex gap-2 mb-3">
             {(['pessoal', 'empresarial', 'kommo'] as Perfil[]).map(p => (
               <button
                 key={p}
@@ -873,7 +881,7 @@ export default function Transactions() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {/* ── Pessoal form ── */}
           {form.perfil === 'pessoal' && (
             <>
@@ -1010,7 +1018,7 @@ export default function Transactions() {
                   <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido / InfinityPay (R$)</label>
+                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Líquido pós-taxas (R$)</label>
                   <input id="kommo-vl" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>

@@ -9,23 +9,30 @@ interface Props {
 
 export default function KommoSummary({ transactions, mes }: Props) {
   const totals = useMemo(() => {
-    let assinaturas = 0, taxas = 0, valorKommo = 0, liquida = 0, socio = 0, final = 0
+    const c = (n: number) => Math.round(n * 100)
+    let assinaturasC = 0, taxasC = 0, valorKommoC = 0, liquidaC = 0, socioC = 0, finalC = 0
     for (const t of transactions) {
-      const vt = t.valor_total_assinatura ?? 0
-      const vl = t.valor_liquido ?? 0
-      const vk = t.valor_pago_kommo ?? 0
+      const vtC = c(t.valor_total_assinatura ?? 0)
+      const vlC = c(t.valor_liquido ?? 0)
+      const vkC = c(t.valor_pago_kommo ?? 0)
       const pct = t.divisao_socio_pct ?? 0
-      const taxa = vt - vl
-      const liq = vl - vk
-      const s = liq * pct / 100
-      assinaturas += vt
-      taxas += taxa
-      valorKommo += vk
-      liquida += liq
-      socio += s
-      final += liq - s
+      const tLiqC = vlC - vkC
+      const tSocioC = Math.round(tLiqC * pct / 100)
+      assinaturasC += vtC
+      taxasC += vtC - vlC
+      valorKommoC += vkC
+      liquidaC += tLiqC
+      socioC += tSocioC
+      finalC += tLiqC - tSocioC
     }
-    return { assinaturas, taxas, valorKommo, liquida, socio, final }
+    return {
+      assinaturas: assinaturasC / 100,
+      taxas: taxasC / 100,
+      valorKommo: valorKommoC / 100,
+      liquida: liquidaC / 100,
+      socio: socioC / 100,
+      final: finalC / 100,
+    }
   }, [transactions])
 
   const row = (label: string, value: number, highlight = false) => (
