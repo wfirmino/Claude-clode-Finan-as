@@ -217,6 +217,24 @@ export default function Transactions() {
     return { totalIncome: income, totalExpense: expense, balance: income - expense }
   }, [transactions])
 
+  const kommoTotals = useMemo(() => {
+    if (activePerfil !== 'kommo') return null
+    const c = (n: number) => Math.round(n * 100)
+    let assinaturasC = 0, liquidoC = 0, finalC = 0
+    for (const t of transactions) {
+      const vtC = c(t.valor_total_assinatura ?? 0)
+      const vlC = c(t.valor_liquido ?? 0)
+      const vkC = c(t.valor_pago_kommo ?? 0)
+      const pct = t.divisao_socio_pct ?? 0
+      const liquidaC = vlC - vkC
+      const socioC = Math.round(liquidaC * pct / 100)
+      assinaturasC += vtC
+      liquidoC += vlC
+      finalC += liquidaC - socioC
+    }
+    return { totalAssinaturas: assinaturasC / 100, totalLiquido: liquidoC / 100, valorFinal: finalC / 100, count: transactions.length }
+  }, [transactions, activePerfil])
+
   const filteredTransactions = useMemo(() => {
     let arr = transactions
     if (search.trim()) {
@@ -512,40 +530,77 @@ export default function Transactions() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
-          <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-            <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Receitas</span>
+      {kommoTotals ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Valor Total Bruto</span>
+            </div>
+            <p className="text-2xl font-bold text-indigo-600 tabular-nums">{formatCurrency(kommoTotals.totalAssinaturas)}</p>
+            <p className="text-xs text-indigo-400 mt-1">{kommoTotals.count} assinaturas</p>
           </div>
-          <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(totalIncome)}</p>
-          <p className="text-xs text-green-500 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
-        </div>
 
-        <div className="bg-red-50 rounded-xl border border-red-100 px-5 py-4">
-          <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Despesas</span>
+          <div className="bg-purple-50 rounded-xl border border-purple-100 px-5 py-4">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Líquido pós-taxas</span>
+            </div>
+            <p className="text-2xl font-bold text-purple-600 tabular-nums">{formatCurrency(kommoTotals.totalLiquido)}</p>
+            <p className="text-xs text-purple-400 mt-1">após taxas da maquininha</p>
           </div>
-          <p className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency(totalExpense)}</p>
-          <p className="text-xs text-red-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
-        </div>
 
-        <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
-          <div className="flex items-center gap-2 mb-2">
-            <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-            </svg>
-            <span className={`text-xs font-semibold uppercase tracking-wide ${balance >= 0 ? 'text-green-600' : 'text-red-400'}`}>Saldo</span>
+          <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4 col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Comissão</span>
+            </div>
+            <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(kommoTotals.valorFinal)}</p>
+            <p className="text-xs text-green-500 mt-1">após todos os descontos</p>
           </div>
-          <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(balance))}</p>
-          <p className={`text-xs mt-1 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`}>{balance >= 0 ? 'positivo' : 'negativo'}</p>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+              </svg>
+              <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Receitas</span>
+            </div>
+            <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(totalIncome)}</p>
+            <p className="text-xs text-green-500 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
+          </div>
+
+          <div className="bg-red-50 rounded-xl border border-red-100 px-5 py-4">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+              <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Despesas</span>
+            </div>
+            <p className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency(totalExpense)}</p>
+            <p className="text-xs text-red-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
+          </div>
+
+          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+            <div className="flex items-center gap-2 mb-2">
+              <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <span className={`text-xs font-semibold uppercase tracking-wide ${balance >= 0 ? 'text-green-600' : 'text-red-400'}`}>Saldo</span>
+            </div>
+            <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(balance))}</p>
+            <p className={`text-xs mt-1 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`}>{balance >= 0 ? 'positivo' : 'negativo'}</p>
+          </div>
+        </div>
+      )}
 
       {transactions.length >= 500 && (
         <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
