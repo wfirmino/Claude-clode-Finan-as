@@ -106,6 +106,12 @@ function parseBR(value: string): number {
   return parseFloat(normalized)
 }
 
+// Converte número do banco (6734.74) para string pt-BR (6734,74) para usar no form
+function numToStr(n: number | null | undefined): string {
+  if (n == null) return ''
+  return String(n).replace('.', ',')
+}
+
 function getDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
   const today = new Date()
   const fmt = (d: Date) => d.toISOString().split('T')[0]
@@ -251,8 +257,8 @@ export default function Transactions() {
         perfil: 'empresarial',
         nome_cliente: t.nome_cliente ?? t.title,
         nome_empresa: t.nome_empresa ?? '',
-        amount: String(t.amount),
-        divisao_socio: String(t.divisao_socio ?? ''),
+        amount: numToStr(t.amount),
+        divisao_socio: numToStr(t.divisao_socio),
         type: t.type,
         date: t.date,
         category_id: t.category_id ?? '',
@@ -265,16 +271,16 @@ export default function Transactions() {
         nome_empresa: t.nome_empresa ?? '',
         plano: String(t.plano ?? 12),
         num_usuarios: String(t.num_usuarios ?? ''),
-        valor_total_assinatura: String(t.valor_total_assinatura ?? t.amount),
-        valor_liquido: String(t.valor_liquido ?? ''),
-        divisao_socio_pct: String(t.divisao_socio_pct ?? ''),
+        valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
+        valor_liquido: numToStr(t.valor_liquido),
+        divisao_socio_pct: numToStr(t.divisao_socio_pct),
         date: t.date,
       })
     } else {
       setForm({
         perfil: 'pessoal',
         title: t.title,
-        amount: String(t.amount),
+        amount: numToStr(t.amount),
         category_id: t.category_id ?? '',
         category_display_name: t.categories?.name ?? '',
         type: t.type,
