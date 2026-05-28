@@ -273,7 +273,7 @@ export default function Transactions() {
         num_usuarios: String(t.num_usuarios ?? ''),
         valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
         valor_liquido: numToStr(t.valor_liquido),
-        divisao_socio_pct: numToStr(t.divisao_socio_pct),
+        divisao_socio_pct: t.divisao_socio_pct != null ? String(t.divisao_socio_pct).replace('.', ',') : '',
         date: t.date,
       })
     } else {
