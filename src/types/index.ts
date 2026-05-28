@@ -30,6 +30,7 @@ export interface Transaction {
   valor_total_assinatura?: number | null
   valor_liquido?: number | null
   divisao_socio_pct?: number | null
+  apenas_usuario_adicional?: boolean | null
 }
 
 export interface EmpresarialConfig {

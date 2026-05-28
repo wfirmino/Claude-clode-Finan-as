@@ -43,6 +43,7 @@ interface FormStateKommo {
   perfil: 'kommo'
   nome_cliente: string
   nome_empresa: string
+  apenas_usuario_adicional: boolean
   plano: string           // '3'|'6'|'9'|'12'|'24'
   num_usuarios: string
   valor_total_assinatura: string
@@ -63,7 +64,7 @@ function defaultFormForPerfil(perfil: Perfil): FormState {
   if (perfil === 'empresarial') {
     return { perfil: 'empresarial', nome_cliente: '', nome_empresa: '', amount: '', divisao_socio: '', type: 'income', date: today, category_id: '', category_display_name: '' }
   }
-  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', divisao_socio_pct: '', date: today }
+  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', divisao_socio_pct: '', date: today }
 }
 
 function calcKommo(vt: number, vl: number, pct: number) {
@@ -269,6 +270,7 @@ export default function Transactions() {
         perfil: 'kommo',
         nome_cliente: t.nome_cliente ?? t.title,
         nome_empresa: t.nome_empresa ?? '',
+        apenas_usuario_adicional: t.apenas_usuario_adicional ?? false,
         plano: String(t.plano ?? 12),
         num_usuarios: String(t.num_usuarios ?? ''),
         valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
@@ -388,7 +390,8 @@ export default function Transactions() {
           perfil: 'kommo' as const,
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
-          plano: isNaN(rawPlano) ? null : rawPlano,
+          apenas_usuario_adicional: form.apenas_usuario_adicional,
+          plano: form.apenas_usuario_adicional ? null : (isNaN(rawPlano) ? null : rawPlano),
           num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
           valor_total_assinatura: vt,
           valor_liquido: vl,
@@ -784,7 +787,12 @@ export default function Transactions() {
               {paginated.map(t => (
                 <tr key={t.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
-                  <td className="px-6 py-4 font-medium text-gray-900">{t.title}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    <span>{t.title}</span>
+                    {t.apenas_usuario_adicional && (
+                      <span className="ml-2 text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">Usr. adicional</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-gray-500">{t.categories?.name ?? '—'}</td>
                   <td className="px-6 py-4">
                     <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${t.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
@@ -957,14 +965,35 @@ export default function Transactions() {
                 <label htmlFor="kommo-nome-empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da empresa</label>
                 <input id="kommo-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
-                  <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
-                  </select>
+
+              {/* Toggle: apenas usuário adicional */}
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={form.apenas_usuario_adicional}
+                    onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, apenas_usuario_adicional: e.target.checked } : f)}
+                  />
+                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                 </div>
-                <div>
+                <span className="text-sm font-medium text-gray-700">Apenas usuário adicional</span>
+                {form.apenas_usuario_adicional && (
+                  <span className="text-xs text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">Sem plano novo</span>
+                )}
+              </label>
+
+              <div className="grid grid-cols-2 gap-4">
+                {!form.apenas_usuario_adicional && (
+                  <div>
+                    <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
+                    <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                      {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
+                    </select>
+                  </div>
+                )}
+                <div className={form.apenas_usuario_adicional ? 'col-span-2' : ''}>
                   <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 mb-1">Nº de usuários</label>
                   <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
