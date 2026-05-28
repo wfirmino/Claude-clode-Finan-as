@@ -100,6 +100,12 @@ const SORT_OPTIONS: { key: SortBy; label: string }[] = [
 
 const PLANOS = ['3', '6', '9', '12', '24']
 
+// Normaliza formato BR (6.734,74) para float (6734.74)
+function parseBR(value: string): number {
+  const normalized = value.replace(/\./g, '').replace(',', '.')
+  return parseFloat(normalized)
+}
+
 function getDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
   const today = new Date()
   const fmt = (d: Date) => d.toISOString().split('T')[0]
@@ -299,7 +305,7 @@ export default function Transactions() {
     setSubmitting(true)
     try {
       if (form.perfil === 'pessoal') {
-        const amount = parseFloat(form.amount)
+        const amount = parseBR(form.amount)
         if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
         let resolvedCategoryId: string | null = form.category_id || null
         if (!resolvedCategoryId && form.category_display_name) {
@@ -327,7 +333,7 @@ export default function Transactions() {
           showToast('Transação criada.', 'success')
         }
       } else if (form.perfil === 'empresarial') {
-        const amount = parseFloat(form.amount)
+        const amount = parseBR(form.amount)
         if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         let resolvedCategoryId: string | null = form.category_id || null
@@ -348,7 +354,7 @@ export default function Transactions() {
           perfil: 'empresarial' as const,
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
-          divisao_socio: (() => { const v = parseFloat(form.divisao_socio); return isNaN(v) ? null : v })(),
+          divisao_socio: (() => { const v = parseBR(form.divisao_socio); return isNaN(v) ? null : v })(),
         }
         if (modal.editing) {
           await updateTransaction(modal.editing.id, values)
@@ -359,15 +365,15 @@ export default function Transactions() {
         }
       } else {
         // Kommo
-        const vt = parseFloat(form.valor_total_assinatura)
-        const vl = parseFloat(form.valor_liquido)
+        const vt = parseBR(form.valor_total_assinatura)
+        const vl = parseBR(form.valor_liquido)
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
         if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
         if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
         const rawPlano = parseInt(form.plano)
         const rawNumUsuarios = parseInt(form.num_usuarios)
-        const rawDivisaoSocioPct = parseFloat(form.divisao_socio_pct)
+        const rawDivisaoSocioPct = parseBR(form.divisao_socio_pct)
         const values = {
           title: form.nome_cliente,
           amount: vt,
@@ -412,9 +418,9 @@ export default function Transactions() {
   // ─── Kommo live calc ───
   const kommoCalc = useMemo(() => {
     if (form.perfil !== 'kommo') return null
-    const vt = parseFloat(form.valor_total_assinatura)
-    const vl = parseFloat(form.valor_liquido)
-    const pct = parseFloat(form.divisao_socio_pct) || 0
+    const vt = parseBR(form.valor_total_assinatura)
+    const vl = parseBR(form.valor_liquido)
+    const pct = parseBR(form.divisao_socio_pct) || 0
     if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0 && vl < vt) {
       return calcKommo(vt, vl, pct)
     }
@@ -874,7 +880,7 @@ export default function Transactions() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="tx-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
-                  <input id="tx-amount" type="number" required min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="tx-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
                   <label htmlFor="tx-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
@@ -911,11 +917,11 @@ export default function Transactions() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="emp-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor total (R$)</label>
-                  <input id="emp-amount" type="number" required min="0.01" step="0.01" value={form.amount} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="emp-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
                   <label htmlFor="emp-divisao" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (R$)</label>
-                  <input id="emp-divisao" type="number" min="0" step="0.01" value={form.divisao_socio} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, divisao_socio: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="emp-divisao" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, divisao_socio: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -960,17 +966,17 @@ export default function Transactions() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor total assinatura (R$)</label>
-                  <input id="kommo-vt" type="number" required min="0.01" step="0.01" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
                   <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido (R$)</label>
-                  <input id="kommo-vl" type="number" required min="0.01" step="0.01" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="kommo-vl" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
-                  <input id="kommo-socio-pct" type="number" min="0" max="100" step="0.01" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
                   <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
