@@ -32,6 +32,7 @@ export interface Transaction {
   valor_pago_kommo?: number | null
   divisao_socio_pct?: number | null
   apenas_usuario_adicional?: boolean | null
+  lancamento_simplificado?: boolean | null
 }
 
 export interface EmpresarialConfig {

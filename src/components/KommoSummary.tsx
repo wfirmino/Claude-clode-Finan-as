@@ -13,17 +13,21 @@ export default function KommoSummary({ transactions, mes }: Props) {
     let assinaturasC = 0, taxasC = 0, valorKommoC = 0, liquidaC = 0, socioC = 0, finalC = 0
     for (const t of transactions) {
       const vtC = c(t.valor_total_assinatura ?? 0)
-      const vlC = c(t.valor_liquido ?? 0)
-      const vkC = c(t.valor_pago_kommo ?? 0)
-      const pct = t.divisao_socio_pct ?? 0
-      const tLiqC = vlC - vkC
-      const tSocioC = Math.round(tLiqC * pct / 100)
       assinaturasC += vtC
-      taxasC += vtC - vlC
-      valorKommoC += vkC
-      liquidaC += tLiqC
-      socioC += tSocioC
-      finalC += tLiqC - tSocioC
+      if (t.lancamento_simplificado) {
+        finalC += vtC
+      } else {
+        const vlC = c(t.valor_liquido ?? 0)
+        const vkC = c(t.valor_pago_kommo ?? 0)
+        const pct = t.divisao_socio_pct ?? 0
+        const tLiqC = vlC - vkC
+        const tSocioC = Math.round(tLiqC * pct / 100)
+        taxasC += vtC - vlC
+        valorKommoC += vkC
+        liquidaC += tLiqC
+        socioC += tSocioC
+        finalC += tLiqC - tSocioC
+      }
     }
     return {
       assinaturas: assinaturasC / 100,

@@ -44,6 +44,7 @@ interface FormStateKommo {
   nome_cliente: string
   nome_empresa: string
   apenas_usuario_adicional: boolean
+  lancamento_simplificado: boolean
   plano: string           // '3'|'6'|'9'|'12'|'24'
   num_usuarios: string
   valor_total_assinatura: string
@@ -65,7 +66,7 @@ function defaultFormForPerfil(perfil: Perfil): FormState {
   if (perfil === 'empresarial') {
     return { perfil: 'empresarial', nome_cliente: '', nome_empresa: '', amount: '', divisao_socio: '', type: 'income', date: today, category_id: '', category_display_name: '' }
   }
-  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', valor_pago_kommo: '', divisao_socio_pct: '', date: today }
+  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, lancamento_simplificado: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', valor_pago_kommo: '', divisao_socio_pct: '', date: today }
 }
 
 function calcKommo(vt: number, vl: number, vk: number, pct: number) {
@@ -223,14 +224,18 @@ export default function Transactions() {
     let assinaturasC = 0, liquidoC = 0, finalC = 0
     for (const t of transactions) {
       const vtC = c(t.valor_total_assinatura ?? 0)
-      const vlC = c(t.valor_liquido ?? 0)
-      const vkC = c(t.valor_pago_kommo ?? 0)
-      const pct = t.divisao_socio_pct ?? 0
-      const liquidaC = vlC - vkC
-      const socioC = Math.round(liquidaC * pct / 100)
       assinaturasC += vtC
-      liquidoC += vlC
-      finalC += liquidaC - socioC
+      if (t.lancamento_simplificado) {
+        finalC += vtC
+      } else {
+        const vlC = c(t.valor_liquido ?? 0)
+        const vkC = c(t.valor_pago_kommo ?? 0)
+        const pct = t.divisao_socio_pct ?? 0
+        const liquidaC = vlC - vkC
+        const socioC = Math.round(liquidaC * pct / 100)
+        liquidoC += vlC
+        finalC += liquidaC - socioC
+      }
     }
     return { totalAssinaturas: assinaturasC / 100, totalLiquido: liquidoC / 100, valorFinal: finalC / 100, count: transactions.length }
   }, [transactions, activePerfil])
@@ -297,6 +302,7 @@ export default function Transactions() {
         nome_cliente: t.nome_cliente ?? t.title,
         nome_empresa: t.nome_empresa ?? '',
         apenas_usuario_adicional: t.apenas_usuario_adicional ?? false,
+        lancamento_simplificado: t.lancamento_simplificado ?? false,
         plano: String(t.plano ?? 12),
         num_usuarios: String(t.num_usuarios ?? ''),
         valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
@@ -401,17 +407,23 @@ export default function Transactions() {
       } else {
         // Kommo
         const vt = parseBR(form.valor_total_assinatura)
-        const vl = parseBR(form.valor_liquido)
-        const vk = parseBR(form.valor_pago_kommo)
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
-        if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
-        if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
-        if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
-        if (vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
         const rawPlano = parseInt(form.plano)
         const rawNumUsuarios = parseInt(form.num_usuarios)
-        const rawDivisaoSocioPct = parseBR(form.divisao_socio_pct)
+        let vl: number | null = null
+        let vk: number | null = null
+        let rawDivisaoSocioPct: number | null = null
+        if (!form.lancamento_simplificado) {
+          vl = parseBR(form.valor_liquido)
+          vk = parseBR(form.valor_pago_kommo)
+          if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
+          if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
+          if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
+          if (vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
+          const raw = parseBR(form.divisao_socio_pct)
+          rawDivisaoSocioPct = isNaN(raw) ? null : raw
+        }
         const values = {
           title: form.nome_cliente,
           amount: vt,
@@ -420,13 +432,14 @@ export default function Transactions() {
           perfil: 'kommo' as const,
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
+          lancamento_simplificado: form.lancamento_simplificado,
           apenas_usuario_adicional: form.apenas_usuario_adicional,
           plano: form.apenas_usuario_adicional ? null : (isNaN(rawPlano) ? null : rawPlano),
           num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
           valor_total_assinatura: vt,
-          valor_liquido: vl,
-          valor_pago_kommo: vk,
-          divisao_socio_pct: isNaN(rawDivisaoSocioPct) ? null : rawDivisaoSocioPct,
+          valor_liquido: form.lancamento_simplificado ? null : vl,
+          valor_pago_kommo: form.lancamento_simplificado ? null : vk,
+          divisao_socio_pct: form.lancamento_simplificado ? null : rawDivisaoSocioPct,
           category_id: null,
         }
         if (modal.editing) {
@@ -458,6 +471,7 @@ export default function Transactions() {
   // ─── Kommo live calc ───
   const kommoCalc = useMemo(() => {
     if (form.perfil !== 'kommo') return null
+    if (form.lancamento_simplificado) return null
     const vt = parseBR(form.valor_total_assinatura)
     const vl = parseBR(form.valor_liquido)
     const vk = parseBR(form.valor_pago_kommo)
@@ -1035,80 +1049,119 @@ export default function Transactions() {
                 <input id="kommo-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
 
-              {/* Toggle: apenas usuário adicional */}
+              {/* Toggle: lançamento simplificado */}
               <label className="flex items-center gap-2.5 cursor-pointer select-none">
                 <div className="relative">
                   <input
                     type="checkbox"
                     className="sr-only peer"
-                    checked={form.apenas_usuario_adicional}
-                    onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, apenas_usuario_adicional: e.target.checked } : f)}
+                    checked={form.lancamento_simplificado}
+                    onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, lancamento_simplificado: e.target.checked } : f)}
                   />
-                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-amber-500 transition-colors" />
                   <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Apenas usuário adicional</span>
-                {form.apenas_usuario_adicional && (
-                  <span className="text-xs text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">Sem plano novo</span>
+                <span className="text-sm font-medium text-gray-700">Lançamento simplificado</span>
+                {form.lancamento_simplificado && (
+                  <span className="text-xs text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded-full">Sem cálculo</span>
                 )}
               </label>
 
-              <div className="grid grid-cols-2 gap-4">
-                {!form.apenas_usuario_adicional && (
-                  <div>
-                    <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
-                    <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                      {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
-                    </select>
+              {/* Toggle: apenas usuário adicional — oculto no modo simplificado */}
+              {!form.lancamento_simplificado && (
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={form.apenas_usuario_adicional}
+                      onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, apenas_usuario_adicional: e.target.checked } : f)}
+                    />
+                    <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+                    <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                   </div>
-                )}
-                <div className={form.apenas_usuario_adicional ? 'col-span-2' : ''}>
-                  <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 mb-1">Nº de usuários</label>
-                  <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor total assinatura (R$)</label>
-                  <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-                <div>
-                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Líquido pós-taxas (R$)</label>
-                  <input id="kommo-vl" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 mb-1">Valor pago ao Kommo (R$)</label>
-                <input id="kommo-vk" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
-                  <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-                <div>
-                  <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                  <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
-              </div>
+                  <span className="text-sm font-medium text-gray-700">Apenas usuário adicional</span>
+                  {form.apenas_usuario_adicional && (
+                    <span className="text-xs text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">Sem plano novo</span>
+                  )}
+                </label>
+              )}
 
-              {/* Live calculation panel */}
-              {kommoCalc && (
-                <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1.5">
-                  <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
-                  {[
-                    ['Taxa maquininha', kommoCalc.taxa],
-                    ['Valor pago ao Kommo', kommoCalc.valorKommo],
-                    ['Comissão líquida', kommoCalc.liquida],
-                    ['Parte do sócio', kommoCalc.socio],
-                    ['Valor final (seu)', kommoCalc.final],
-                  ].map(([label, value]) => (
-                    <div key={label as string} className="flex justify-between text-xs">
-                      <span className="text-gray-600">{label as string}</span>
-                      <span className="font-medium tabular-nums text-purple-700">{formatCurrency(value as number)}</span>
+              {/* Plano + Nº usuários — oculto no modo simplificado */}
+              {!form.lancamento_simplificado && (
+                <div className="grid grid-cols-2 gap-4">
+                  {!form.apenas_usuario_adicional && (
+                    <div>
+                      <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
+                      <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
+                      </select>
                     </div>
-                  ))}
+                  )}
+                  <div className={form.apenas_usuario_adicional ? 'col-span-2' : ''}>
+                    <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 mb-1">Nº de usuários</label>
+                    <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
                 </div>
+              )}
+
+              {/* Valor total assinatura + Líquido pós-taxas */}
+              {form.lancamento_simplificado ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor recebido (R$)</label>
+                    <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
+                  <div>
+                    <label htmlFor="kommo-date-s" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                    <input id="kommo-date-s" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor total assinatura (R$)</label>
+                      <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Líquido pós-taxas (R$)</label>
+                      <input id="kommo-vl" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 mb-1">Valor pago ao Kommo (R$)</label>
+                    <input id="kommo-vk" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
+                      <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                      <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    </div>
+                  </div>
+                  {/* Live calculation panel */}
+                  {kommoCalc && (
+                    <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1.5">
+                      <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
+                      {[
+                        ['Taxa maquininha', kommoCalc.taxa],
+                        ['Valor pago ao Kommo', kommoCalc.valorKommo],
+                        ['Comissão líquida', kommoCalc.liquida],
+                        ['Parte do sócio', kommoCalc.socio],
+                        ['Valor final (seu)', kommoCalc.final],
+                      ].map(([label, value]) => (
+                        <div key={label as string} className="flex justify-between text-xs">
+                          <span className="text-gray-600">{label as string}</span>
+                          <span className="font-medium tabular-nums text-purple-700">{formatCurrency(value as number)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}
