@@ -9,24 +9,23 @@ interface Props {
 
 export default function KommoSummary({ transactions, mes }: Props) {
   const totals = useMemo(() => {
-    let assinaturas = 0, taxas = 0, kommo65 = 0, bruta35 = 0, liquida = 0, socio = 0, final = 0
+    let assinaturas = 0, taxas = 0, valorKommo = 0, liquida = 0, socio = 0, final = 0
     for (const t of transactions) {
       const vt = t.valor_total_assinatura ?? 0
       const vl = t.valor_liquido ?? 0
+      const vk = t.valor_pago_kommo ?? 0
       const pct = t.divisao_socio_pct ?? 0
       const taxa = vt - vl
-      const b = vt * 0.35
-      const liq = b - taxa
+      const liq = vl - vk
       const s = liq * pct / 100
       assinaturas += vt
       taxas += taxa
-      kommo65 += vt * 0.65
-      bruta35 += b
+      valorKommo += vk
       liquida += liq
       socio += s
       final += liq - s
     }
-    return { assinaturas, taxas, kommo65, bruta35, liquida, socio, final }
+    return { assinaturas, taxas, valorKommo, liquida, socio, final }
   }, [transactions])
 
   const row = (label: string, value: number, highlight = false) => (
@@ -42,8 +41,7 @@ export default function KommoSummary({ transactions, mes }: Props) {
       <div className="divide-y divide-purple-100">
         {row('Total de assinaturas', totals.assinaturas)}
         {row('Total taxas maquininha', totals.taxas)}
-        {row('Total comissão Kommo (65%)', totals.kommo65)}
-        {row('Total comissão bruta (35%)', totals.bruta35)}
+        {row('Total pago ao Kommo', totals.valorKommo)}
         {row('Total comissão líquida', totals.liquida)}
         {row('Total pago ao sócio', totals.socio)}
         {row('Total final do usuário', totals.final, true)}

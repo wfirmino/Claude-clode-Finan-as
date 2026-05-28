@@ -48,6 +48,7 @@ interface FormStateKommo {
   num_usuarios: string
   valor_total_assinatura: string
   valor_liquido: string
+  valor_pago_kommo: string
   divisao_socio_pct: string
   date: string
 }
@@ -64,15 +65,14 @@ function defaultFormForPerfil(perfil: Perfil): FormState {
   if (perfil === 'empresarial') {
     return { perfil: 'empresarial', nome_cliente: '', nome_empresa: '', amount: '', divisao_socio: '', type: 'income', date: today, category_id: '', category_display_name: '' }
   }
-  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', divisao_socio_pct: '', date: today }
+  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', valor_pago_kommo: '', divisao_socio_pct: '', date: today }
 }
 
-function calcKommo(vt: number, vl: number, pct: number) {
+function calcKommo(vt: number, vl: number, vk: number, pct: number) {
   const taxa = vt - vl
-  const bruta = vt * 0.35
-  const liquida = bruta - taxa
+  const liquida = vl - vk
   const socio = liquida * pct / 100
-  return { taxa, kommo65: vt * 0.65, bruta, liquida, socio, final: liquida - socio }
+  return { taxa, valorKommo: vk, liquida, socio, final: liquida - socio }
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -275,6 +275,7 @@ export default function Transactions() {
         num_usuarios: String(t.num_usuarios ?? ''),
         valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
         valor_liquido: numToStr(t.valor_liquido),
+        valor_pago_kommo: numToStr(t.valor_pago_kommo),
         divisao_socio_pct: t.divisao_socio_pct != null ? String(t.divisao_socio_pct).replace('.', ',') : '',
         date: t.date,
       })
@@ -375,10 +376,13 @@ export default function Transactions() {
         // Kommo
         const vt = parseBR(form.valor_total_assinatura)
         const vl = parseBR(form.valor_liquido)
+        const vk = parseBR(form.valor_pago_kommo)
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
         if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
         if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
+        if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
+        if (vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
         const rawPlano = parseInt(form.plano)
         const rawNumUsuarios = parseInt(form.num_usuarios)
         const rawDivisaoSocioPct = parseBR(form.divisao_socio_pct)
@@ -395,6 +399,7 @@ export default function Transactions() {
           num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
           valor_total_assinatura: vt,
           valor_liquido: vl,
+          valor_pago_kommo: vk,
           divisao_socio_pct: isNaN(rawDivisaoSocioPct) ? null : rawDivisaoSocioPct,
           category_id: null,
         }
@@ -429,9 +434,10 @@ export default function Transactions() {
     if (form.perfil !== 'kommo') return null
     const vt = parseBR(form.valor_total_assinatura)
     const vl = parseBR(form.valor_liquido)
+    const vk = parseBR(form.valor_pago_kommo)
     const pct = parseBR(form.divisao_socio_pct) || 0
-    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0 && vl < vt) {
-      return calcKommo(vt, vl, pct)
+    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0 && vl < vt && !isNaN(vk) && vk >= 0 && vk < vl) {
+      return calcKommo(vt, vl, vk, pct)
     }
     return null
   }, [form])
@@ -1004,9 +1010,13 @@ export default function Transactions() {
                   <input id="kommo-vt" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido (R$)</label>
+                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido / InfinityPay (R$)</label>
                   <input id="kommo-vl" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
+              </div>
+              <div>
+                <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 mb-1">Valor pago ao Kommo (R$)</label>
+                <input id="kommo-vk" type="text" inputMode="decimal" required placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1025,8 +1035,7 @@ export default function Transactions() {
                   <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
                   {[
                     ['Taxa maquininha', kommoCalc.taxa],
-                    ['Kommo 65%', kommoCalc.kommo65],
-                    ['Comissão bruta 35%', kommoCalc.bruta],
+                    ['Valor pago ao Kommo', kommoCalc.valorKommo],
                     ['Comissão líquida', kommoCalc.liquida],
                     ['Parte do sócio', kommoCalc.socio],
                     ['Valor final (seu)', kommoCalc.final],

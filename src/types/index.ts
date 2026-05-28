@@ -29,6 +29,7 @@ export interface Transaction {
   num_usuarios?: number | null
   valor_total_assinatura?: number | null
   valor_liquido?: number | null
+  valor_pago_kommo?: number | null
   divisao_socio_pct?: number | null
   apenas_usuario_adicional?: boolean | null
 }
