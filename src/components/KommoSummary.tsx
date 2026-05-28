@@ -9,9 +9,8 @@ interface Props {
 
 export default function KommoSummary({ transactions, mes }: Props) {
   const totals = useMemo(() => {
-    const txsMes = transactions.filter(t => t.date.startsWith(mes))
     let assinaturas = 0, taxas = 0, kommo65 = 0, bruta35 = 0, liquida = 0, socio = 0, final = 0
-    for (const t of txsMes) {
+    for (const t of transactions) {
       const vt = t.valor_total_assinatura ?? 0
       const vl = t.valor_liquido ?? 0
       const pct = t.divisao_socio_pct ?? 0
@@ -28,7 +27,7 @@ export default function KommoSummary({ transactions, mes }: Props) {
       final += liq - s
     }
     return { assinaturas, taxas, kommo65, bruta35, liquida, socio, final }
-  }, [transactions, mes])
+  }, [transactions])
 
   const row = (label: string, value: number, highlight = false) => (
     <div key={label} className={`flex justify-between items-center py-2 ${highlight ? 'font-semibold' : 'text-gray-600'}`}>
