@@ -37,25 +37,25 @@ export function useTransactions(filters: TransactionFilters = {}) {
   useEffect(() => { fetchAll() }, [fetchAll])
 
   async function createTransaction(values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').insert({ ...values, user_id: session.user.id })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').insert({ ...values, user_id: user.id })
     if (error) throw error
     await fetchAll()
   }
 
   async function updateTransaction(id: string, values: Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>) {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').update(values).eq('id', id).eq('user_id', session.user.id)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').update(values).eq('id', id).eq('user_id', user.id)
     if (error) throw error
     await fetchAll()
   }
 
   async function deleteTransaction(id: string) {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user) throw new Error('Não autenticado')
-    const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', session.user.id)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase.from('transactions').delete().eq('id', id).eq('user_id', user.id)
     if (error) throw error
     await fetchAll()
   }

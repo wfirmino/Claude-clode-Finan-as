@@ -191,7 +191,7 @@ function getDateRange(preset: DatePreset): { startDate?: string; endDate?: strin
 export default function Transactions() {
   // Profile
   const [activePerfil, setActivePerfil] = useState<Perfil>('pessoal')
-  const currentMes = new Date().toISOString().slice(0, 7)
+  const currentMes = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` })()
 
   // Filters
   const [datePreset, setDatePreset] = useState<DatePreset>('thisMonth')
@@ -476,9 +476,9 @@ export default function Transactions() {
           const vkRaw = parseBR(form.valor_pago_kommo)
           vk = (!isNaN(vkRaw) && vkRaw >= 0) ? vkRaw : null
           const raw = parseBR(form.divisao_socio_pct)
-          rawDivisaoSocioPct = isNaN(raw) ? null : raw
+          rawDivisaoSocioPct = form.sem_comissao ? null : (isNaN(raw) ? null : raw)
           const vlrRaw = parseBR(form.valor_liquido_recebido)
-          rawValorLiquidoRecebido = (!isNaN(vlrRaw) && vlrRaw >= 0) ? vlrRaw : null
+          rawValorLiquidoRecebido = !form.sem_comissao && (!isNaN(vlrRaw) && vlrRaw >= 0) ? vlrRaw : null
         } else {
           if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
           if (form.forma_pagamento === 'pix') {
@@ -510,10 +510,10 @@ export default function Transactions() {
           forma_pagamento: form.forma_pagamento,
           apenas_usuario_adicional: form.apenas_usuario_adicional,
           plano: (form.lancamento_simplificado || form.apenas_usuario_adicional) ? null : (isNaN(rawPlano) ? null : rawPlano),
-          num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
+          num_usuarios: form.lancamento_simplificado ? null : (isNaN(rawNumUsuarios) ? null : rawNumUsuarios),
           valor_total_assinatura: vt,
           valor_liquido: vl,
-          valor_pago_kommo: vk,
+          valor_pago_kommo: form.sem_comissao ? null : vk,
           divisao_socio_pct: rawDivisaoSocioPct,
           valor_liquido_recebido: rawValorLiquidoRecebido,
           category_id: null,
