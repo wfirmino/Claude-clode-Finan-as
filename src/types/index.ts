@@ -34,6 +34,8 @@ export interface Transaction {
   valor_liquido_recebido?: number | null
   apenas_usuario_adicional?: boolean | null
   lancamento_simplificado?: boolean | null
+  sem_comissao?: boolean | null
+  forma_pagamento?: string | null
 }
 
 export interface EmpresarialConfig {

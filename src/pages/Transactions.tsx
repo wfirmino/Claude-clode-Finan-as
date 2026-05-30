@@ -4,7 +4,7 @@ import { useCategories } from '../hooks/useCategories'
 import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import type { Transaction, DatePreset, Perfil } from '../types'
 import { formatCurrency, formatDate } from '../utils/formatters'
-import { getErrorMessage } from '../utils/errors'
+import { getErrorMessage, isCheckConstraintError } from '../utils/errors'
 import Toast from '../components/Toast'
 import Modal from '../components/Modal'
 import CategoryPicker from '../components/CategoryPicker'
@@ -45,6 +45,8 @@ interface FormStateKommo {
   nome_empresa: string
   apenas_usuario_adicional: boolean
   lancamento_simplificado: boolean
+  sem_comissao: boolean
+  forma_pagamento: 'cartao' | 'pix'
   plano: string           // '3'|'6'|'9'|'12'|'24'
   num_usuarios: string
   valor_total_assinatura: string
@@ -67,7 +69,7 @@ function defaultFormForPerfil(perfil: Perfil): FormState {
   if (perfil === 'empresarial') {
     return { perfil: 'empresarial', nome_cliente: '', nome_empresa: '', amount: '', divisao_socio: '', type: 'income', date: today, category_id: '', category_display_name: '' }
   }
-  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, lancamento_simplificado: false, plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', valor_pago_kommo: '', divisao_socio_pct: '', valor_liquido_recebido: '', date: today }
+  return { perfil: 'kommo', nome_cliente: '', nome_empresa: '', apenas_usuario_adicional: false, lancamento_simplificado: false, sem_comissao: false, forma_pagamento: 'cartao', plano: '12', num_usuarios: '', valor_total_assinatura: '', valor_liquido: '', valor_pago_kommo: '', divisao_socio_pct: '', valor_liquido_recebido: '', date: today }
 }
 
 function calcKommo(vt: number, vl: number, vk: number, pct: number) {
@@ -243,6 +245,7 @@ export default function Transactions() {
     for (const t of transactions) {
       const vtC = c(t.valor_total_assinatura ?? 0)
       assinaturasC += vtC
+      if (t.sem_comissao) continue
       if (t.lancamento_simplificado) {
         finalC += vtC
       } else {
@@ -321,6 +324,8 @@ export default function Transactions() {
         nome_empresa: t.nome_empresa ?? '',
         apenas_usuario_adicional: t.apenas_usuario_adicional ?? false,
         lancamento_simplificado: t.lancamento_simplificado ?? false,
+        sem_comissao: t.sem_comissao ?? false,
+        forma_pagamento: (t.forma_pagamento === 'pix' ? 'pix' : 'cartao') as 'cartao' | 'pix',
         plano: String(t.plano ?? 12),
         num_usuarios: String(t.num_usuarios ?? ''),
         valor_total_assinatura: numToStr(t.valor_total_assinatura ?? t.amount),
@@ -443,10 +448,14 @@ export default function Transactions() {
           rawValorLiquidoRecebido = (!isNaN(vlrRaw) && vlrRaw >= 0) ? vlrRaw : null
         } else {
           if (isNaN(vt) || vt <= 0) { showToast('Informe um valor total de assinatura válido.', 'error'); return }
-          vl = parseBR(form.valor_liquido)
+          if (form.forma_pagamento === 'pix') {
+            vl = vt
+          } else {
+            const vlRaw = parseBR(form.valor_liquido)
+            vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : vt
+            if (vl > vt) { showToast('Valor líquido não pode ser maior que o valor total da assinatura.', 'error'); return }
+          }
           vk = parseBR(form.valor_pago_kommo)
-          if (isNaN(vl) || vl <= 0) { showToast('Informe um valor líquido válido.', 'error'); return }
-          if (vl >= vt) { showToast('Valor líquido deve ser menor que o valor total da assinatura.', 'error'); return }
           if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
           if (vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
           const raw = parseBR(form.divisao_socio_pct)
@@ -463,6 +472,8 @@ export default function Transactions() {
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
           lancamento_simplificado: form.lancamento_simplificado,
+          sem_comissao: form.sem_comissao,
+          forma_pagamento: form.forma_pagamento,
           apenas_usuario_adicional: form.apenas_usuario_adicional,
           plano: form.apenas_usuario_adicional ? null : (isNaN(rawPlano) ? null : rawPlano),
           num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
@@ -483,7 +494,11 @@ export default function Transactions() {
       }
       closeModal()
     } catch (err) {
-      showToast(getErrorMessage(err), 'error')
+      if (isCheckConstraintError(err, 'transactions_amount_check')) {
+        showToast('Informe o Valor total da assinatura antes de criar a transação.', 'error')
+      } else {
+        showToast(getErrorMessage(err), 'error')
+      }
     } finally {
       setSubmitting(false)
     }
@@ -503,14 +518,23 @@ export default function Transactions() {
   const kommoCalc = useMemo(() => {
     if (form.perfil !== 'kommo') return null
     const vt = parseBR(form.valor_total_assinatura)
-    const vl = parseBR(form.valor_liquido)
-    if (!isNaN(vt) && vt > 0 && !isNaN(vl) && vl > 0 && vl < vt) {
-      const vkRaw = parseBR(form.valor_pago_kommo)
-      const vk = (!isNaN(vkRaw) && vkRaw >= 0) ? vkRaw : 0
-      const pct = parseBR(form.divisao_socio_pct) || 0
-      return calcKommo(vt, vl, vk, pct)
+    if (isNaN(vt) || vt <= 0) return null
+    let vl: number
+    if (form.forma_pagamento === 'pix') {
+      vl = vt
+    } else {
+      const vlRaw = parseBR(form.valor_liquido)
+      vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : vt
     }
-    return null
+    if (vl > vt) return null
+    const vkRaw = parseBR(form.valor_pago_kommo)
+    const vk = (!isNaN(vkRaw) && vkRaw >= 0) ? vkRaw : 0
+    const taxa = Math.round(vt * 100 - vl * 100) / 100
+    if (form.sem_comissao) {
+      return { taxa, valorKommo: vk, liquida: 0, socio: 0, final: 0 }
+    }
+    const pct = parseBR(form.divisao_socio_pct) || 0
+    return calcKommo(vt, vl, vk, pct)
   }, [form])
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -906,6 +930,9 @@ export default function Transactions() {
                     {t.apenas_usuario_adicional && (
                       <span className="ml-2 text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">Usr. adicional</span>
                     )}
+                    {t.sem_comissao && (
+                      <span className="ml-2 text-xs font-medium text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full">Sem comissão</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-gray-500">{t.categories?.name ?? '—'}</td>
                   <td className="px-6 py-4">
@@ -1098,6 +1125,24 @@ export default function Transactions() {
                 )}
               </label>
 
+              {/* Toggle: sem comissão */}
+              <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={form.sem_comissao}
+                    onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, sem_comissao: e.target.checked } : f)}
+                  />
+                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-rose-500 transition-colors" />
+                  <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
+                </div>
+                <span className="text-sm font-medium text-gray-700">Sem comissão</span>
+                {form.sem_comissao && (
+                  <span className="text-xs text-rose-700 font-medium bg-rose-50 px-2 py-0.5 rounded-full">Repasse direto</span>
+                )}
+              </label>
+
               {/* Toggle: apenas usuário adicional — oculto no modo simplificado */}
               {!form.lancamento_simplificado && (
                 <label className="flex items-center gap-2.5 cursor-pointer select-none">
@@ -1136,6 +1181,23 @@ export default function Transactions() {
                 </div>
               )}
 
+              {/* Forma de pagamento */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Forma de pagamento</label>
+                <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                  {(['cartao', 'pix'] as const).map(fp => (
+                    <button
+                      key={fp}
+                      type="button"
+                      onClick={() => setForm(f => f.perfil === 'kommo' ? { ...f, forma_pagamento: fp } : f)}
+                      className={`flex-1 py-1.5 text-sm font-medium transition-colors ${form.forma_pagamento === fp ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      {fp === 'cartao' ? 'Cartão' : 'Pix'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Valor total assinatura + Líquido pós-taxas */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -1144,39 +1206,52 @@ export default function Transactions() {
                 </div>
                 <div>
                   <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Líquido pós-taxas (R$)</label>
-                  <input id="kommo-vl" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_liquido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <input
+                    id="kommo-vl"
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="Deixe vazio se não houver taxa (ex: Pix)"
+                    value={form.forma_pagamento === 'pix' ? form.valor_total_assinatura : form.valor_liquido}
+                    disabled={form.forma_pagamento === 'pix'}
+                    onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)}
+                    className={`w-full rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 ${form.forma_pagamento === 'pix' ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed' : 'border-gray-300'}`}
+                  />
                 </div>
               </div>
               <div>
                 <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 mb-1">Valor pago ao Kommo (R$)</label>
                 <input id="kommo-vk" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
-                  <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0 se não houver sócio" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
-                </div>
+              <div className={`grid gap-4 ${form.sem_comissao ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                {!form.sem_comissao && (
+                  <div>
+                    <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
+                    <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0 se não houver sócio" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  </div>
+                )}
                 <div>
                   <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
                   <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
-              {form.lancamento_simplificado && (
+              {form.lancamento_simplificado && !form.sem_comissao && (
                 <div>
                   <label htmlFor="kommo-vlr" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido recebido (R$)</label>
                   <input id="kommo-vlr" type="text" inputMode="decimal" placeholder="0,00" value={form.valor_liquido_recebido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido_recebido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               )}
-              {/* Live calculation panel — only when all required values are present (normal mode) */}
+              {/* Live calculation panel */}
               {kommoCalc && (
                 <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1.5">
                   <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
                   {[
                     ['Taxa maquininha', kommoCalc.taxa],
                     ['Valor pago ao Kommo', kommoCalc.valorKommo],
-                    ['Comissão líquida', kommoCalc.liquida],
-                    ['Parte do sócio', kommoCalc.socio],
-                    ['Valor final (seu)', kommoCalc.final],
+                    ...(!form.sem_comissao ? [
+                      ['Comissão líquida', kommoCalc.liquida] as [string, number],
+                      ['Parte do sócio', kommoCalc.socio] as [string, number],
+                      ['Valor final (seu)', kommoCalc.final] as [string, number],
+                    ] : []),
                   ].map(([label, value]) => (
                     <div key={label as string} className="flex justify-between text-xs">
                       <span className="text-gray-600">{label as string}</span>

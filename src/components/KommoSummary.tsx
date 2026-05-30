@@ -14,6 +14,7 @@ export default function KommoSummary({ transactions, mes }: Props) {
     for (const t of transactions) {
       const vtC = c(t.valor_total_assinatura ?? 0)
       assinaturasC += vtC
+      if (t.sem_comissao) continue
       if (t.lancamento_simplificado) {
         finalC += vtC
       } else {
