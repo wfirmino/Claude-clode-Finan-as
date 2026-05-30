@@ -31,6 +31,7 @@ export interface Transaction {
   valor_liquido?: number | null
   valor_pago_kommo?: number | null
   divisao_socio_pct?: number | null
+  valor_liquido_recebido?: number | null
   apenas_usuario_adicional?: boolean | null
   lancamento_simplificado?: boolean | null
 }
