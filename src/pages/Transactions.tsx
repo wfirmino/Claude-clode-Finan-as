@@ -438,6 +438,7 @@ export default function Transactions() {
           nome_cliente: form.nome_cliente,
           nome_empresa: form.nome_empresa || null,
           divisao_socio: (() => { const v = parseBR(form.divisao_socio); return isNaN(v) ? null : v })(),
+          notes: null,
         }
         if (modal.editing) {
           await updateTransaction(modal.editing.id, values)
@@ -501,6 +502,7 @@ export default function Transactions() {
           divisao_socio_pct: rawDivisaoSocioPct,
           valor_liquido_recebido: rawValorLiquidoRecebido,
           category_id: null,
+          notes: null,
         }
         if (modal.editing) {
           await updateTransaction(modal.editing.id, values)
