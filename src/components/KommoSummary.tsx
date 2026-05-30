@@ -4,18 +4,22 @@ import { formatCurrency } from '../utils/formatters'
 
 interface Props {
   transactions: Transaction[]
-  mes: string
+  periodo: string
 }
 
-export default function KommoSummary({ transactions, mes }: Props) {
+export default function KommoSummary({ transactions, periodo }: Props) {
   const totals = useMemo(() => {
     const c = (n: number) => Math.round(n * 100)
-    let assinaturasC = 0, taxasC = 0, valorKommoC = 0, liquidaC = 0, socioC = 0, finalC = 0
+    let assinaturasC = 0, taxasC = 0, valorKommoC = 0, liquidaC = 0, socioC = 0, finalC = 0, semComissaoC = 0
     for (const t of transactions) {
       const vtC = c(t.valor_total_assinatura ?? 0)
       assinaturasC += vtC
-      if (t.sem_comissao) continue
+      if (t.sem_comissao) {
+        semComissaoC += vtC
+        continue
+      }
       if (t.lancamento_simplificado) {
+        liquidaC += vtC
         finalC += vtC
       } else {
         const vlC = c(t.valor_liquido ?? 0)
@@ -37,6 +41,7 @@ export default function KommoSummary({ transactions, mes }: Props) {
       liquida: liquidaC / 100,
       socio: socioC / 100,
       final: finalC / 100,
+      semComissao: semComissaoC / 100,
     }
   }, [transactions])
 
@@ -49,9 +54,10 @@ export default function KommoSummary({ transactions, mes }: Props) {
 
   return (
     <div className="bg-purple-50 border border-purple-100 rounded-xl p-4 mb-6">
-      <h3 className="text-sm font-semibold text-purple-700 mb-3">Resumo Kommo — {mes}</h3>
+      <h3 className="text-sm font-semibold text-purple-700 mb-3">Resumo Kommo — {periodo}</h3>
       <div className="divide-y divide-purple-100">
         {row('Total de assinaturas', totals.assinaturas)}
+        {totals.semComissao > 0 && row('Repasses diretos (sem comissão)', totals.semComissao)}
         {row('Total taxas maquininha', totals.taxas)}
         {row('Total pago ao Kommo', totals.valorKommo)}
         {row('Total comissão líquida', totals.liquida)}

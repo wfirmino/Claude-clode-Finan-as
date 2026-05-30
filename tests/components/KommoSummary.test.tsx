@@ -20,13 +20,13 @@ const tx1: Transaction = {
 // final = 310 - 155 = 155
 
 describe('KommoSummary', () => {
-  it('renders the summary heading', () => {
-    render(<KommoSummary transactions={[tx1]} mes="2026-05" />)
-    expect(screen.getByText(/resumo kommo/i)).toBeInTheDocument()
+  it('renders the summary heading with the periodo label', () => {
+    render(<KommoSummary transactions={[tx1]} periodo="Este mês" />)
+    expect(screen.getByText(/resumo kommo — este mês/i)).toBeInTheDocument()
   })
 
   it('renders all summary row labels', () => {
-    render(<KommoSummary transactions={[tx1]} mes="2026-05" />)
+    render(<KommoSummary transactions={[tx1]} periodo="Este mês" />)
     expect(screen.getByText(/total de assinaturas/i)).toBeInTheDocument()
     expect(screen.getByText(/total taxas maquininha/i)).toBeInTheDocument()
     expect(screen.getByText(/total comissão líquida/i)).toBeInTheDocument()
@@ -42,20 +42,17 @@ describe('KommoSummary', () => {
       valor_liquido: 1900,
       divisao_socio_pct: 40,
     }
-    // tx2: taxa=100, bruta=700, liquida=600, socio=240, final=360
-    // combined: assinaturas=3000
-    render(<KommoSummary transactions={[tx1, tx2]} mes="2026-05" />)
+    render(<KommoSummary transactions={[tx1, tx2]} periodo="Este mês" />)
     expect(screen.getByText(/resumo kommo/i)).toBeInTheDocument()
   })
 
-  it('only includes transactions from the given month', () => {
-    const txOtherMonth: Transaction = {
-      id: '3', user_id: 'u1', category_id: null, title: 'Out of month',
-      amount: 9999, type: 'income', date: '2026-04-01', notes: null, created_at: '',
-      perfil: 'kommo', valor_total_assinatura: 9999, valor_liquido: 9000, divisao_socio_pct: 50,
+  it('shows "Repasses diretos" row when sem_comissao transactions exist', () => {
+    const txSemComissao: Transaction = {
+      id: '3', user_id: 'u1', category_id: null, title: 'Repasse',
+      amount: 500, type: 'income', date: '2026-05-15', notes: null, created_at: '',
+      perfil: 'kommo', valor_total_assinatura: 500, sem_comissao: true,
     }
-    render(<KommoSummary transactions={[tx1, txOtherMonth]} mes="2026-05" />)
-    // Only tx1 should be included — we can verify the heading renders fine
-    expect(screen.getByText(/resumo kommo/i)).toBeInTheDocument()
+    render(<KommoSummary transactions={[tx1, txSemComissao]} periodo="Este mês" />)
+    expect(screen.getByText(/repasses diretos/i)).toBeInTheDocument()
   })
 })

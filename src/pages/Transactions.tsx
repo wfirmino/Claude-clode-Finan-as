@@ -80,7 +80,7 @@ function calcKommo(vt: number, vl: number, vk: number, pct: number) {
   const finalC = liquidaC - socioC
   return {
     taxa: taxaC / 100,
-    valorKommo: vk,
+    valorKommo: c(vk) / 100,
     liquida: liquidaC / 100,
     socio: socioC / 100,
     final: finalC / 100,
@@ -123,8 +123,11 @@ function parseBR(value: string): number {
       ? parseFloat(s.replace(/\./g, '').replace(',', '.'))  // PT-BR: 1.234,56
       : parseFloat(s.replace(/,/g, ''))                      // US:    1,234.56
   }
-  // Só vírgula → decimal (497,88 → 497.88)
-  if (s.includes(',')) return parseFloat(s.replace(',', '.'))
+  // Só vírgula: múltiplas vírgulas → milhar US (1,234,567); única → decimal PT-BR (497,88)
+  if (s.includes(',')) {
+    if ((s.match(/,/g) ?? []).length > 1) return parseFloat(s.replace(/,/g, ''))
+    return parseFloat(s.replace(',', '.'))
+  }
   // Só ponto: heurística por número de dígitos após o ponto
   if (s.includes('.')) {
     const afterDot = s.split('.').pop() ?? ''
@@ -247,6 +250,7 @@ export default function Transactions() {
       assinaturasC += vtC
       if (t.sem_comissao) continue
       if (t.lancamento_simplificado) {
+        liquidoC += vtC
         finalC += vtC
       } else {
         const vlC = c(t.valor_liquido ?? 0)
@@ -266,9 +270,12 @@ export default function Transactions() {
     const c = (n: number) => Math.round(n * 100)
     let faturamentoC = 0, socioC = 0, despesaMEIC = 0
     for (const t of transactions) {
-      if (t.type === 'income') faturamentoC += c(t.amount)
-      else despesaMEIC += c(t.amount)
-      socioC += c(t.divisao_socio ?? 0)
+      if (t.type === 'income') {
+        faturamentoC += c(t.amount)
+        socioC += c(t.divisao_socio ?? 0)
+      } else {
+        despesaMEIC += c(t.amount)
+      }
     }
     const suaParteC = faturamentoC - socioC
     const liquidoPessoalC = suaParteC - despesaMEIC - c(prolabore)
@@ -456,7 +463,8 @@ export default function Transactions() {
         let rawDivisaoSocioPct: number | null = null
         let rawValorLiquidoRecebido: number | null = null
         if (form.lancamento_simplificado) {
-          if (isNaN(vt) || vt <= 0) vt = 0
+          if (isNaN(vt)) vt = 0
+          else if (vt < 0) { showToast('Valor total não pode ser negativo.', 'error'); return }
           const vlRaw = parseBR(form.valor_liquido)
           vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : null
           const vkRaw = parseBR(form.valor_pago_kommo)
@@ -471,7 +479,8 @@ export default function Transactions() {
             vl = vt
           } else {
             const vlRaw = parseBR(form.valor_liquido)
-            vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : vt
+            vl = (!isNaN(vlRaw) && vlRaw >= 0) ? vlRaw : vt
+            if (vl <= 0) { showToast('Informe um valor líquido válido maior que zero.', 'error'); return }
             if (vl > vt) { showToast('Valor líquido não pode ser maior que o valor total da assinatura.', 'error'); return }
           }
           vk = parseBR(form.valor_pago_kommo)
@@ -537,6 +546,7 @@ export default function Transactions() {
   // ─── Kommo live calc ───
   const kommoCalc = useMemo(() => {
     if (form.perfil !== 'kommo') return null
+    if (form.lancamento_simplificado) return null
     const vt = parseBR(form.valor_total_assinatura)
     if (isNaN(vt) || vt <= 0) return null
     let vl: number
@@ -544,7 +554,7 @@ export default function Transactions() {
       vl = vt
     } else {
       const vlRaw = parseBR(form.valor_liquido)
-      vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : vt
+      vl = (!isNaN(vlRaw) && vlRaw >= 0) ? vlRaw : vt
     }
     if (vl > vt) return null
     const vkRaw = parseBR(form.valor_pago_kommo)
@@ -574,7 +584,10 @@ export default function Transactions() {
         />
       )}
       {activePerfil === 'kommo' && (
-        <KommoSummary transactions={transactions} mes={currentMes} />
+        <KommoSummary
+          transactions={transactions}
+          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
+        />
       )}
 
       {/* Header */}

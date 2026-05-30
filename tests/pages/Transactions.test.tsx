@@ -84,7 +84,7 @@ describe('Transactions page', () => {
     await waitFor(() => screen.getAllByText('Salário')[0])
     fireEvent.click(screen.getByRole('button', { name: /nova transação/i }))
     fireEvent.change(screen.getByLabelText(/título/i), { target: { value: 'Novo gasto' } })
-    fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '50' } })
+    fireEvent.change(screen.getByLabelText(/valor \(r\$\)/i), { target: { value: '50' } })
     fireEvent.click(screen.getByRole('button', { name: /criar transação/i }))
     await waitFor(() => {
       expect(insertMock).toHaveBeenCalledWith(
