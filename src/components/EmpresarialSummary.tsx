@@ -5,11 +5,12 @@ import { formatCurrency } from '../utils/formatters'
 interface Props {
   transactions: Transaction[]
   mes: string
+  periodo: string
   prolabore: number
   onSaveProlabore: (valor: number, mes: string) => Promise<void>
 }
 
-export default function EmpresarialSummary({ transactions, mes, prolabore: initialProlabore, onSaveProlabore }: Props) {
+export default function EmpresarialSummary({ transactions, mes, periodo, prolabore: initialProlabore, onSaveProlabore }: Props) {
   const [prolaboreInput, setProlaboreInput] = useState(String(initialProlabore))
   const [saving, setSaving] = useState(false)
 
@@ -18,12 +19,11 @@ export default function EmpresarialSummary({ transactions, mes, prolabore: initi
   }, [initialProlabore])
 
   const { faturamento, totalSocio, despesaMEI, lucro } = useMemo(() => {
-    const txsMes = transactions.filter(t => t.date.startsWith(mes))
-    const fat = txsMes.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
-    const soc = txsMes.reduce((s, t) => s + (t.divisao_socio ?? 0), 0)
-    const mei = txsMes.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+    const fat = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+    const soc = transactions.filter(t => t.type === 'income').reduce((s, t) => s + (t.divisao_socio ?? 0), 0)
+    const mei = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
     return { faturamento: fat, totalSocio: soc, despesaMEI: mei, lucro: fat - soc - mei }
-  }, [transactions, mes])
+  }, [transactions])
 
   const currentProlabore = parseFloat(prolaboreInput) || 0
   const caixa = lucro - currentProlabore
@@ -42,7 +42,7 @@ export default function EmpresarialSummary({ transactions, mes, prolabore: initi
 
   return (
     <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6">
-      <h3 className="text-sm font-semibold text-indigo-700 mb-3">Resumo Empresarial — {mes}</h3>
+      <h3 className="text-sm font-semibold text-indigo-700 mb-3">Resumo Empresarial — {periodo}</h3>
       <div className="divide-y divide-indigo-100">
         {row('Faturamento total do mês', faturamento)}
         {row('Total dividido com sócio', totalSocio)}

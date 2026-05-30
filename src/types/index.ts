@@ -32,10 +32,10 @@ export interface Transaction {
   valor_pago_kommo?: number | null
   divisao_socio_pct?: number | null
   valor_liquido_recebido?: number | null
-  apenas_usuario_adicional?: boolean | null
-  lancamento_simplificado?: boolean | null
-  sem_comissao?: boolean | null
-  forma_pagamento?: string | null
+  apenas_usuario_adicional?: boolean
+  lancamento_simplificado?: boolean
+  sem_comissao?: boolean
+  forma_pagamento?: string
 }
 
 export interface EmpresarialConfig {

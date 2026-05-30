@@ -130,11 +130,15 @@ function parseBR(value: string): number {
   }
   // Só ponto: heurística por número de dígitos após o ponto
   if (s.includes('.')) {
-    const afterDot = s.split('.').pop() ?? ''
-    // ≤ 2 dígitos após o ponto → decimal (497.88); 3 dígitos → milhar (1.000)
-    return afterDot.length <= 2
-      ? parseFloat(s)
-      : parseFloat(s.replace(/\./g, ''))
+    const parts = s.split('.')
+    const lastPart = parts[parts.length - 1]
+    if (parts.length > 2) {
+      // Múltiplos pontos: último segmento ≤2 dígitos → decimal final (1.234.56 → 1234.56)
+      if (lastPart.length <= 2) return parseFloat(parts.slice(0, -1).join('') + '.' + lastPart)
+      return parseFloat(s.replace(/\./g, ''))
+    }
+    // Ponto único: ≤2 dígitos → decimal (497.88); 3 dígitos → milhar (1.000)
+    return lastPart.length <= 2 ? parseFloat(s) : parseFloat(s.replace(/\./g, ''))
   }
   return parseFloat(s)
 }
@@ -250,8 +254,10 @@ export default function Transactions() {
       assinaturasC += vtC
       if (t.sem_comissao) continue
       if (t.lancamento_simplificado) {
-        liquidoC += vtC
-        finalC += vtC
+        const vlC = t.valor_liquido != null ? c(t.valor_liquido) : vtC
+        const vlrC = t.valor_liquido_recebido != null ? c(t.valor_liquido_recebido) : vlC
+        liquidoC += vlC
+        finalC += vlrC
       } else {
         const vlC = c(t.valor_liquido ?? 0)
         const vkC = c(t.valor_pago_kommo ?? 0)
@@ -466,7 +472,7 @@ export default function Transactions() {
           if (isNaN(vt)) vt = 0
           else if (vt < 0) { showToast('Valor total não pode ser negativo.', 'error'); return }
           const vlRaw = parseBR(form.valor_liquido)
-          vl = (!isNaN(vlRaw) && vlRaw > 0) ? vlRaw : null
+          vl = (!isNaN(vlRaw) && vlRaw >= 0) ? vlRaw : null
           const vkRaw = parseBR(form.valor_pago_kommo)
           vk = (!isNaN(vkRaw) && vkRaw >= 0) ? vkRaw : null
           const raw = parseBR(form.divisao_socio_pct)
@@ -485,9 +491,9 @@ export default function Transactions() {
           }
           vk = parseBR(form.valor_pago_kommo)
           if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
-          if (vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
+          if (!form.sem_comissao && vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
           const raw = parseBR(form.divisao_socio_pct)
-          rawDivisaoSocioPct = isNaN(raw) ? null : raw
+          rawDivisaoSocioPct = form.sem_comissao ? null : (isNaN(raw) ? null : raw)
         }
         const rawPlano = parseInt(form.plano)
         const rawNumUsuarios = parseInt(form.num_usuarios)
@@ -503,7 +509,7 @@ export default function Transactions() {
           sem_comissao: form.sem_comissao,
           forma_pagamento: form.forma_pagamento,
           apenas_usuario_adicional: form.apenas_usuario_adicional,
-          plano: form.apenas_usuario_adicional ? null : (isNaN(rawPlano) ? null : rawPlano),
+          plano: (form.lancamento_simplificado || form.apenas_usuario_adicional) ? null : (isNaN(rawPlano) ? null : rawPlano),
           num_usuarios: isNaN(rawNumUsuarios) ? null : rawNumUsuarios,
           valor_total_assinatura: vt,
           valor_liquido: vl,
@@ -579,6 +585,7 @@ export default function Transactions() {
         <EmpresarialSummary
           transactions={transactions}
           mes={currentMes}
+          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
           prolabore={prolabore}
           onSaveProlabore={saveProlabore}
         />

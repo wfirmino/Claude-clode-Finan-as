@@ -22,12 +22,12 @@ describe('EmpresarialSummary', () => {
   beforeEach(() => vi.clearAllMocks())
 
   it('renders the summary section', () => {
-    render(<EmpresarialSummary transactions={txs} mes="2026-05" prolabore={0} onSaveProlabore={onSaveProlabore} />)
+    render(<EmpresarialSummary transactions={txs} mes="2026-05" periodo="Este mês" prolabore={0} onSaveProlabore={onSaveProlabore} />)
     expect(screen.getByText(/resumo empresarial/i)).toBeInTheDocument()
   })
 
   it('shows faturamento, divisão sócio and despesa MEI values', () => {
-    render(<EmpresarialSummary transactions={txs} mes="2026-05" prolabore={0} onSaveProlabore={onSaveProlabore} />)
+    render(<EmpresarialSummary transactions={txs} mes="2026-05" periodo="Este mês" prolabore={0} onSaveProlabore={onSaveProlabore} />)
     // Faturamento = 5000, totalSocio = 1000, despesaMEI = 500
     expect(screen.getByText(/faturamento total/i)).toBeInTheDocument()
     expect(screen.getByText(/total dividido com sócio/i)).toBeInTheDocument()
@@ -35,7 +35,7 @@ describe('EmpresarialSummary', () => {
   })
 
   it('calls onSaveProlabore when Salvar is clicked', async () => {
-    render(<EmpresarialSummary transactions={txs} mes="2026-05" prolabore={0} onSaveProlabore={onSaveProlabore} />)
+    render(<EmpresarialSummary transactions={txs} mes="2026-05" periodo="Este mês" prolabore={0} onSaveProlabore={onSaveProlabore} />)
     const input = screen.getByRole('spinbutton')
     fireEvent.change(input, { target: { value: '1000' } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))

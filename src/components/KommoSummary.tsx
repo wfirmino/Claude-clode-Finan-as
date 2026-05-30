@@ -19,8 +19,10 @@ export default function KommoSummary({ transactions, periodo }: Props) {
         continue
       }
       if (t.lancamento_simplificado) {
-        liquidaC += vtC
-        finalC += vtC
+        const vlC = t.valor_liquido != null ? c(t.valor_liquido) : vtC
+        const vlrC = t.valor_liquido_recebido != null ? c(t.valor_liquido_recebido) : vlC
+        liquidaC += vlC
+        finalC += vlrC
       } else {
         const vlC = c(t.valor_liquido ?? 0)
         const vkC = c(t.valor_pago_kommo ?? 0)
