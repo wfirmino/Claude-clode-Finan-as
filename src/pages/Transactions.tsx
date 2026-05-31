@@ -545,64 +545,6 @@ export default function Transactions() {
       {/* Profile tabs */}
       <ProfileTabs active={activePerfil} onChange={p => { setActivePerfil(p); setPage(0) }} />
 
-      {/* Monthly summaries */}
-      {activePerfil === 'empresarial' && (
-        <EmpresarialSummary
-          transactions={transactions}
-          mes={currentMes}
-          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
-          prolabore={prolabore}
-          onSaveProlabore={saveProlabore}
-        />
-      )}
-      {activePerfil === 'kommo' && (
-        <KommoSummary
-          transactions={transactions}
-          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
-        />
-      )}
-
-      {/* Header */}
-      <div className="flex items-center gap-2 mb-3 md:mb-6">
-        <div className="relative flex-1">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Buscar transações..."
-            value={search}
-            onChange={e => { setSearch(e.target.value); setPage(0) }}
-            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-full"
-          />
-        </div>
-        <button onClick={openCreate} className="flex-shrink-0 flex items-center gap-1.5 px-3 md:px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-          <span className="text-base leading-none">+</span><span className="hidden md:inline ml-1">Nova Transação</span>
-        </button>
-      </div>
-
-      {/* Mobile filter button — hidden on desktop */}
-      <button
-        onClick={() => setFilterSheetOpen(true)}
-        className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 dark:border-[#2a2a2a] rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] mb-3"
-      >
-        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
-        </svg>
-        Filtros
-        {(typeFilter !== '' || categoryFilter !== '') && (
-          <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">
-            {[typeFilter !== '', categoryFilter !== ''].filter(Boolean).length}
-          </span>
-        )}
-      </button>
-
-      {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-lg text-sm text-red-800 dark:text-red-400">
-          Erro ao carregar transações: {error}
-        </div>
-      )}
-
       {/* Summary cards */}
       {activePerfil === 'empresarial' && empresarialTotals ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -676,6 +618,64 @@ export default function Transactions() {
             <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(balance))}</p>
             <p className={`text-xs mt-1 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`}>{balance >= 0 ? 'positivo' : 'negativo'}</p>
           </div>
+        </div>
+      )}
+
+      {/* Monthly summaries — accordion */}
+      {activePerfil === 'empresarial' && (
+        <EmpresarialSummary
+          transactions={transactions}
+          mes={currentMes}
+          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
+          prolabore={prolabore}
+          onSaveProlabore={saveProlabore}
+        />
+      )}
+      {activePerfil === 'kommo' && (
+        <KommoSummary
+          transactions={transactions}
+          periodo={DATE_PRESETS.find(p => p.key === datePreset)?.label ?? (datePreset === 'custom' ? 'Período personalizado' : 'Todo período')}
+        />
+      )}
+
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-3 md:mb-6">
+        <div className="relative flex-1">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Buscar transações..."
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(0) }}
+            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-full"
+          />
+        </div>
+        <button onClick={openCreate} className="flex-shrink-0 flex items-center gap-1.5 px-3 md:px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+          <span className="text-base leading-none">+</span><span className="hidden md:inline ml-1">Nova Transação</span>
+        </button>
+      </div>
+
+      {/* Mobile filter button — hidden on desktop */}
+      <button
+        onClick={() => setFilterSheetOpen(true)}
+        className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 dark:border-[#2a2a2a] rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] mb-3"
+      >
+        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+        </svg>
+        Filtros
+        {(typeFilter !== '' || categoryFilter !== '') && (
+          <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-semibold">
+            {[typeFilter !== '', categoryFilter !== ''].filter(Boolean).length}
+          </span>
+        )}
+      </button>
+
+      {error && (
+        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-lg text-sm text-red-800 dark:text-red-400">
+          Erro ao carregar transações: {error}
         </div>
       )}
 
