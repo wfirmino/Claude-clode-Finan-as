@@ -11,3 +11,94 @@
     display: none;
   }
 }
+
+/* ─── Dark mode global ─────────────────────────────────────────────────────── */
+/* Aplicado quando <html class="dark"> — afeta todo o app automaticamente       */
+
+.dark body {
+  background-color: #000;
+  color: #f9fafb;
+}
+
+/* Fundos */
+.dark .bg-white        { background-color: #1a1a1a; }
+.dark .bg-gray-50      { background-color: #0d0d0d; }
+.dark .bg-gray-100     { background-color: #1f1f1f; }
+
+/* Bordas */
+.dark .border-gray-200 { border-color: #2a2a2a; }
+.dark .border-gray-100 { border-color: #222; }
+
+/* Texto */
+.dark .text-gray-900   { color: #f9fafb; }
+.dark .text-gray-800   { color: #f3f4f6; }
+.dark .text-gray-700   { color: #d1d5db; }
+.dark .text-gray-600   { color: #9ca3af; }
+.dark .text-gray-500   { color: #6b7280; }
+
+/* Divisores */
+.dark .divide-gray-100 > * + * { border-color: #2a2a2a; }
+.dark .divide-gray-200 > * + * { border-color: #2a2a2a; }
+
+/* Hover states */
+.dark .hover\:bg-gray-100:hover { background-color: #2a2a2a; }
+.dark .hover\:bg-gray-50:hover  { background-color: #1a1a1a; }
+
+/* Inputs e formulários */
+.dark input:not([class*="bg-"]),
+.dark textarea:not([class*="bg-"]),
+.dark select:not([class*="bg-"]) {
+  background-color: #1a1a1a;
+  color: #f9fafb;
+  border-color: #2a2a2a;
+}
+
+/* Cards coloridos claros → fundo escuro uniforme */
+.dark .bg-green-50,
+.dark .bg-green-100   { background-color: #1a1a1a; }
+.dark .bg-red-50,
+.dark .bg-red-100     { background-color: #1a1a1a; }
+.dark .bg-pink-50,
+.dark .bg-pink-100    { background-color: #1a1a1a; }
+.dark .bg-blue-50,
+.dark .bg-blue-100    { background-color: #1a1a1a; }
+.dark .bg-yellow-50,
+.dark .bg-yellow-100  { background-color: #1a1a1a; }
+.dark .bg-amber-50,
+.dark .bg-amber-100   { background-color: #1a1a1a; }
+.dark .bg-indigo-50,
+.dark .bg-indigo-100  { background-color: #1a1d2e; }
+.dark .bg-purple-50,
+.dark .bg-purple-100  { background-color: #1a1a1a; }
+.dark .bg-teal-50,
+.dark .bg-teal-100    { background-color: #1a1a1a; }
+.dark .bg-orange-50,
+.dark .bg-orange-100  { background-color: #1a1a1a; }
+.dark .bg-emerald-50,
+.dark .bg-emerald-100 { background-color: #1a1a1a; }
+
+/* Bordas coloridas claras */
+.dark .border-green-200  { border-color: #2a2a2a; }
+.dark .border-red-200    { border-color: #2a2a2a; }
+.dark .border-pink-200   { border-color: #2a2a2a; }
+.dark .border-blue-200   { border-color: #2a2a2a; }
+.dark .border-yellow-200 { border-color: #2a2a2a; }
+.dark .border-amber-200  { border-color: #2a2a2a; }
+.dark .border-indigo-200 { border-color: #2a3050; }
+.dark .border-purple-200 { border-color: #2a2a2a; }
+
+/* Textos em tons claros de cores (labels dentro de cards coloridos) */
+.dark .text-green-700,
+.dark .text-green-800  { color: #22c55e; }
+.dark .text-red-700,
+.dark .text-red-800    { color: #ef4444; }
+.dark .text-blue-700,
+.dark .text-blue-800   { color: #60a5fa; }
+.dark .text-amber-700,
+.dark .text-amber-800  { color: #f59e0b; }
+.dark .text-indigo-700,
+.dark .text-indigo-800 { color: #818cf8; }
+
+/* Modais e overlays */
+.dark .bg-white\/80,
+.dark .bg-gray-50\/80  { background-color: rgba(0, 0, 0, 0.8); }

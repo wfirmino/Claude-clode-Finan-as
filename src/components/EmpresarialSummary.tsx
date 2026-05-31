@@ -34,30 +34,30 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
   }
 
   const row = (label: string, value: number, highlight = false) => (
-    <div key={label} className={`flex justify-between items-center py-2 ${highlight ? 'font-semibold text-gray-900' : 'text-gray-600'}`}>
+    <div key={label} className={`flex justify-between items-center py-2 ${highlight ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
       <span className="text-sm">{label}</span>
-      <span className={`text-sm tabular-nums ${highlight ? 'text-indigo-700' : ''}`}>{formatCurrency(value)}</span>
+      <span className={`text-sm tabular-nums ${highlight ? 'text-indigo-700 dark:text-indigo-400' : ''}`}>{formatCurrency(value)}</span>
     </div>
   )
 
   return (
-    <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-4 mb-6">
-      <h3 className="text-sm font-semibold text-indigo-700 mb-3">Resumo Empresarial — {periodo}</h3>
-      <div className="divide-y divide-indigo-100">
+    <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-4 mb-6">
+      <h3 className="text-sm font-semibold text-indigo-700 dark:text-indigo-400 mb-3">Resumo Empresarial — {periodo}</h3>
+      <div className="divide-y divide-indigo-100 dark:divide-indigo-800/50">
         {row('Faturamento total do mês', faturamento)}
         {row('Total dividido com sócio', totalSocio)}
         {row('Despesa MEI', despesaMEI)}
         {row('Lucro', lucro, true)}
       </div>
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-indigo-100">
-        <label className="text-sm text-gray-600 shrink-0">Pró-labore (R$):</label>
+      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-indigo-100 dark:border-indigo-800/50">
+        <label className="text-sm text-gray-600 dark:text-gray-400 shrink-0">Pró-labore (R$):</label>
         <input
           type="text"
           inputMode="decimal"
           placeholder="0,00"
           value={prolaboreInput}
           onChange={e => setProlaboreInput(maskCurrency(e.target.value))}
-          className="w-32 rounded border border-indigo-200 text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+          className="w-32 rounded border border-indigo-200 dark:border-indigo-700 dark:bg-[#1a1a1a] dark:text-white text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
         />
         <button
           onClick={handleSave}
@@ -67,7 +67,7 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
           {saving ? 'Salvando...' : 'Salvar'}
         </button>
       </div>
-      <div className={`flex justify-between items-center mt-2 pt-2 border-t border-indigo-100 font-semibold ${caixa >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+      <div className={`flex justify-between items-center mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-800/50 font-semibold ${caixa >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
         <span className="text-sm">Caixa da empresa</span>
         <span className="text-sm tabular-nums">{formatCurrency(caixa)}</span>
       </div>

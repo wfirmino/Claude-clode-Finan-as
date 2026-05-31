@@ -14,7 +14,7 @@ export default function TopNav() {
   return (
     <nav
       aria-label="Navegação principal"
-      className="flex overflow-x-auto gap-2 px-4 py-3 bg-white scrollbar-hide"
+      className="flex overflow-x-auto gap-2 px-4 pb-3 bg-white dark:bg-[#111] scrollbar-hide"
     >
       {navItems.map(item => (
         <NavLink
@@ -25,7 +25,7 @@ export default function TopNav() {
             `flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition-colors ${
               isActive
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                : 'bg-gray-100 dark:bg-[#2a2a2a] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-[#333]'
             }`
           }
         >

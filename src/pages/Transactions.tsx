@@ -541,7 +541,7 @@ export default function Transactions() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div className="bg-white min-h-full">
+    <div className="bg-white dark:bg-black min-h-full">
       {/* Profile tabs */}
       <ProfileTabs active={activePerfil} onChange={p => { setActivePerfil(p); setPage(0) }} />
 
@@ -573,7 +573,7 @@ export default function Transactions() {
             placeholder="Buscar transações..."
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(0) }}
-            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-full"
+            className="pl-9 pr-4 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent w-full"
           />
         </div>
         <button onClick={openCreate} className="flex-shrink-0 flex items-center gap-1.5 px-3 md:px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
@@ -584,7 +584,7 @@ export default function Transactions() {
       {/* Mobile filter button — hidden on desktop */}
       <button
         onClick={() => setFilterSheetOpen(true)}
-        className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white mb-3"
+        className="md:hidden w-full flex items-center justify-center gap-2 py-2.5 px-4 border border-gray-300 dark:border-[#2a2a2a] rounded-lg text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] mb-3"
       >
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
@@ -598,7 +598,7 @@ export default function Transactions() {
       </button>
 
       {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-lg text-sm text-red-800 dark:text-red-400">
           Erro ao carregar transações: {error}
         </div>
       )}
@@ -606,7 +606,7 @@ export default function Transactions() {
       {/* Summary cards */}
       {activePerfil === 'empresarial' && empresarialTotals ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -617,7 +617,7 @@ export default function Transactions() {
             <p className="text-xs text-indigo-400 mt-1">receitas no período</p>
           </div>
 
-          <div className="bg-purple-50 rounded-xl border border-purple-100 px-5 py-4">
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -628,7 +628,7 @@ export default function Transactions() {
             <p className="text-xs text-purple-400 mt-1">após divisão com sócio</p>
           </div>
 
-          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
             <div className="flex items-center gap-2 mb-2">
               <svg className={`w-4 h-4 shrink-0 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -641,7 +641,7 @@ export default function Transactions() {
         </div>
       ) : kommoTotals ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -652,7 +652,7 @@ export default function Transactions() {
             <p className="text-xs text-indigo-400 mt-1">{kommoTotals.count} assinaturas</p>
           </div>
 
-          <div className="bg-purple-50 rounded-xl border border-purple-100 px-5 py-4">
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -663,7 +663,7 @@ export default function Transactions() {
             <p className="text-xs text-purple-400 mt-1">após taxas da maquininha</p>
           </div>
 
-          <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4 col-span-2 md:col-span-1">
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/30 px-5 py-4 col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -676,7 +676,7 @@ export default function Transactions() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -687,7 +687,7 @@ export default function Transactions() {
             <p className="text-xs text-green-500 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
           </div>
 
-          <div className="bg-red-50 rounded-xl border border-red-100 px-5 py-4">
+          <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/30 px-5 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
@@ -698,7 +698,7 @@ export default function Transactions() {
             <p className="text-xs text-red-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
           </div>
 
-          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100'}`}>
+          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
             <div className="flex items-center gap-2 mb-2">
               <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -712,7 +712,7 @@ export default function Transactions() {
       )}
 
       {transactions.length >= 500 && (
-        <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+        <div className="mb-4 px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/40 rounded-lg text-sm text-amber-800 dark:text-amber-400">
           Mostrando os 500 registros mais recentes.
         </div>
       )}
@@ -723,7 +723,7 @@ export default function Transactions() {
         <div className="relative">
           <button
             onClick={() => { setShowDateDropdown(v => !v); setCustomPanelOpen(false) }}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-colors"
           >
             <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -736,22 +736,22 @@ export default function Transactions() {
           {showDateDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => { setShowDateDropdown(false); setCustomPanelOpen(false) }} />
-              <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg border border-gray-200 shadow-lg z-20 py-1">
+              <div className="absolute top-full left-0 mt-1 w-56 bg-white dark:bg-[#1a1a1a] rounded-lg border border-gray-200 dark:border-[#2a2a2a] shadow-lg z-20 py-1">
                 {!customPanelOpen ? (
                   <>
                     {DATE_PRESETS.map(p => (
                       <button
                         key={p.key}
                         onClick={() => { setDatePreset(p.key); setShowDateDropdown(false); setPage(0) }}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${datePreset === p.key ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${datePreset === p.key ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                       >
                         {p.label}
                       </button>
                     ))}
-                    <div className="border-t border-gray-100 mt-1 pt-1">
+                    <div className="border-t border-gray-100 dark:border-[#2a2a2a] mt-1 pt-1">
                       <button
                         onClick={() => setCustomPanelOpen(true)}
-                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${datePreset === 'custom' ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${datePreset === 'custom' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                       >
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -763,36 +763,36 @@ export default function Transactions() {
                 ) : (
                   <div className="px-4 py-3">
                     <div className="flex items-center gap-2 mb-3">
-                      <button onClick={() => setCustomPanelOpen(false)} className="text-gray-400 hover:text-gray-600">
+                      <button onClick={() => setCustomPanelOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                       </button>
-                      <span className="text-xs font-semibold text-gray-600">Período personalizado</span>
+                      <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Período personalizado</span>
                     </div>
                     <div className="space-y-2">
                       <div>
-                        <label className="text-xs text-gray-400 block mb-0.5">De</label>
+                        <label className="text-xs text-gray-400 dark:text-gray-500 block mb-0.5">De</label>
                         <input
                           type="date"
                           value={customStartDate}
                           onChange={e => setCustomStartDate(e.target.value)}
-                          className="w-full rounded border border-gray-200 text-sm px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                          className="w-full rounded border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                         />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-400 block mb-0.5">Até</label>
+                        <label className="text-xs text-gray-400 dark:text-gray-500 block mb-0.5">Até</label>
                         <input
                           type="date"
                           value={customEndDate}
                           onChange={e => setCustomEndDate(e.target.value)}
-                          className="w-full rounded border border-gray-200 text-sm px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                          className="w-full rounded border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                         />
                       </div>
                       <div className="flex gap-2 pt-1">
                         <button
                           onClick={() => setCustomPanelOpen(false)}
-                          className="flex-1 py-1.5 text-xs text-gray-500 border border-gray-200 rounded hover:bg-gray-50"
+                          className="flex-1 py-1.5 text-xs text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-[#2a2a2a] rounded hover:bg-gray-50 dark:hover:bg-[#2a2a2a]"
                         >
                           Voltar
                         </button>
@@ -816,7 +816,7 @@ export default function Transactions() {
           <select
             value={typeFilter}
             onChange={e => { setTypeFilter(e.target.value as '' | 'income' | 'expense'); setPage(0) }}
-            className="rounded-lg border-gray-300 text-sm pl-3 pr-8 py-2"
+            className="rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 text-sm pl-3 pr-8 py-2"
           >
             <option value="">Todos os tipos</option>
             <option value="income">Receita</option>
@@ -828,7 +828,7 @@ export default function Transactions() {
         <div className="relative">
           <button
             onClick={() => setShowCategoryDropdown(v => !v)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-colors"
           >
             <span>{categoryFilter ? (categories.find(c => c.id === categoryFilter)?.name ?? 'Todas as categorias') : 'Todas as categorias'}</span>
             <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -838,21 +838,21 @@ export default function Transactions() {
           {showCategoryDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowCategoryDropdown(false)} />
-              <div className="absolute top-full left-0 mt-1 w-52 bg-white rounded-lg border border-gray-200 shadow-lg z-20 py-1 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 mt-1 w-52 bg-white dark:bg-[#1a1a1a] rounded-lg border border-gray-200 dark:border-[#2a2a2a] shadow-lg z-20 py-1 max-h-60 overflow-y-auto">
                 <button
                   onClick={() => { setCategoryFilter(''); setShowCategoryDropdown(false); setPage(0) }}
-                  className={`w-full text-left px-4 py-2 text-sm transition-colors ${!categoryFilter ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                  className={`w-full text-left px-4 py-2 text-sm transition-colors ${!categoryFilter ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                 >
                   Todas as categorias
                 </button>
                 {categories.length === 0 && (
-                  <p className="px-4 py-3 text-xs text-gray-400">Nenhuma categoria cadastrada</p>
+                  <p className="px-4 py-3 text-xs text-gray-400 dark:text-gray-500">Nenhuma categoria cadastrada</p>
                 )}
                 {categories.map(c => (
                   <button
                     key={c.id}
                     onClick={() => { setCategoryFilter(c.id); setShowCategoryDropdown(false); setPage(0) }}
-                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${categoryFilter === c.id ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2 ${categoryFilter === c.id ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                   >
                     <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: c.color || '#6366f1' }} />
                     <span className="flex-1 truncate">{c.name}</span>
@@ -870,7 +870,7 @@ export default function Transactions() {
         <div className="relative ml-auto">
           <button
             onClick={() => setShowSortDropdown(v => !v)}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1a1a1a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-colors"
           >
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
@@ -883,12 +883,12 @@ export default function Transactions() {
           {showSortDropdown && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} />
-              <div className="absolute top-full right-0 mt-1 w-52 bg-white rounded-lg border border-gray-200 shadow-lg z-20 py-1">
+              <div className="absolute top-full right-0 mt-1 w-52 bg-white dark:bg-[#1a1a1a] rounded-lg border border-gray-200 dark:border-[#2a2a2a] shadow-lg z-20 py-1">
                 {SORT_OPTIONS.map(s => (
                   <button
                     key={s.key}
                     onClick={() => { setSortBy(s.key); setShowSortDropdown(false); setPage(0) }}
-                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${sortBy === s.key ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${sortBy === s.key ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                   >
                     {s.label}
                   </button>
@@ -909,20 +909,20 @@ export default function Transactions() {
             <button
               key={t.id}
               onClick={() => setSheetTx(t)}
-              className="w-full text-left bg-white border border-gray-200 rounded-xl p-4 space-y-2"
+              className="w-full text-left bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl p-4 space-y-2"
             >
-              <div className="flex justify-between items-center text-xs text-gray-400">
+              <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-500">
                 <span>{formatDate(t.date)}</span>
                 <span>⋮</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-lg flex-shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-lg flex-shrink-0">
                   {t.type === 'income' ? '💰' : '💸'}
                 </div>
-                <span className="text-sm font-semibold text-gray-900">{t.title}</span>
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">{t.title}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${t.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-indigo-50 text-indigo-700'}`}>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${t.type === 'income' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'}`}>
                   {t.categories?.name ?? '—'}
                 </span>
                 <span className={`text-sm font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
@@ -934,7 +934,7 @@ export default function Transactions() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between pt-2">
               <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="text-sm text-indigo-600 disabled:opacity-40">← Anterior</button>
-              <span className="text-sm text-gray-500">{page + 1} / {totalPages}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{page + 1} / {totalPages}</span>
               <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="text-sm text-indigo-600 disabled:opacity-40">Próxima →</button>
             </div>
           )}
@@ -945,16 +945,16 @@ export default function Transactions() {
       {loading ? (
         <p className="text-sm text-gray-400 py-4">Carregando...</p>
       ) : (
-        <div className="hidden md:block rounded-xl border border-gray-200 overflow-hidden">
+        <div className="hidden md:block rounded-xl border border-gray-200 dark:border-[#2a2a2a] overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 dark:bg-[#111] border-b border-gray-200 dark:border-[#2a2a2a]">
               <tr>
                 {['Data', 'Título', 'Categoria', 'Tipo', 'Valor', ''].map((h, i) => (
-                  <th key={i} className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                  <th key={i} className="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
+            <tbody className="divide-y divide-gray-100 dark:divide-[#2a2a2a] bg-white dark:bg-[#1a1a1a]">
               {paginated.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-6 py-16 text-center">
@@ -963,20 +963,20 @@ export default function Transactions() {
                 </tr>
               )}
               {paginated.map(t => (
-                <tr key={t.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{formatDate(t.date)}</td>
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-[#222] transition-colors">
+                  <td className="px-6 py-4 text-gray-500 dark:text-gray-400 whitespace-nowrap">{formatDate(t.date)}</td>
+                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
                     <span>{t.title}</span>
                     {t.apenas_usuario_adicional && (
-                      <span className="ml-2 text-xs font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full">Usr. adicional</span>
+                      <span className="ml-2 text-xs font-medium text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded-full">Usr. adicional</span>
                     )}
                     {t.sem_comissao && (
-                      <span className="ml-2 text-xs font-medium text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full">Sem comissão</span>
+                      <span className="ml-2 text-xs font-medium text-rose-600 bg-rose-50 dark:bg-rose-900/30 px-1.5 py-0.5 rounded-full">Sem comissão</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-gray-500">{t.categories?.name ?? '—'}</td>
+                  <td className="px-6 py-4 text-gray-500 dark:text-gray-400">{t.categories?.name ?? '—'}</td>
                   <td className="px-6 py-4">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${t.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${t.type === 'income' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'}`}>
                       {t.type === 'income' ? 'Receita' : 'Despesa'}
                     </span>
                   </td>
@@ -986,9 +986,9 @@ export default function Transactions() {
                   <td className="px-6 py-4">
                     {confirmDelete === t.id ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-600">Confirmar?</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Confirmar?</span>
                         <button onClick={() => handleDelete(t.id)} className="text-red-600 text-xs font-medium hover:underline">Sim</button>
-                        <button onClick={() => setConfirmDelete(null)} className="text-gray-500 text-xs hover:underline">Não</button>
+                        <button onClick={() => setConfirmDelete(null)} className="text-gray-500 dark:text-gray-400 text-xs hover:underline">Não</button>
                       </div>
                     ) : (
                       <div className="flex gap-3">
@@ -1002,9 +1002,9 @@ export default function Transactions() {
             </tbody>
           </table>
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-white">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a]">
               <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="text-sm text-indigo-600 disabled:opacity-40 hover:text-indigo-800 transition-colors">← Anterior</button>
-              <span className="text-sm text-gray-500">{page + 1} / {totalPages}</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{page + 1} / {totalPages}</span>
               <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="text-sm text-indigo-600 disabled:opacity-40 hover:text-indigo-800 transition-colors">Próxima →</button>
             </div>
           )}
@@ -1028,7 +1028,7 @@ export default function Transactions() {
 
       {/* ─── Modal ─────────────────────────────────────────────────────────── */}
       <Modal open={modal.open} onClose={closeModal} titleId="transaction-modal-title">
-        <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 mb-3">
+        <h3 id="transaction-modal-title" className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
           {modal.editing ? 'Editar Transação' : 'Nova Transação'}
         </h3>
 
@@ -1040,7 +1040,7 @@ export default function Transactions() {
                 key={p}
                 type="button"
                 onClick={() => setForm(defaultFormForPerfil(p))}
-                className={`flex-1 py-1.5 text-xs font-medium rounded-lg border transition-colors capitalize ${form.perfil === p ? 'bg-indigo-600 text-white border-indigo-600' : 'text-gray-600 border-gray-300 hover:bg-gray-50'}`}
+                className={`flex-1 py-1.5 text-xs font-medium rounded-lg border transition-colors capitalize ${form.perfil === p ? 'bg-indigo-600 text-white border-indigo-600' : 'text-gray-600 dark:text-gray-300 border-gray-300 dark:border-[#2a2a2a] hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
               >
                 {p}
               </button>
@@ -1053,11 +1053,11 @@ export default function Transactions() {
           {form.perfil === 'pessoal' && (
             <>
               <div>
-                <label htmlFor="tx-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                <input id="tx-title" type="text" required value={form.title} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, title: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="tx-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+                <input id="tx-title" type="text" required value={form.title} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, title: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
                 <CategoryPicker
                   userCategories={categories}
                   displayName={form.category_display_name}
@@ -1066,25 +1066,25 @@ export default function Transactions() {
                 />
               </div>
               <div>
-                <label htmlFor="tx-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                <select id="tx-type" value={form.type} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <label htmlFor="tx-type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                <select id="tx-type" value={form.type} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                   <option value="expense">Despesa</option>
                   <option value="income">Receita</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="tx-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor (R$)</label>
-                  <input id="tx-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="tx-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor (R$)</label>
+                  <input id="tx-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="tx-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                  <input id="tx-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="tx-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data</label>
+                  <input id="tx-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               <div>
-                <label htmlFor="tx-notes" className="block text-sm font-medium text-gray-700 mb-1">Observação (opcional)</label>
-                <textarea id="tx-notes" value={form.notes} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, notes: e.target.value } : f)} rows={2} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="tx-notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Observação (opcional)</label>
+                <textarea id="tx-notes" value={form.notes} onChange={e => setForm(f => f.perfil === 'pessoal' ? { ...f, notes: e.target.value } : f)} rows={2} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
             </>
           )}
@@ -1093,15 +1093,15 @@ export default function Transactions() {
           {form.perfil === 'empresarial' && (
             <>
               <div>
-                <label htmlFor="emp-nome-cliente" className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
-                <input id="emp-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="emp-nome-cliente" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do cliente</label>
+                <input id="emp-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div>
-                <label htmlFor="emp-nome-empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da empresa</label>
-                <input id="emp-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="emp-nome-empresa" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome da empresa</label>
+                <input id="emp-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
                 <CategoryPicker
                   userCategories={categories}
                   displayName={form.category_display_name}
@@ -1111,25 +1111,25 @@ export default function Transactions() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="emp-amount" className="block text-sm font-medium text-gray-700 mb-1">Valor total (R$)</label>
-                  <input id="emp-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="emp-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor total (R$)</label>
+                  <input id="emp-amount" type="text" inputMode="decimal" required placeholder="0,00" value={form.amount} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, amount: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="emp-divisao" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (R$)</label>
-                  <input id="emp-divisao" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, divisao_socio: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="emp-divisao" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Divisão com sócio (R$)</label>
+                  <input id="emp-divisao" type="text" inputMode="decimal" placeholder="0,00" value={form.divisao_socio} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, divisao_socio: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="emp-type" className="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
-                  <select id="emp-type" value={form.type} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                  <label htmlFor="emp-type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                  <select id="emp-type" value={form.type} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, type: e.target.value as 'income' | 'expense' } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="income">Receita</option>
                     <option value="expense">Despesa</option>
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="emp-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                  <input id="emp-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="emp-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data</label>
+                  <input id="emp-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'empresarial' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
             </>
@@ -1139,12 +1139,12 @@ export default function Transactions() {
           {form.perfil === 'kommo' && (
             <>
               <div>
-                <label htmlFor="kommo-nome-cliente" className="block text-sm font-medium text-gray-700 mb-1">Nome do cliente</label>
-                <input id="kommo-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="kommo-nome-cliente" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do cliente</label>
+                <input id="kommo-nome-cliente" type="text" required value={form.nome_cliente} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_cliente: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div>
-                <label htmlFor="kommo-nome-empresa" className="block text-sm font-medium text-gray-700 mb-1">Nome da empresa</label>
-                <input id="kommo-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="kommo-nome-empresa" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome da empresa</label>
+                <input id="kommo-nome-empresa" type="text" value={form.nome_empresa} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, nome_empresa: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
 
               {/* Toggle: lançamento simplificado */}
@@ -1156,12 +1156,12 @@ export default function Transactions() {
                     checked={form.lancamento_simplificado}
                     onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, lancamento_simplificado: e.target.checked } : f)}
                   />
-                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-amber-500 transition-colors" />
+                  <div className="w-9 h-5 bg-gray-200 dark:bg-[#2a2a2a] rounded-full peer peer-checked:bg-amber-500 transition-colors" />
                   <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Lançamento simplificado</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Lançamento simplificado</span>
                 {form.lancamento_simplificado && (
-                  <span className="text-xs text-amber-700 font-medium bg-amber-50 px-2 py-0.5 rounded-full">Sem cálculo</span>
+                  <span className="text-xs text-amber-700 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">Sem cálculo</span>
                 )}
               </label>
 
@@ -1174,12 +1174,12 @@ export default function Transactions() {
                     checked={form.sem_comissao}
                     onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, sem_comissao: e.target.checked } : f)}
                   />
-                  <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-rose-500 transition-colors" />
+                  <div className="w-9 h-5 bg-gray-200 dark:bg-[#2a2a2a] rounded-full peer peer-checked:bg-rose-500 transition-colors" />
                   <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">Sem comissão</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Sem comissão</span>
                 {form.sem_comissao && (
-                  <span className="text-xs text-rose-700 font-medium bg-rose-50 px-2 py-0.5 rounded-full">Repasse direto</span>
+                  <span className="text-xs text-rose-700 dark:text-rose-400 font-medium bg-rose-50 dark:bg-rose-900/30 px-2 py-0.5 rounded-full">Repasse direto</span>
                 )}
               </label>
 
@@ -1193,12 +1193,12 @@ export default function Transactions() {
                       checked={form.apenas_usuario_adicional}
                       onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, apenas_usuario_adicional: e.target.checked } : f)}
                     />
-                    <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+                    <div className="w-9 h-5 bg-gray-200 dark:bg-[#2a2a2a] rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
                     <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">Apenas usuário adicional</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Apenas usuário adicional</span>
                   {form.apenas_usuario_adicional && (
-                    <span className="text-xs text-indigo-600 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">Sem plano novo</span>
+                    <span className="text-xs text-indigo-600 font-medium bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">Sem plano novo</span>
                   )}
                 </label>
               )}
@@ -1208,29 +1208,29 @@ export default function Transactions() {
                 <div className="grid grid-cols-2 gap-4">
                   {!form.apenas_usuario_adicional && (
                     <div>
-                      <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 mb-1">Plano</label>
-                      <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                      <label htmlFor="kommo-plano" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plano</label>
+                      <select id="kommo-plano" value={form.plano} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, plano: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                         {PLANOS.map(p => <option key={p} value={p}>{p} meses</option>)}
                       </select>
                     </div>
                   )}
                   <div className={form.apenas_usuario_adicional ? 'col-span-2' : ''}>
-                    <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 mb-1">Nº de usuários</label>
-                    <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    <label htmlFor="kommo-usuarios" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº de usuários</label>
+                    <input id="kommo-usuarios" type="number" min="1" step="1" value={form.num_usuarios} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, num_usuarios: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                 </div>
               )}
 
               {/* Forma de pagamento */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Forma de pagamento</label>
-                <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Forma de pagamento</label>
+                <div className="flex rounded-lg border border-gray-200 dark:border-[#2a2a2a] overflow-hidden">
                   {(['cartao', 'pix'] as const).map(fp => (
                     <button
                       key={fp}
                       type="button"
                       onClick={() => setForm(f => f.perfil === 'kommo' ? { ...f, forma_pagamento: fp } : f)}
-                      className={`flex-1 py-1.5 text-sm font-medium transition-colors ${form.forma_pagamento === fp ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                      className={`flex-1 py-1.5 text-sm font-medium transition-colors ${form.forma_pagamento === fp ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-[#1a1a1a] text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
                     >
                       {fp === 'cartao' ? 'Cartão' : 'Pix'}
                     </button>
@@ -1241,11 +1241,11 @@ export default function Transactions() {
               {/* Valor total assinatura + Líquido pós-taxas */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 mb-1">Valor total assinatura (R$)</label>
-                  <input id="kommo-vt" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="kommo-vt" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor total assinatura (R$)</label>
+                  <input id="kommo-vt" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_total_assinatura} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_total_assinatura: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
                 <div>
-                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 mb-1">Líquido pós-taxas (R$)</label>
+                  <label htmlFor="kommo-vl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Líquido pós-taxas (R$)</label>
                   <input
                     id="kommo-vl"
                     type="text"
@@ -1254,36 +1254,36 @@ export default function Transactions() {
                     value={form.forma_pagamento === 'pix' ? form.valor_total_assinatura : form.valor_liquido}
                     disabled={form.forma_pagamento === 'pix'}
                     onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido: e.target.value } : f)}
-                    className={`w-full rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 ${form.forma_pagamento === 'pix' ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed' : 'border-gray-300'}`}
+                    className={`w-full rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500 ${form.forma_pagamento === 'pix' ? 'bg-gray-50 dark:bg-[#111] border-gray-200 dark:border-[#2a2a2a] text-gray-400 dark:text-gray-600 cursor-not-allowed' : 'border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100'}`}
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 mb-1">Valor pago ao Kommo (R$)</label>
-                <input id="kommo-vk" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <label htmlFor="kommo-vk" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor pago ao Kommo (R$)</label>
+                <input id="kommo-vk" type="text" inputMode="decimal" required={!form.lancamento_simplificado} placeholder="0,00" value={form.valor_pago_kommo} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_pago_kommo: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
               </div>
               <div className={`grid gap-4 ${form.sem_comissao ? 'grid-cols-1' : 'grid-cols-2'}`}>
                 {!form.sem_comissao && (
                   <div>
-                    <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 mb-1">Divisão com sócio (%)</label>
-                    <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0 se não houver sócio" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                    <label htmlFor="kommo-socio-pct" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Divisão com sócio (%)</label>
+                    <input id="kommo-socio-pct" type="text" inputMode="decimal" placeholder="0 se não houver sócio" value={form.divisao_socio_pct} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, divisao_socio_pct: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                 )}
                 <div>
-                  <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                  <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="kommo-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data</label>
+                  <input id="kommo-date" type="date" required value={form.date} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, date: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               </div>
               {form.lancamento_simplificado && !form.sem_comissao && (
                 <div>
-                  <label htmlFor="kommo-vlr" className="block text-sm font-medium text-gray-700 mb-1">Valor líquido recebido (R$)</label>
-                  <input id="kommo-vlr" type="text" inputMode="decimal" placeholder="0,00" value={form.valor_liquido_recebido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido_recebido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                  <label htmlFor="kommo-vlr" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor líquido recebido (R$)</label>
+                  <input id="kommo-vlr" type="text" inputMode="decimal" placeholder="0,00" value={form.valor_liquido_recebido} onChange={e => setForm(f => f.perfil === 'kommo' ? { ...f, valor_liquido_recebido: e.target.value } : f)} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-gray-100 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
                 </div>
               )}
               {/* Live calculation panel */}
               {kommoCalc && (
-                <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 space-y-1.5">
-                  <p className="text-xs font-semibold text-purple-700 mb-2">Cálculo automático</p>
+                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30 rounded-lg p-3 space-y-1.5">
+                  <p className="text-xs font-semibold text-purple-700 dark:text-purple-400 mb-2">Cálculo automático</p>
                   {[
                     ['Taxa maquininha', kommoCalc.taxa],
                     ['Valor pago ao Kommo', kommoCalc.valorKommo],
@@ -1294,8 +1294,8 @@ export default function Transactions() {
                     ] : []),
                   ].map(([label, value]) => (
                     <div key={label as string} className="flex justify-between text-xs">
-                      <span className="text-gray-600">{label as string}</span>
-                      <span className="font-medium tabular-nums text-purple-700">{formatCurrency(value as number)}</span>
+                      <span className="text-gray-600 dark:text-gray-400">{label as string}</span>
+                      <span className="font-medium tabular-nums text-purple-700 dark:text-purple-400">{formatCurrency(value as number)}</span>
                     </div>
                   ))}
                 </div>
@@ -1304,7 +1304,7 @@ export default function Transactions() {
           )}
 
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 hover:text-gray-600 rounded-lg transition-colors">Cancelar</button>
+            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors">Cancelar</button>
             <button type="submit" disabled={submitting} className="px-5 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-60">
               {submitting ? 'Salvando...' : (modal.editing ? 'Salvar alterações' : 'Criar Transação')}
             </button>

@@ -50,12 +50,12 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
   return (
     <div className="mb-6">
       {/* Progress bar panel */}
-      <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 mb-4">
+      <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl px-5 py-4 mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Resumo {periodo}</span>
-          <span className="text-sm font-medium text-gray-600 tabular-nums">{pct}% pago</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Resumo {periodo}</span>
+          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 tabular-nums">{pct}% pago</span>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-2.5 mb-2">
+        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5 mb-2">
           <div className={`h-2.5 rounded-full transition-all ${barColor(pct)}`} style={{ width: `${pct}%` }} />
         </div>
         <p className={`text-xs ${dueColor(daysUntil)}`}>
@@ -65,17 +65,17 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
 
       {/* 3 cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl px-4 py-3">
           <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">💳 FATURA</p>
-          <p className="text-xl font-bold text-indigo-700 tabular-nums">{compras}</p>
+          <p className="text-xl font-bold text-indigo-700 dark:text-indigo-400 tabular-nums">{compras}</p>
           <p className="text-xs text-indigo-400 mt-0.5">compra{compras !== 1 ? 's' : ''}</p>
         </div>
-        <div className="bg-green-50 border border-green-100 rounded-xl px-4 py-3">
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/50 rounded-xl px-4 py-3">
           <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">✅ PAGO</p>
-          <p className="text-xl font-bold text-green-700 tabular-nums">{formatCurrency(pago)}</p>
+          <p className="text-xl font-bold text-green-700 dark:text-green-400 tabular-nums">{formatCurrency(pago)}</p>
           <p className="text-xs text-green-400 mt-0.5">{pagamentos} pagamento{pagamentos !== 1 ? 's' : ''}</p>
         </div>
-        <div className={`border rounded-xl px-4 py-3 ${emAberto > 0 ? 'bg-red-50 border-red-100' : 'bg-gray-50 border-gray-100'}`}>
+        <div className={`border rounded-xl px-4 py-3 ${emAberto > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/50' : 'bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700'}`}>
           <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${emAberto > 0 ? 'text-red-500' : 'text-gray-400'}`}>⏳ EM ABERTO</p>
           <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-600' : 'text-gray-400'}`}>{formatCurrency(emAberto)}</p>
           <p className={`text-xs mt-0.5 ${dueColor(daysUntil)}`}>vence em {daysUntil}d</p>

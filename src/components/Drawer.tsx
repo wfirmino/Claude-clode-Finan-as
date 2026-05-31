@@ -1,4 +1,5 @@
-import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useProfile } from '../hooks/useProfile'
 
 interface Props {
   open: boolean
@@ -6,47 +7,67 @@ interface Props {
 }
 
 export default function Drawer({ open, onClose }: Props) {
+  const navigate = useNavigate()
+  const { profile } = useProfile()
+
+  const initials = profile?.name
+    ? profile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
+
   if (!open) return null
 
   return (
     <div className="fixed inset-0 z-50 md:hidden">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#111] flex flex-col shadow-2xl">
 
-      {/* Panel */}
-      <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#1a1a1a] flex flex-col shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 pt-12 pb-4">
+          <span className="text-white font-bold text-xl">FinanceApp</span>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="Fechar menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
         {/* Banner */}
-        <div className="bg-indigo-700 px-6 py-8 flex items-center justify-between">
-          <div>
-            <p className="text-white font-bold text-xl">FinanceApp</p>
-            <p className="text-indigo-300 text-sm mt-0.5">Controle financeiro</p>
+        <div className="mx-5 mb-4 rounded-2xl overflow-hidden flex bg-indigo-900">
+          <div className="flex-1 p-4">
+            <p className="text-white font-bold text-base leading-tight">Bem-vindo ao FinanceApp</p>
+            <p className="text-indigo-300 text-xs mt-1">Controle suas finanças</p>
           </div>
-          <div className="w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center text-2xl shadow-lg">
+          <div className="w-20 bg-indigo-700 flex items-center justify-center text-4xl select-none">
             💰
           </div>
         </div>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Footer */}
-        <div className="p-4 border-t border-white/10">
-          <NavLink
-            to="/settings"
-            onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
-                isActive ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'
-              }`
-            }
+        {/* Footer — user + gear */}
+        <div className="border-t border-white/10 p-4">
+          <button
+            onClick={() => { onClose(); navigate('/settings') }}
+            className="w-full flex items-center gap-3 px-2 py-2 rounded-xl hover:bg-white/5 transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-full bg-[#333] overflow-hidden flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+              {profile?.avatar_url
+                ? <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                : initials}
+            </div>
+            <span className="flex-1 text-white font-medium text-sm text-left truncate">
+              {profile?.name ?? 'Usuário'}
+            </span>
+            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            Configurações
-          </NavLink>
+          </button>
         </div>
       </div>
     </div>

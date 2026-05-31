@@ -54,17 +54,17 @@ export default function Reports() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">Relatórios</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Relatórios</h2>
         <button
           onClick={() => exportTransactionsToCSV(allTransactions)}
-          className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+          className="px-4 py-2 border border-gray-300 dark:border-[#2a2a2a] text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-colors"
         >
           Exportar CSV
         </button>
       </div>
 
       {/* Card toggle */}
-      <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+      <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-lg">
         <label className="flex items-center gap-2 cursor-pointer select-none">
           <div className="relative">
             <input
@@ -73,10 +73,10 @@ export default function Reports() {
               checked={includeCards}
               onChange={e => setIncludeCards(e.target.checked)}
             />
-            <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+            <div className="w-9 h-5 bg-gray-200 dark:bg-[#2a2a2a] rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
             <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
           </div>
-          <span className="text-sm font-medium text-gray-700">Incluir transações de cartão</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Incluir transações de cartão</span>
         </label>
         {includeCards && (
           <p className="text-xs text-amber-600">
@@ -91,7 +91,7 @@ export default function Reports() {
           <button
             key={p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-1.5 text-sm rounded-lg font-medium transition-colors ${period === p ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'}`}
+            className={`px-4 py-1.5 text-sm rounded-lg font-medium transition-colors ${period === p ? 'bg-indigo-600 text-white' : 'bg-white dark:bg-[#1a1a1a] border border-gray-300 dark:border-[#2a2a2a] text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2a2a2a]'}`}
           >
             {{ month: 'Este mês', quarter: 'Trimestre', year: 'Este ano', custom: 'Personalizado' }[p]}
           </button>
@@ -103,28 +103,28 @@ export default function Reports() {
               value={custom.startDate}
               max={custom.endDate || undefined}
               onChange={e => setCustom(c => ({ ...c, startDate: e.target.value }))}
-              className="rounded-lg border-gray-300 text-sm"
+              className="rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm"
             />
-            <span className="text-gray-400 text-sm">até</span>
+            <span className="text-gray-400 dark:text-gray-500 text-sm">até</span>
             <input
               type="date"
               value={custom.endDate}
               min={custom.startDate || undefined}
               onChange={e => setCustom(c => ({ ...c, endDate: e.target.value }))}
-              className="rounded-lg border-gray-300 text-sm"
+              className="rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm"
             />
           </div>
         )}
       </div>
 
       {error && (
-        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+        <div className="px-4 py-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg text-sm text-red-800 dark:text-red-400">
           Erro ao carregar transações: {error}
         </div>
       )}
 
       {allTransactions.length >= 500 && !loading && (
-        <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+        <div className="px-4 py-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 rounded-lg text-sm text-amber-800 dark:text-amber-400">
           Mostrando os 500 registros mais recentes. Os totais do período podem estar incompletos.
         </div>
       )}
@@ -133,20 +133,20 @@ export default function Reports() {
         <>
           {/* Totals */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-medium text-gray-500 uppercase mb-1">Total de Receitas</p>
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Receitas</p>
               <p className="text-2xl font-bold text-green-600">{formatCurrency(totalIncome)}</p>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-xs font-medium text-gray-500 uppercase mb-1">Total de Despesas</p>
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Despesas</p>
               <p className="text-2xl font-bold text-red-600">{formatCurrency(totalExpense)}</p>
             </div>
           </div>
 
           {/* Category chart */}
           {categoryTotals.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
-              <p className="text-sm font-medium text-gray-700 mb-4">Despesas por categoria</p>
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Despesas por categoria</p>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={categoryTotals} layout="vertical">
                   <XAxis type="number" tick={{ fontSize: 11 }} tickFormatter={v => formatCurrency(Number(v))} />
@@ -163,26 +163,26 @@ export default function Reports() {
           )}
 
           {/* Transactions table */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 dark:bg-[#111111] border-b border-gray-200 dark:border-[#2a2a2a]">
                 <tr>
                   {['Data', 'Título', 'Categoria', 'Tipo', 'Valor'].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide">{h}</th>
+                    <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#2a2a2a]">
                 {allTransactions.length === 0 && (
-                  <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">Nenhuma transação no período.</td></tr>
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400 dark:text-gray-500">Nenhuma transação no período.</td></tr>
                 )}
                 {allTransactions.map(t => (
-                  <tr key={t.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-gray-500">{formatDate(t.date)}</td>
-                    <td className="px-4 py-3 font-medium text-gray-800">{t.title}</td>
-                    <td className="px-4 py-3 text-gray-500">{t.categories?.name ?? '—'}</td>
+                  <tr key={t.id} className="hover:bg-gray-50 dark:hover:bg-[#222222]">
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{formatDate(t.date)}</td>
+                    <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200">{t.title}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{t.categories?.name ?? '—'}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${t.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${t.type === 'income' ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400'}`}>
                         {t.type === 'income' ? 'Receita' : 'Despesa'}
                       </span>
                     </td>

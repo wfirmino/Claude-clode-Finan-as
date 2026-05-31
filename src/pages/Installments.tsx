@@ -50,9 +50,9 @@ function getMonthlyProjection(installments: Installment[]) {
 }
 
 const STATUS_STYLE = {
-  quitado: 'bg-gray-100 text-gray-500',
-  em_dia: 'bg-green-50 text-green-700',
-  vencido: 'bg-red-50 text-red-700',
+  quitado: 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400',
+  em_dia: 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+  vencido: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400',
 }
 const STATUS_LABEL = { quitado: 'Quitado', em_dia: 'Em dia', vencido: 'Vencido' }
 
@@ -180,12 +180,12 @@ export default function Installments() {
   }
 
   return (
-    <div className="bg-white min-h-full">
+    <div className="bg-white dark:bg-black min-h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Parcelamentos</h2>
-          <p className="hidden md:block text-sm text-gray-400 mt-0.5">Gerencie suas compras parceladas</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Parcelamentos</h2>
+          <p className="hidden md:block text-sm text-gray-400 dark:text-gray-500 mt-0.5">Gerencie suas compras parceladas</p>
         </div>
         <button
           onClick={openCreate}
@@ -196,25 +196,25 @@ export default function Installments() {
       </div>
 
       {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-800 dark:text-red-300">
           Erro ao carregar parcelamentos: {error}
         </div>
       )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-red-50 rounded-xl border border-red-100 px-5 py-4">
+        <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 px-5 py-4">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Total em aberto</span>
+            <span className="text-xs font-semibold text-red-400 dark:text-red-400 uppercase tracking-wide">Total em aberto</span>
           </div>
           <p className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency(summary.totalAberto)}</p>
           <p className="text-xs text-red-400 mt-1">parcelas pendentes</p>
         </div>
 
-        <div className="bg-green-50 rounded-xl border border-green-100 px-5 py-4">
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/50 px-5 py-4">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -225,7 +225,7 @@ export default function Installments() {
           <p className="text-xs text-green-500 mt-1">valor quitado</p>
         </div>
 
-        <div className="bg-indigo-50 rounded-xl border border-indigo-100 px-5 py-4 col-span-2 md:col-span-1">
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50 px-5 py-4 col-span-2 md:col-span-1">
           <div className="flex items-center gap-2 mb-2">
             <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -238,8 +238,8 @@ export default function Installments() {
       </div>
 
       {/* Bar chart */}
-      <div className="rounded-xl border border-gray-200 px-5 py-4 mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">Impacto nos próximos 6 meses</h3>
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 px-5 py-4 mb-6">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Impacto nos próximos 6 meses</h3>
         {installments.length === 0 ? (
           <p className="text-sm text-gray-400 py-4 text-center">Nenhum parcelamento para exibir</p>
         ) : (
@@ -269,9 +269,9 @@ export default function Installments() {
       {loading ? (
         <p className="text-sm text-gray-400 py-4">Carregando...</p>
       ) : installments.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 px-6 py-16 text-center">
-          <p className="text-gray-400 text-base">Nenhum parcelamento cadastrado</p>
-          <p className="text-sm text-gray-300 mt-1">Clique em "Novo Parcelamento" para começar</p>
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 px-6 py-16 text-center">
+          <p className="text-gray-400 dark:text-gray-500 text-base">Nenhum parcelamento cadastrado</p>
+          <p className="text-sm text-gray-300 dark:text-gray-600 mt-1">Clique em "Novo Parcelamento" para começar</p>
         </div>
       ) : (
         <>
@@ -284,13 +284,13 @@ export default function Installments() {
                 const progress = Math.min((inst.paid_installments / inst.total_installments) * 100, 100)
                 const remaining = inst.total_installments - inst.paid_installments
                 return (
-                  <div key={inst.id} className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+                  <div key={inst.id} className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl p-4 space-y-3">
                     {/* Top: name + status */}
                     <div className="flex justify-between items-start gap-2">
                       <div className="min-w-0">
-                        <span className="text-sm font-semibold text-gray-900 block truncate">{inst.name}</span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white block truncate">{inst.name}</span>
                         {inst.category && (
-                          <span className="text-xs text-gray-400">{inst.category}</span>
+                          <span className="text-xs text-gray-400 dark:text-gray-500">{inst.category}</span>
                         )}
                       </div>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full shrink-0 ${STATUS_STYLE[status]}`}>
@@ -300,21 +300,21 @@ export default function Installments() {
 
                     {/* Amount + parcelas */}
                     <div className="flex justify-between items-center text-sm">
-                      <span className="font-bold text-gray-900">{formatCurrency(inst.installment_amount)}<span className="text-xs font-normal text-gray-400">/parcela</span></span>
-                      <span className="text-xs text-gray-500">{inst.paid_installments}/{inst.total_installments} pagas</span>
+                      <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(inst.installment_amount)}<span className="text-xs font-normal text-gray-400 dark:text-gray-500">/parcela</span></span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">{inst.paid_installments}/{inst.total_installments} pagas</span>
                     </div>
 
                     {/* Progress bar */}
                     <div className="space-y-1">
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${status === 'quitado' ? 'bg-gray-400' : 'bg-indigo-500'}`}
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400">
+                      <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
                         {nextDue ? (
-                          <span>Próx. venc.: <span className="text-gray-600 font-medium">{nextDue.toLocaleDateString('pt-BR')}</span></span>
+                          <span>Próx. venc.: <span className="text-gray-600 dark:text-gray-300 font-medium">{nextDue.toLocaleDateString('pt-BR')}</span></span>
                         ) : <span />}
                         {status !== 'quitado' && <span>{remaining} restante{remaining !== 1 ? 's' : ''}</span>}
                       </div>
@@ -323,7 +323,7 @@ export default function Installments() {
                     {/* Actions */}
                     {confirmDelete === inst.id ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-600">Confirmar exclusão?</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Confirmar exclusão?</span>
                         <button onClick={() => handleDelete(inst.id)} className="text-xs font-medium text-red-600 hover:underline">Sim</button>
                         <button onClick={() => setConfirmDelete(null)} className="text-xs text-gray-500 hover:underline">Não</button>
                       </div>
@@ -368,62 +368,62 @@ export default function Installments() {
             const hasInterestInfo = inst.original_amount != null
 
             return (
-              <div key={inst.id} className="rounded-xl border border-gray-200 bg-white px-5 py-4">
+              <div key={inst.id} className="rounded-xl border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a] px-5 py-4">
                 <div className="flex items-start justify-between gap-4">
                   {/* Left: info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-gray-900 truncate">{inst.name}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white truncate">{inst.name}</span>
                       {inst.category && (
-                        <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full shrink-0">{inst.category}</span>
+                        <span className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-full shrink-0">{inst.category}</span>
                       )}
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${STATUS_STYLE[status]}`}>
                         {STATUS_LABEL[status]}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 mb-1">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400 mb-1">
                       {hasInterestInfo ? (
                         <>
                           <span>
-                            Valor original: <span className="font-medium text-gray-700">{formatCurrency(inst.original_amount!)}</span>
+                            Valor original: <span className="font-medium text-gray-700 dark:text-gray-300">{formatCurrency(inst.original_amount!)}</span>
                           </span>
                           <span>·</span>
                           <span>
                             Juros:{' '}
-                            <span className={`font-medium ${inst.interest_amount && inst.interest_amount > 0 ? 'text-amber-600' : 'text-gray-700'}`}>
+                            <span className={`font-medium ${inst.interest_amount && inst.interest_amount > 0 ? 'text-amber-600' : 'text-gray-700 dark:text-gray-300'}`}>
                               {formatCurrency(inst.interest_amount ?? 0)}
                             </span>
                           </span>
                           <span>·</span>
-                          <span>Total: <span className="font-medium text-gray-700">{formatCurrency(inst.total_amount)}</span></span>
+                          <span>Total: <span className="font-medium text-gray-700 dark:text-gray-300">{formatCurrency(inst.total_amount)}</span></span>
                         </>
                       ) : (
-                        <span>Total: <span className="font-medium text-gray-700">{formatCurrency(inst.total_amount)}</span></span>
+                        <span>Total: <span className="font-medium text-gray-700 dark:text-gray-300">{formatCurrency(inst.total_amount)}</span></span>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                      <span>{formatCurrency(inst.installment_amount)}<span className="text-gray-400">/parcela</span></span>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                      <span>{formatCurrency(inst.installment_amount)}<span className="text-gray-400 dark:text-gray-500">/parcela</span></span>
                       {nextDue && (
                         <>
                           <span>·</span>
-                          <span>Próxima: <span className="font-medium text-gray-700">{nextDue.toLocaleDateString('pt-BR')}</span></span>
+                          <span>Próxima: <span className="font-medium text-gray-700 dark:text-gray-300">{nextDue.toLocaleDateString('pt-BR')}</span></span>
                         </>
                       )}
                     </div>
 
                     {/* Progress bar */}
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${status === 'quitado' ? 'bg-gray-400' : 'bg-indigo-500'}`}
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <span className="text-xs text-gray-500 tabular-nums shrink-0">
+                      <span className="text-xs text-gray-500 dark:text-gray-400 tabular-nums shrink-0">
                         {inst.paid_installments}/{inst.total_installments}
-                        {status !== 'quitado' && <span className="text-gray-400"> · {remaining} restante{remaining !== 1 ? 's' : ''}</span>}
+                        {status !== 'quitado' && <span className="text-gray-400 dark:text-gray-500"> · {remaining} restante{remaining !== 1 ? 's' : ''}</span>}
                       </span>
                     </div>
                   </div>
@@ -449,7 +449,7 @@ export default function Installments() {
                     </button>
                     {confirmDelete === inst.id ? (
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs text-gray-500">Excluir?</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Excluir?</span>
                         <button onClick={() => handleDelete(inst.id)} className="text-xs text-red-600 font-medium hover:underline">Sim</button>
                         <button onClick={() => setConfirmDelete(null)} className="text-xs text-gray-400 hover:underline">Não</button>
                       </div>
@@ -473,12 +473,12 @@ export default function Installments() {
 
       {/* Modal */}
       <Modal open={modal.open} onClose={closeModal} titleId="installment-modal-title">
-        <h3 id="installment-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 id="installment-modal-title" className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           {modal.editing ? 'Editar Parcelamento' : 'Novo Parcelamento'}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="inst-name" className="block text-sm font-medium text-gray-700 mb-1">Nome da compra</label>
+            <label htmlFor="inst-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome da compra</label>
             <input
               id="inst-name"
               type="text"
@@ -486,13 +486,13 @@ export default function Installments() {
               placeholder="Ex: iPhone 15, Notebook..."
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="inst-original" className="block text-sm font-medium text-gray-700 mb-1">Valor original (R$)</label>
+              <label htmlFor="inst-original" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor original (R$)</label>
               <input
                 id="inst-original"
                 type="text"
@@ -501,12 +501,12 @@ export default function Installments() {
                 placeholder="0,00"
                 value={form.original_amount}
                 onChange={e => setForm(f => ({ ...f, original_amount: maskCurrency(e.target.value) }))}
-                className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div>
-              <label htmlFor="inst-interest" className="block text-sm font-medium text-gray-700 mb-1">
-                Juros (R$) <span className="text-gray-400 font-normal">(opcional)</span>
+              <label htmlFor="inst-interest" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Juros (R$) <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
               </label>
               <input
                 id="inst-interest"
@@ -515,21 +515,21 @@ export default function Installments() {
                 placeholder="0,00"
                 value={form.interest_amount}
                 onChange={e => setForm(f => ({ ...f, interest_amount: maskCurrency(e.target.value) }))}
-                className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
           </div>
 
           {derived.total !== null && (
-            <div className="px-3 py-2.5 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-between text-sm">
-              <span className="text-gray-500">Valor total</span>
-              <span className="font-semibold text-gray-900">{formatCurrency(derived.total)}</span>
+            <div className="px-3 py-2.5 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-between text-sm">
+              <span className="text-gray-500 dark:text-gray-400">Valor total</span>
+              <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(derived.total)}</span>
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="inst-count" className="block text-sm font-medium text-gray-700 mb-1">Nº de parcelas</label>
+              <label htmlFor="inst-count" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nº de parcelas</label>
               <input
                 id="inst-count"
                 type="number"
@@ -540,12 +540,12 @@ export default function Installments() {
                 placeholder="12"
                 value={form.total_installments}
                 onChange={e => setForm(f => ({ ...f, total_installments: e.target.value }))}
-                className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
             <div className="flex flex-col justify-end">
               {derived.perInstallment !== null && (
-                <div className="px-3 py-2.5 bg-indigo-50 rounded-lg border border-indigo-100 flex items-center justify-between text-sm h-[38px]">
+                <div className="px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg border border-indigo-100 dark:border-indigo-800/50 flex items-center justify-between text-sm h-[38px]">
                   <span className="text-indigo-500">Por parcela</span>
                   <span className="font-semibold text-indigo-700">{formatCurrency(derived.perInstallment)}</span>
                 </div>
@@ -554,38 +554,38 @@ export default function Installments() {
           </div>
 
           <div>
-            <label htmlFor="inst-date" className="block text-sm font-medium text-gray-700 mb-1">Data da primeira parcela</label>
+            <label htmlFor="inst-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data da primeira parcela</label>
             <input
               id="inst-date"
               type="date"
               required
               value={form.first_payment_date}
               onChange={e => setForm(f => ({ ...f, first_payment_date: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
           <div>
-            <label htmlFor="inst-category" className="block text-sm font-medium text-gray-700 mb-1">Categoria <span className="text-gray-400 font-normal">(opcional)</span></label>
+            <label htmlFor="inst-category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span></label>
             <input
               id="inst-category"
               type="text"
               placeholder="Ex: Eletrônicos, Roupas..."
               value={form.category}
               onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
           <div>
-            <label htmlFor="inst-notes" className="block text-sm font-medium text-gray-700 mb-1">Observação <span className="text-gray-400 font-normal">(opcional)</span></label>
+            <label htmlFor="inst-notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Observação <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span></label>
             <textarea
               id="inst-notes"
               rows={2}
               placeholder="Notas adicionais..."
               value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 

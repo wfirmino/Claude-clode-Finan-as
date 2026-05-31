@@ -32,13 +32,13 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
         role="dialog"
         aria-modal="true"
         aria-label="Detalhes da transação"
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-xl"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#1a1a1a] rounded-t-2xl shadow-xl"
       >
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
         </div>
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-          <span className="text-sm font-bold text-gray-900">Detalhes da Transação</span>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-[#2a2a2a]">
+          <span className="text-sm font-bold text-gray-900 dark:text-white">Detalhes da Transação</span>
           <div className="flex gap-4">
             <button
               onClick={() => { onEdit(transaction); handleClose() }}
@@ -48,7 +48,7 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
             </button>
             {confirmDelete ? (
               <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-500">Confirmar exclusão?</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">Confirmar exclusão?</span>
                 <button
                   onClick={() => { onDelete(transaction.id); handleClose() }}
                   className="text-sm font-semibold text-red-600"
@@ -72,41 +72,41 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
             )}
           </div>
         </div>
-        <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl">
+        <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-100 dark:border-[#2a2a2a]">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-2xl">
             {transaction.type === 'income' ? '💰' : '💸'}
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-0.5">{transaction.title}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">{transaction.title}</p>
             <p className={`text-2xl font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
               {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
             </p>
           </div>
         </div>
         <div
-          className="divide-y divide-gray-50"
+          className="divide-y divide-gray-50 dark:divide-[#2a2a2a]"
           style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}
         >
           <div className="flex justify-between items-center px-5 py-3 text-sm">
-            <span className="text-gray-400">📅 Data</span>
-            <span className="font-medium text-gray-800">{formatDate(transaction.date)}</span>
+            <span className="text-gray-400 dark:text-gray-500">📅 Data</span>
+            <span className="font-medium text-gray-800 dark:text-gray-200">{formatDate(transaction.date)}</span>
           </div>
           <div className="flex justify-between items-center px-5 py-3 text-sm">
-            <span className="text-gray-400">🏷 Categoria</span>
-            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${transaction.type === 'income' ? 'bg-green-50 text-green-700' : 'bg-indigo-50 text-indigo-700'}`}>
+            <span className="text-gray-400 dark:text-gray-500">🏷 Categoria</span>
+            <span className={`text-xs font-semibold px-3 py-1 rounded-full ${transaction.type === 'income' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'}`}>
               {transaction.categories?.name ?? '—'}
             </span>
           </div>
           <div className="flex justify-between items-center px-5 py-3 text-sm">
-            <span className="text-gray-400">📝 Tipo</span>
-            <span className="font-medium text-gray-800">
+            <span className="text-gray-400 dark:text-gray-500">📝 Tipo</span>
+            <span className="font-medium text-gray-800 dark:text-gray-200">
               {transaction.type === 'income' ? 'Receita' : 'Despesa'}
             </span>
           </div>
           {transaction.notes && (
             <div className="flex justify-between items-center px-5 py-3 text-sm">
-              <span className="text-gray-400">📌 Observação</span>
-              <span className="font-medium text-gray-800 max-w-[200px] text-right">{transaction.notes}</span>
+              <span className="text-gray-400 dark:text-gray-500">📌 Observação</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200 max-w-[200px] text-right">{transaction.notes}</span>
             </div>
           )}
         </div>

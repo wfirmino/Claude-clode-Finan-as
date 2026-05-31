@@ -24,16 +24,16 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-xl font-semibold text-gray-900">Dashboard</h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Dashboard</h2>
 
       {error && (
-        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+        <div className="px-4 py-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-800 dark:text-red-400">
           Erro ao carregar transações: {error}
         </div>
       )}
 
       {totalCount !== null && transactions.length < totalCount && (
-        <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+        <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-800 dark:text-amber-400">
           Saldo calculado sobre {transactions.length.toLocaleString('pt-BR')} de {totalCount.toLocaleString('pt-BR')} transações. O limite do servidor foi atingido — o saldo pode divergir do total real.
         </div>
       )}
@@ -41,12 +41,12 @@ export default function Dashboard() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900' : 'text-red-600' },
+          { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600' },
           { label: 'Receitas do mês', value: income, color: 'text-green-600' },
           { label: 'Despesas do mês', value: expense, color: 'text-red-600' },
         ].map((card, i) => (
-          <div key={card.label} className={`bg-white rounded-xl border border-gray-200 p-5 ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{card.label}</p>
+          <div key={card.label} className={`bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5 ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
           </div>
         ))}
@@ -54,8 +54,8 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm font-medium text-gray-700 mb-4">Gastos por categoria (mês atual)</p>
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Gastos por categoria (mês atual)</p>
           {categoryTotals.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">Sem dados</p>
           ) : (
@@ -70,12 +70,12 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm font-medium text-gray-700 mb-4">Receitas vs Despesas (6 meses)</p>
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Receitas vs Despesas (6 meses)</p>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={monthly}>
-              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={v => { const n = Number(v); return n >= 1000 ? `R$${(n / 1000).toFixed(0)}k` : `R$${n}` }} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} />
+              <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} tickFormatter={v => { const n = Number(v); return n >= 1000 ? `R$${(n / 1000).toFixed(0)}k` : `R$${n}` }} />
               <Tooltip formatter={(v) => formatCurrency(Number(v))} />
               <Legend />
               <Bar dataKey="income" name="Receita" fill="#22c55e" radius={[4, 4, 0, 0]} />
@@ -86,19 +86,19 @@ export default function Dashboard() {
       </div>
 
       {/* Recent transactions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-medium text-gray-700">Últimas transações</p>
-          <Link to="/transactions" className="text-sm text-indigo-600 hover:underline">Ver todas</Link>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Últimas transações</p>
+          <Link to="/transactions" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Ver todas</Link>
         </div>
         {recent.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-4">Nenhuma transação registrada.</p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100 dark:divide-[#2a2a2a]">
             {recent.map(t => (
               <div key={t.id} className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{t.title}</p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{t.title}</p>
                   <p className="text-xs text-gray-400">{t.categories?.name ?? '—'} · {formatDate(t.date)}</p>
                 </div>
                 <span className={`text-sm font-medium ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>

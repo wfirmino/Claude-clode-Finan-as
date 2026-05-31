@@ -48,16 +48,16 @@ export default function KommoSummary({ transactions, periodo }: Props) {
   }, [transactions])
 
   const row = (label: string, value: number, highlight = false) => (
-    <div key={label} className={`flex justify-between items-center py-2 ${highlight ? 'font-semibold' : 'text-gray-600'}`}>
+    <div key={label} className={`flex justify-between items-center py-2 ${highlight ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
       <span className="text-sm">{label}</span>
-      <span className={`text-sm tabular-nums ${highlight ? 'text-purple-700' : ''}`}>{formatCurrency(value)}</span>
+      <span className={`text-sm tabular-nums ${highlight ? 'text-purple-700 dark:text-purple-400' : ''}`}>{formatCurrency(value)}</span>
     </div>
   )
 
   return (
-    <div className="bg-purple-50 border border-purple-100 rounded-xl p-4 mb-6">
-      <h3 className="text-sm font-semibold text-purple-700 mb-3">Resumo Kommo — {periodo}</h3>
-      <div className="divide-y divide-purple-100">
+    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/50 rounded-xl p-4 mb-6">
+      <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-400 mb-3">Resumo Kommo — {periodo}</h3>
+      <div className="divide-y divide-purple-100 dark:divide-purple-800/50">
         {row('Total de assinaturas', totals.assinaturas)}
         {totals.semComissao > 0 && row('Repasses diretos (sem comissão)', totals.semComissao)}
         {row('Total taxas maquininha', totals.taxas)}

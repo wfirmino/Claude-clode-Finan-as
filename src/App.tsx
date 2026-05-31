@@ -14,6 +14,7 @@ import Cartao from './pages/Cartao'
 import SettingsPage from './pages/settings/SettingsPage'
 import ProfilePage from './pages/settings/ProfilePage'
 import ChangePasswordPage from './pages/settings/ChangePasswordPage'
+import PreferencesPage from './pages/settings/PreferencesPage'
 
 export default function App() {
   const { user, loading } = useAuth()
@@ -30,7 +31,9 @@ export default function App() {
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
       <Route element={<ProtectedRoute user={user} />}>
+        {/* Páginas com Layout (sidebar desktop + TopNav mobile) */}
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
@@ -39,11 +42,15 @@ export default function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/settings/profile" element={<ProfilePage />} />
-          <Route path="/settings/change-password" element={<ChangePasswordPage />} />
         </Route>
+
+        {/* Settings — standalone, sem Layout */}
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings/profile" element={<ProfilePage />} />
+        <Route path="/settings/change-password" element={<ChangePasswordPage />} />
+        <Route path="/settings/preferences" element={<PreferencesPage />} />
       </Route>
+
       <Route path="*" element={
         <div className="flex flex-col items-center justify-center h-screen text-center">
           <p className="text-4xl font-bold text-gray-300 mb-2">404</p>

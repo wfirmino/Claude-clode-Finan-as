@@ -19,7 +19,7 @@ export default function Layout() {
   const { signOut } = useAuth()
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
-  useTheme() // Garante classe dark/light no <html> ao montar
+  useTheme()
 
   async function handleSignOut() {
     try { await signOut() } catch (err) { console.error('Sign out error:', err) }
@@ -27,7 +27,7 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50 dark:bg-black">
       {/* Sidebar — desktop only */}
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-gray-200 flex-col">
         <div className="px-6 py-5 border-b border-gray-200">
@@ -64,11 +64,11 @@ export default function Layout() {
       {/* Main area */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Header + TopNav — mobile only */}
-        <div className="md:hidden bg-white border-b border-gray-200">
+        <div className="md:hidden bg-white dark:bg-[#111] border-b border-gray-200 dark:border-white/10">
           <div className="flex items-center px-4 py-3">
             <button
               onClick={() => setDrawerOpen(true)}
-              className="p-1 -ml-1 text-gray-600 hover:text-gray-900"
+              className="p-1 -ml-1 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-300"
               aria-label="Abrir menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,11 +76,12 @@ export default function Layout() {
                   d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <span className="flex-1 text-center text-base font-bold text-indigo-600">FinanceApp</span>
+            <span className="flex-1 text-center text-base font-bold text-indigo-600 dark:text-white">FinanceApp</span>
           </div>
           <TopNav />
         </div>
-        <main className="flex-1 overflow-auto p-4 md:p-8">
+
+        <main className="flex-1 overflow-auto p-4 md:p-8 bg-gray-50 dark:bg-black">
           <Outlet />
         </main>
       </div>

@@ -56,16 +56,16 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
         role="dialog"
         aria-modal="true"
         aria-label="Filtros"
-        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[85vh] flex flex-col shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#1a1a1a] rounded-t-2xl max-h-[85vh] flex flex-col shadow-2xl"
       >
         {/* Handle */}
         <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 flex-shrink-0">
-          <span className="text-lg font-bold text-gray-900">Filtros</span>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-[#2a2a2a] flex-shrink-0">
+          <span className="text-lg font-bold text-gray-900 dark:text-white">Filtros</span>
           <button onClick={handleClear} className="text-sm font-medium text-indigo-600 active:opacity-70">
             Limpar todos
           </button>
@@ -76,7 +76,7 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
 
           {/* Período */}
           <section>
-            <h3 className="text-sm font-semibold text-gray-500 mb-3">Período</h3>
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Período</h3>
             <div className="flex flex-wrap gap-2">
               {DATE_PRESETS.map(p => (
                 <button
@@ -85,7 +85,7 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
                   className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                     draft.datePreset === p.key
                       ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'bg-white text-gray-700 border-gray-300 active:bg-gray-50'
+                      : 'bg-white dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#2a2a2a] active:bg-gray-50 dark:active:bg-[#2a2a2a]'
                   }`}
                 >
                   {p.label}
@@ -95,21 +95,21 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
             {draft.datePreset === 'custom' && (
               <div className="mt-3 flex gap-3">
                 <div className="flex-1">
-                  <label className="text-xs text-gray-400 block mb-1">De</label>
+                  <label className="text-xs text-gray-400 dark:text-gray-500 block mb-1">De</label>
                   <input
                     type="date"
                     value={draft.customStartDate}
                     onChange={e => setDraft(d => ({ ...d, customStartDate: e.target.value }))}
-                    className="w-full rounded-lg border border-gray-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-xs text-gray-400 block mb-1">Até</label>
+                  <label className="text-xs text-gray-400 dark:text-gray-500 block mb-1">Até</label>
                   <input
                     type="date"
                     value={draft.customEndDate}
                     onChange={e => setDraft(d => ({ ...d, customEndDate: e.target.value }))}
-                    className="w-full rounded-lg border border-gray-300 text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    className="w-full rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-sm text-gray-800 dark:text-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                   />
                 </div>
               </div>
@@ -118,8 +118,8 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
 
           {/* Tipo de Transação */}
           <section>
-            <h3 className="text-sm font-semibold text-gray-500 mb-3">Tipo de Transação</h3>
-            <div className="flex rounded-xl overflow-hidden border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Tipo de Transação</h3>
+            <div className="flex rounded-xl overflow-hidden border border-gray-200 dark:border-[#2a2a2a]">
               {(
                 [
                   { value: '' as const, label: 'Todas' },
@@ -131,11 +131,11 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
                   key={opt.value}
                   onClick={() => setDraft(d => ({ ...d, typeFilter: opt.value }))}
                   className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-                    i > 0 ? 'border-l border-gray-200' : ''
+                    i > 0 ? 'border-l border-gray-200 dark:border-[#2a2a2a]' : ''
                   } ${
                     draft.typeFilter === opt.value
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-50 text-gray-600 active:bg-gray-100'
+                      : 'bg-gray-50 dark:bg-[#111] text-gray-600 dark:text-gray-400 active:bg-gray-100 dark:active:bg-[#2a2a2a]'
                   }`}
                 >
                   {opt.label}
@@ -147,14 +147,14 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
           {/* Categoria */}
           {categories.length > 0 && (
             <section>
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">Categoria</h3>
+              <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">Categoria</h3>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setDraft(d => ({ ...d, categoryFilter: '' }))}
                   className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                     draft.categoryFilter === ''
                       ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'bg-white text-gray-700 border-gray-300 active:bg-gray-50'
+                      : 'bg-white dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-300 border-gray-300 dark:border-[#2a2a2a] active:bg-gray-50 dark:active:bg-[#2a2a2a]'
                   }`}
                 >
                   Todas
@@ -186,10 +186,10 @@ export default function MobileFilterSheet({ open, onClose, current, onApply, cat
         </div>
 
         {/* Bottom actions */}
-        <div className="flex gap-3 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-gray-100 flex-shrink-0">
+        <div className="flex gap-3 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-gray-100 dark:border-[#2a2a2a] flex-shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-600 bg-gray-100 active:bg-gray-200 transition-colors"
+            className="flex-1 py-3 rounded-xl text-sm font-semibold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-[#2a2a2a] active:bg-gray-200 dark:active:bg-[#333] transition-colors"
           >
             Cancelar
           </button>

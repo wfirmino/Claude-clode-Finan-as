@@ -91,7 +91,7 @@ export default function Cartao() {
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">Cartões</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Cartões</h2>
         <button onClick={openCreate} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
           + Novo Cartão
         </button>
@@ -101,8 +101,8 @@ export default function Cartao() {
       {cards.length === 0 && (
         <div className="text-center py-20">
           <p className="text-4xl mb-3">💳</p>
-          <p className="text-gray-500 font-medium mb-1">Nenhum cartão cadastrado.</p>
-          <p className="text-sm text-gray-400 mb-6">Adicione um cartão para importar extratos e controlar faturas.</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">Nenhum cartão cadastrado.</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">Adicione um cartão para importar extratos e controlar faturas.</p>
           <button onClick={openCreate} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
             + Adicionar cartão
           </button>
@@ -118,7 +118,7 @@ export default function Cartao() {
               <button
                 key={c.id}
                 onClick={() => setActiveCardId(c.id)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeCard?.id === c.id ? 'text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${activeCard?.id === c.id ? 'text-white shadow-sm' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                 style={activeCard?.id === c.id ? { backgroundColor: c.color } : {}}
               >
                 <span className="w-2 h-2 rounded-full bg-current opacity-70" />
@@ -127,14 +127,14 @@ export default function Cartao() {
             ))}
             <button
               onClick={openCreate}
-              className="flex-shrink-0 px-3 py-2 rounded-full text-sm text-gray-400 hover:bg-gray-100 border border-dashed border-gray-300"
+              className="flex-shrink-0 px-3 py-2 rounded-full text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-600"
             >
               + Novo
             </button>
             <div className="ml-auto flex-shrink-0">
               <button
                 onClick={() => setImportOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+                className="flex items-center gap-1.5 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -150,7 +150,7 @@ export default function Cartao() {
               <button onClick={() => openEdit(activeCard)} className="text-indigo-600 hover:underline">Editar</button>
               {confirmDelete === activeCard.id ? (
                 <>
-                  <span className="text-gray-500">Excluir cartão e todas as transações?</span>
+                  <span className="text-gray-500 dark:text-gray-400">Excluir cartão e todas as transações?</span>
                   <button onClick={() => handleDelete(activeCard.id)} className="text-red-600 font-medium hover:underline">Sim</button>
                   <button onClick={() => setConfirmDelete(null)} className="text-gray-500 hover:underline">Não</button>
                 </>
@@ -173,15 +173,15 @@ export default function Cartao() {
               </p>
             )}
             {cardTxs.map(t => (
-              <div key={t.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-xl px-4 py-3">
+              <div key={t.id} className="flex items-center justify-between bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-[#2a2a2a] rounded-xl px-4 py-3">
                 <div className="flex items-center gap-3">
                   <span className="text-lg">{t.type === 'income' ? '✅' : '🛍️'}</span>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t.title}</p>
-                    <p className="text-xs text-gray-400">{formatDate(t.date)}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{t.title}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">{formatDate(t.date)}</p>
                   </div>
                 </div>
-                <span className={`text-sm font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600' : 'text-gray-800'}`}>
+                <span className={`text-sm font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600' : 'text-gray-800 dark:text-gray-200'}`}>
                   {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                 </span>
               </div>
@@ -192,30 +192,30 @@ export default function Cartao() {
 
       {/* Modal: novo/editar cartão */}
       <Modal open={cardModal.open} onClose={() => setCardModal({ open: false, editing: null })} titleId="card-modal-title">
-        <h3 id="card-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 id="card-modal-title" className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           {cardModal.editing ? 'Editar Cartão' : 'Novo Cartão'}
         </h3>
         <form onSubmit={handleCardSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nome do cartão</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nome do cartão</label>
             <input
               type="text" required placeholder="Ex: Nubank, Itaú Platinum"
               value={cardForm.name}
               onChange={e => setCardForm(f => ({ ...f, name: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Dia de vencimento</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Dia de vencimento</label>
             <input
               type="number" required min={1} max={31} placeholder="Ex: 10"
               value={cardForm.due_day}
               onChange={e => setCardForm(f => ({ ...f, due_day: e.target.value }))}
-              className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cor</label>
             <div className="flex gap-2">
               {CARD_COLORS.map(color => (
                 <button
@@ -228,7 +228,7 @@ export default function Cartao() {
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={() => setCardModal({ open: false, editing: null })} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+            <button type="button" onClick={() => setCardModal({ open: false, editing: null })} className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg">Cancelar</button>
             <button type="submit" disabled={submitting} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60">
               {submitting ? 'Salvando...' : 'Salvar'}
             </button>

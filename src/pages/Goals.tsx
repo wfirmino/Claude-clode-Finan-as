@@ -78,14 +78,14 @@ export default function Goals() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Metas</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Metas</h2>
         <button onClick={openCreate} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
           Nova Meta
         </button>
       </div>
 
       {error && (
-        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+        <div className="mb-4 px-4 py-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-lg text-sm text-red-800 dark:text-red-400">
           Erro ao carregar metas: {error}
         </div>
       )}
@@ -97,21 +97,21 @@ export default function Goals() {
           const progress = calculateGoalProgress(g)
           const atRisk = isGoalAtRisk(g)
           return (
-            <div key={g.id} className={`bg-white rounded-xl border p-5 ${atRisk ? 'border-amber-300' : 'border-gray-200'}`}>
+            <div key={g.id} className={`bg-white dark:bg-[#1a1a1a] rounded-xl border p-5 ${atRisk ? 'border-amber-300 dark:border-amber-700' : 'border-gray-200 dark:border-[#2a2a2a]'}`}>
               {atRisk && (
-                <span className="inline-block mb-2 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                <span className="inline-block mb-2 text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full">
                   Atenção: prazo próximo
                 </span>
               )}
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="font-medium text-gray-900">{g.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Prazo: {formatDate(g.deadline)}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{g.title}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Prazo: {formatDate(g.deadline)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   {confirmDelete === g.id ? (
                     <>
-                      <span className="text-xs text-gray-600">Confirmar?</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Confirmar?</span>
                       <button onClick={() => handleDelete(g.id)} className="text-sm text-red-600 font-medium hover:underline">Sim</button>
                       <button onClick={() => setConfirmDelete(null)} className="text-sm text-gray-500 hover:underline">Não</button>
                     </>
@@ -124,11 +124,11 @@ export default function Goals() {
                 </div>
               </div>
               <div className="mb-2">
-                <div className="flex justify-between text-xs text-gray-500 mb-1">
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                   <span>{formatCurrency(g.current)} de {formatCurrency(g.target)}</span>
                   <span>{progress}%</span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
+                <div className="w-full bg-gray-100 dark:bg-[#2a2a2a] rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${progress >= 100 ? 'bg-green-500' : atRisk ? 'bg-amber-400' : 'bg-indigo-500'}`}
                     style={{ width: `${progress}%` }}
@@ -141,30 +141,30 @@ export default function Goals() {
       </div>
 
       <Modal open={modal.open} onClose={closeModal} titleId="goal-modal-title">
-        <h3 id="goal-modal-title" className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 id="goal-modal-title" className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           {modal.editing ? 'Editar Meta' : 'Nova Meta'}
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="goal-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-            <input id="goal-title" type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <label htmlFor="goal-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+            <input id="goal-title" type="text" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="goal-target" className="block text-sm font-medium text-gray-700 mb-1">Valor alvo (R$)</label>
-              <input id="goal-target" type="text" inputMode="decimal" required placeholder="0,00" value={form.target} onChange={e => setForm(f => ({ ...f, target: maskCurrency(e.target.value) }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <label htmlFor="goal-target" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor alvo (R$)</label>
+              <input id="goal-target" type="text" inputMode="decimal" required placeholder="0,00" value={form.target} onChange={e => setForm(f => ({ ...f, target: maskCurrency(e.target.value) }))} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500" />
             </div>
             <div>
-              <label htmlFor="goal-current" className="block text-sm font-medium text-gray-700 mb-1">Valor atual (R$)</label>
-              <input id="goal-current" type="text" inputMode="decimal" required placeholder="0,00" value={form.current} onChange={e => setForm(f => ({ ...f, current: maskCurrency(e.target.value) }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <label htmlFor="goal-current" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Valor atual (R$)</label>
+              <input id="goal-current" type="text" inputMode="decimal" required placeholder="0,00" value={form.current} onChange={e => setForm(f => ({ ...f, current: maskCurrency(e.target.value) }))} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500" />
             </div>
           </div>
           <div>
-            <label htmlFor="goal-deadline" className="block text-sm font-medium text-gray-700 mb-1">Prazo</label>
-            <input id="goal-deadline" type="date" required value={form.deadline} onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <label htmlFor="goal-deadline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Prazo</label>
+            <input id="goal-deadline" type="date" required value={form.deadline} onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))} className="w-full rounded-lg border-gray-300 dark:border-[#2a2a2a] dark:bg-[#1a1a1a] dark:text-white text-sm focus:ring-indigo-500 focus:border-indigo-500" />
           </div>
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+            <button type="button" onClick={closeModal} className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg">Cancelar</button>
             <button type="submit" disabled={submitting} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60">
               {submitting ? 'Salvando...' : 'Salvar'}
             </button>
