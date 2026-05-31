@@ -2,8 +2,8 @@ import { describe, it, expectTypeOf } from 'vitest'
 import type { Perfil, Transaction, EmpresarialConfig } from '../../src/types'
 
 describe('Perfil types', () => {
-  it('Perfil is union of three strings', () => {
-    expectTypeOf<Perfil>().toEqualTypeOf<'pessoal' | 'empresarial' | 'kommo'>()
+  it('Perfil is union of four strings', () => {
+    expectTypeOf<Perfil>().toEqualTypeOf<'pessoal' | 'empresarial' | 'kommo' | 'cartao'>()
   })
 
   it('Transaction has optional perfil fields', () => {

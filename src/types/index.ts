@@ -7,7 +7,7 @@ export interface Category {
   created_at: string
 }
 
-export type Perfil = 'pessoal' | 'empresarial' | 'kommo'
+export type Perfil = 'pessoal' | 'empresarial' | 'kommo' | 'cartao'
 
 export interface Transaction {
   id: string
@@ -36,6 +36,16 @@ export interface Transaction {
   lancamento_simplificado?: boolean
   sem_comissao?: boolean
   forma_pagamento?: string
+  card_id?: string | null
+}
+
+export interface Card {
+  id: string
+  user_id: string
+  name: string
+  due_day: number
+  color: string
+  created_at: string
 }
 
 export interface EmpresarialConfig {
