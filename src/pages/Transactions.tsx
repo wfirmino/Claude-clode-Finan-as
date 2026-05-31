@@ -3,7 +3,7 @@ import { useTransactions, type TransactionFilters } from '../hooks/useTransactio
 import { useCategories } from '../hooks/useCategories'
 import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import type { Transaction, DatePreset, Perfil } from '../types'
-import { formatCurrency, formatDate } from '../utils/formatters'
+import { formatCurrency, formatDate, numToStr, parseBR } from '../utils/formatters'
 import { getErrorMessage, isCheckConstraintError } from '../utils/errors'
 import Toast from '../components/Toast'
 import Modal from '../components/Modal'
@@ -113,41 +113,6 @@ const SORT_OPTIONS: { key: SortBy; label: string }[] = [
 
 const PLANOS = ['3', '6', '9', '12', '24']
 
-// Normaliza para float aceitando PT-BR (1.234,56), US (1,234.56) e sem milhar (497,88 ou 497.88)
-function parseBR(value: string): number {
-  const s = value.trim()
-  if (!s) return NaN
-  // Ambos os separadores presentes: o que aparecer por último é o decimal
-  if (s.includes(',') && s.includes('.')) {
-    return s.lastIndexOf(',') > s.lastIndexOf('.')
-      ? parseFloat(s.replace(/\./g, '').replace(',', '.'))  // PT-BR: 1.234,56
-      : parseFloat(s.replace(/,/g, ''))                      // US:    1,234.56
-  }
-  // Só vírgula: múltiplas vírgulas → milhar US (1,234,567); única → decimal PT-BR (497,88)
-  if (s.includes(',')) {
-    if ((s.match(/,/g) ?? []).length > 1) return parseFloat(s.replace(/,/g, ''))
-    return parseFloat(s.replace(',', '.'))
-  }
-  // Só ponto: heurística por número de dígitos após o ponto
-  if (s.includes('.')) {
-    const parts = s.split('.')
-    const lastPart = parts[parts.length - 1]
-    if (parts.length > 2) {
-      // Múltiplos pontos: último segmento ≤2 dígitos → decimal final (1.234.56 → 1234.56)
-      if (lastPart.length <= 2) return parseFloat(parts.slice(0, -1).join('') + '.' + lastPart)
-      return parseFloat(s.replace(/\./g, ''))
-    }
-    // Ponto único: ≤2 dígitos → decimal (497.88); 3 dígitos → milhar (1.000)
-    return lastPart.length <= 2 ? parseFloat(s) : parseFloat(s.replace(/\./g, ''))
-  }
-  return parseFloat(s)
-}
-
-// Converte número do banco (6734.74) para string pt-BR (6734,74) para usar no form
-function numToStr(n: number | null | undefined): string {
-  if (n == null) return ''
-  return n.toFixed(2).replace('.', ',')
-}
 
 function getDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
   const today = new Date()

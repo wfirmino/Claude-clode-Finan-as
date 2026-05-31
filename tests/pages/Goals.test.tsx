@@ -74,10 +74,9 @@ describe('Goals page', () => {
     render(<MemoryRouter><Goals /></MemoryRouter>)
     await waitFor(() => screen.getByText('Viagem'))
     fireEvent.click(screen.getByRole('button', { name: /nova meta/i }))
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Meta teste' } })
-    const spinbuttons = screen.getAllByRole('spinbutton')
-    fireEvent.change(spinbuttons[0], { target: { value: '100' } })  // target
-    fireEvent.change(spinbuttons[1], { target: { value: '200' } })  // current > target
+    fireEvent.change(screen.getByLabelText(/título/i), { target: { value: 'Meta teste' } })
+    fireEvent.change(screen.getByLabelText(/valor alvo/i), { target: { value: '100' } })
+    fireEvent.change(screen.getByLabelText(/valor atual/i), { target: { value: '200' } })
     // date input is the only input[type=date] in the modal
     const dateInputs = document.querySelectorAll('input[type="date"]')
     fireEvent.change(dateInputs[dateInputs.length - 1], { target: { value: futureDeadline } })
@@ -105,10 +104,9 @@ describe('Goals page', () => {
     render(<MemoryRouter><Goals /></MemoryRouter>)
     await waitFor(() => screen.getByText('Viagem'))
     fireEvent.click(screen.getByRole('button', { name: /nova meta/i }))
-    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Nova meta' } })
-    const spinbuttons = screen.getAllByRole('spinbutton')
-    fireEvent.change(spinbuttons[0], { target: { value: '1000' } })  // target
-    fireEvent.change(spinbuttons[1], { target: { value: '200' } })   // current
+    fireEvent.change(screen.getByLabelText(/título/i), { target: { value: 'Nova meta' } })
+    fireEvent.change(screen.getByLabelText(/valor alvo/i), { target: { value: '1000' } })
+    fireEvent.change(screen.getByLabelText(/valor atual/i), { target: { value: '200' } })
     fireEvent.change(screen.getByDisplayValue(''), { target: { value: futureDeadline } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => {

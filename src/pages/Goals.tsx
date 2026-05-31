@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { useGoals } from '../hooks/useGoals'
 import type { Goal } from '../types'
 import { calculateGoalProgress, isGoalAtRisk } from '../utils/calculations'
-import { formatCurrency, formatDate } from '../utils/formatters'
+import { formatCurrency, formatDate, numToStr, parseBR } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Toast from '../components/Toast'
 import Modal from '../components/Modal'
@@ -25,14 +25,14 @@ export default function Goals() {
 
   function openCreate() { setForm(defaultForm); setModal({ open: true, editing: null }) }
   function openEdit(g: Goal) {
-    setForm({ title: g.title, target: String(g.target), current: String(g.current), deadline: g.deadline })
+    setForm({ title: g.title, target: numToStr(g.target), current: numToStr(g.current), deadline: g.deadline })
     setModal({ open: true, editing: g })
   }
   function closeModal() { setModal({ open: false, editing: null }) }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const values = { title: form.title, target: parseFloat(form.target), current: parseFloat(form.current), deadline: form.deadline }
+    const values = { title: form.title, target: parseBR(form.target), current: parseBR(form.current), deadline: form.deadline }
     if (!isFinite(values.target) || values.target <= 0) {
       showToast('Informe um valor alvo numérico maior que zero.', 'error')
       return
@@ -152,11 +152,11 @@ export default function Goals() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="goal-target" className="block text-sm font-medium text-gray-700 mb-1">Valor alvo (R$)</label>
-              <input id="goal-target" type="number" required min="0.01" step="0.01" value={form.target} onChange={e => setForm(f => ({ ...f, target: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <input id="goal-target" type="text" inputMode="decimal" required placeholder="0,00" value={form.target} onChange={e => setForm(f => ({ ...f, target: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
             </div>
             <div>
               <label htmlFor="goal-current" className="block text-sm font-medium text-gray-700 mb-1">Valor atual (R$)</label>
-              <input id="goal-current" type="number" required min="0" step="0.01" value={form.current} onChange={e => setForm(f => ({ ...f, current: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+              <input id="goal-current" type="text" inputMode="decimal" required placeholder="0,00" value={form.current} onChange={e => setForm(f => ({ ...f, current: e.target.value }))} className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
             </div>
           </div>
           <div>
