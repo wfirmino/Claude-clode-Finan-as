@@ -871,7 +871,7 @@ export default function Transactions() {
             <button
               key={t.id}
               onClick={() => setSheetTx(t)}
-              className="w-full text-left bg-gray-100 dark:bg-[#1a1a1a] rounded-2xl p-4"
+              className="w-full text-left bg-transparent border border-gray-200 dark:border-white/10 rounded-2xl p-4"
             >
               {/* Date + dots */}
               <div className="flex justify-between items-center mb-3">
@@ -881,7 +881,7 @@ export default function Transactions() {
 
               {/* Icon + title */}
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${t.type === 'income' ? 'bg-green-900/40' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 bg-gray-100 dark:bg-white/10">
                   {t.type === 'income' ? '💰' : '💸'}
                 </div>
                 <span className="text-base font-semibold text-gray-900 dark:text-white">{t.title}</span>
