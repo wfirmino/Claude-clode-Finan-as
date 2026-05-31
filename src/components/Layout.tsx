@@ -64,7 +64,7 @@ export default function Layout() {
       {/* Main area */}
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Header + TopNav — mobile only */}
-        <div className="md:hidden bg-white dark:bg-[#111] border-b border-gray-200 dark:border-white/10">
+        <div className="md:hidden bg-white dark:bg-[#111]">
           <div className="flex items-center px-4 py-3">
             <button
               onClick={() => setDrawerOpen(true)}
