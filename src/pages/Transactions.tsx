@@ -863,7 +863,7 @@ export default function Transactions() {
 
       {/* Mobile card list — hidden on desktop */}
       {!loading && (
-        <div className="md:hidden divide-y divide-gray-100 dark:divide-white/10 mb-4">
+        <div className="md:hidden space-y-3 mb-4">
           {paginated.length === 0 && (
             <p className="text-sm text-gray-400 text-center py-8">Nenhuma transação encontrada</p>
           )}
@@ -871,22 +871,36 @@ export default function Transactions() {
             <button
               key={t.id}
               onClick={() => setSheetTx(t)}
-              className="w-full text-left py-4 flex items-center gap-3"
+              className="w-full text-left bg-gray-100 dark:bg-[#1a1a1a] rounded-2xl p-4"
             >
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-lg flex-shrink-0">
-                {t.type === 'income' ? '💰' : '💸'}
+              {/* Date + dots */}
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(t.date)}</span>
+                <span className="text-gray-400 dark:text-gray-400 text-xl leading-none font-bold">⋮</span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{t.title}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                  {t.categories?.name ?? '—'} · {formatDate(t.date)}
-                </p>
+
+              {/* Icon + title */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${t.type === 'income' ? 'bg-green-900/40' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                  {t.type === 'income' ? '💰' : '💸'}
+                </div>
+                <span className="text-base font-semibold text-gray-900 dark:text-white">{t.title}</span>
               </div>
-              <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                <span className={`text-base font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                  {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+
+              {/* Category badge */}
+              <div className="flex items-center gap-2 mb-4">
+                {t.categories && (
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${t.type === 'income' ? 'bg-green-900/40 text-green-400 border border-green-800/50' : 'bg-gray-200 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600'}`}>
+                    {t.categories.name}
+                  </span>
+                )}
+              </div>
+
+              {/* Value — large, bottom right */}
+              <div className="flex justify-end">
+                <span className={`text-xl font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                  {t.type === 'income' ? '' : '-'}{formatCurrency(t.amount)}
                 </span>
-                <span className="text-gray-400 dark:text-gray-500 text-sm font-bold tracking-widest">···</span>
               </div>
             </button>
           ))}
