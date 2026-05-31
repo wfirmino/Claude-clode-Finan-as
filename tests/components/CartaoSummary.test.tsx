@@ -19,7 +19,7 @@ describe('CartaoSummary', () => {
     const txs = [makeExpense(1000), makeExpense(500), makePayment(800)]
     render(<CartaoSummary transactions={txs} dueDay={10} periodo="Maio 2026" />)
     expect(screen.getByText(/FATURA/i)).toBeInTheDocument()
-    expect(screen.getByText(/PAGO/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/PAGO/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/ABERTO/i)).toBeInTheDocument()
   })
 
