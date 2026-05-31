@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/transactions', label: 'Transações', end: false },
+  { to: '/cartao', label: '💳 Cartão', end: false },
   { to: '/installments', label: 'Parcelamentos', end: false },
   { to: '/goals', label: 'Metas', end: false },
   { to: '/reports', label: 'Relatórios', end: false },

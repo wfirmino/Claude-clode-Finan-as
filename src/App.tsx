@@ -10,6 +10,7 @@ import Installments from './pages/Installments'
 import Categories from './pages/Categories'
 import Goals from './pages/Goals'
 import Reports from './pages/Reports'
+import Cartao from './pages/Cartao'
 
 export default function App() {
   const { user, loading } = useAuth()
@@ -30,6 +31,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/cartao" element={<Cartao />} />
           <Route path="/installments" element={<Installments />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/goals" element={<Goals />} />
