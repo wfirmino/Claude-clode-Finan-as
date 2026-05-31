@@ -11,6 +11,9 @@ import Categories from './pages/Categories'
 import Goals from './pages/Goals'
 import Reports from './pages/Reports'
 import Cartao from './pages/Cartao'
+import SettingsPage from './pages/settings/SettingsPage'
+import ProfilePage from './pages/settings/ProfilePage'
+import ChangePasswordPage from './pages/settings/ChangePasswordPage'
 
 export default function App() {
   const { user, loading } = useAuth()
@@ -36,6 +39,9 @@ export default function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/settings/profile" element={<ProfilePage />} />
+          <Route path="/settings/change-password" element={<ChangePasswordPage />} />
         </Route>
       </Route>
       <Route path="*" element={
