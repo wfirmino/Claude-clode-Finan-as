@@ -153,7 +153,7 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
           </div>
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-0.5 truncate">{transaction.title}</p>
-            <p className={`text-2xl font-bold tabular-nums ${isIncome ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-2xl font-bold tabular-nums ${isIncome ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
             </p>
           </div>

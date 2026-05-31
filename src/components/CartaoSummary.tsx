@@ -50,7 +50,7 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
   return (
     <div className="mb-6">
       {/* Progress bar panel */}
-      <div className="bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl px-5 py-4 mb-4">
+      <div className="border border-gray-200 dark:border-white/10 rounded-xl px-5 py-4 mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Resumo {periodo}</span>
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400 tabular-nums">{pct}% pago</span>
