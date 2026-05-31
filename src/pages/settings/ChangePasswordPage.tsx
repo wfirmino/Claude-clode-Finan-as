@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTheme } from '../../hooks/useTheme'
 import { supabase } from '../../lib/supabase'
 import Toast from '../../components/Toast'
 
 export default function ChangePasswordPage() {
+  useTheme()
   const navigate = useNavigate()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')

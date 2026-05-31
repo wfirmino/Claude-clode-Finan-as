@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
+import { useTheme } from '../../hooks/useTheme'
 import { supabase } from '../../lib/supabase'
 import Toast from '../../components/Toast'
 
 export default function ProfilePage() {
+  useTheme()
   const navigate = useNavigate()
   const { profile, loading, updateProfile } = useProfile()
   const [name, setName] = useState('')

@@ -1,11 +1,13 @@
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProfile } from '../../hooks/useProfile'
+import { useTheme } from '../../hooks/useTheme'
 import { supabase } from '../../lib/supabase'
 
 export default function SettingsPage() {
   const navigate = useNavigate()
   const { profile, updateProfile } = useProfile()
+  useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const initials = profile?.name

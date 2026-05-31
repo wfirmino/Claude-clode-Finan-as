@@ -9,6 +9,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data:;" />
     <title>financeapp</title>
+  <style>
+    html.dark, html.dark body { background-color: #000 !important; }
+    html:not(.dark), html:not(.dark) body { background-color: #fff; }
+  </style>
   <script>
     (function(){try{
       var t=localStorage.getItem('app-theme')||'dark';
