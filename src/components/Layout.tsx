@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { useTheme } from '../hooks/useTheme'
 import TopNav from './TopNav'
+import Drawer from './Drawer'
 
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
@@ -15,6 +18,8 @@ const navItems = [
 export default function Layout() {
   const { signOut } = useAuth()
   const navigate = useNavigate()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  useTheme() // Garante classe dark/light no <html> ao montar
 
   async function handleSignOut() {
     try { await signOut() } catch (err) { console.error('Sign out error:', err) }
@@ -22,7 +27,7 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Sidebar — desktop only */}
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-gray-200 flex-col">
         <div className="px-6 py-5 border-b border-gray-200">
@@ -60,14 +65,18 @@ export default function Layout() {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         {/* Header + TopNav — mobile only */}
         <div className="md:hidden bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between px-4 py-3">
-            <span className="text-base font-bold text-indigo-600">FinanceApp</span>
+          <div className="flex items-center px-4 py-3">
             <button
-              onClick={handleSignOut}
-              className="text-xs text-gray-500 hover:text-gray-700"
+              onClick={() => setDrawerOpen(true)}
+              className="p-1 -ml-1 text-gray-600 hover:text-gray-900"
+              aria-label="Abrir menu"
             >
-              Sair
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
+            <span className="flex-1 text-center text-base font-bold text-indigo-600">FinanceApp</span>
           </div>
           <TopNav />
         </div>
@@ -75,6 +84,8 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </div>
   )
 }
