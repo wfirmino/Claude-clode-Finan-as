@@ -11,12 +11,11 @@ interface Props {
 }
 
 export default function EmpresarialSummary({ transactions, mes, periodo, prolabore: initialProlabore, onSaveProlabore }: Props) {
+  const [open, setOpen] = useState(false)
   const [prolaboreInput, setProlaboreInput] = useState(numToStr(initialProlabore))
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    setProlaboreInput(numToStr(initialProlabore))
-  }, [initialProlabore])
+  useEffect(() => { setProlaboreInput(numToStr(initialProlabore)) }, [initialProlabore])
 
   const { faturamento, totalSocio, despesaMEI, lucro } = useMemo(() => {
     const fat = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
@@ -41,35 +40,53 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
   )
 
   return (
-    <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl p-4 mb-6">
-      <h3 className="text-sm font-semibold text-indigo-700 dark:text-indigo-400 mb-3">Resumo Empresarial — {periodo}</h3>
-      <div className="divide-y divide-indigo-100 dark:divide-indigo-800/50">
-        {row('Faturamento total do mês', faturamento)}
-        {row('Total dividido com sócio', totalSocio)}
-        {row('Despesa MEI', despesaMEI)}
-        {row('Lucro', lucro, true)}
-      </div>
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-indigo-100 dark:border-indigo-800/50">
-        <label className="text-sm text-gray-600 dark:text-gray-400 shrink-0">Pró-labore (R$):</label>
-        <input
-          type="text"
-          inputMode="decimal"
-          placeholder="0,00"
-          value={prolaboreInput}
-          onChange={e => setProlaboreInput(maskCurrency(e.target.value))}
-          className="w-32 rounded border border-indigo-200 dark:border-indigo-700 dark:bg-[#1a1a1a] dark:text-white text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
-        />
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="px-3 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-60"
+    <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl mb-6 overflow-hidden">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+      >
+        <h3 className="text-sm font-semibold text-indigo-700 dark:text-indigo-400">
+          Resumo Empresarial — {periodo}
+        </h3>
+        <svg
+          className={`w-4 h-4 text-indigo-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
         >
-          {saving ? 'Salvando...' : 'Salvar'}
-        </button>
-      </div>
-      <div className={`flex justify-between items-center mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-800/50 font-semibold ${caixa >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-        <span className="text-sm">Caixa da empresa</span>
-        <span className="text-sm tabular-nums">{formatCurrency(caixa)}</span>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div className={`transition-all duration-200 ease-in-out overflow-hidden ${open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="px-4 pb-4">
+          <div className="divide-y divide-indigo-100 dark:divide-indigo-800/50">
+            {row('Faturamento total do mês', faturamento)}
+            {row('Total dividido com sócio', totalSocio)}
+            {row('Despesa MEI', despesaMEI)}
+            {row('Lucro', lucro, true)}
+          </div>
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-indigo-100 dark:border-indigo-800/50">
+            <label className="text-sm text-gray-600 dark:text-gray-400 shrink-0">Pró-labore (R$):</label>
+            <input
+              type="text"
+              inputMode="decimal"
+              placeholder="0,00"
+              value={prolaboreInput}
+              onChange={e => setProlaboreInput(maskCurrency(e.target.value))}
+              className="w-32 rounded border border-indigo-200 dark:border-indigo-700 dark:bg-[#1a1a1a] dark:text-white text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            />
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-3 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-60"
+            >
+              {saving ? 'Salvando...' : 'Salvar'}
+            </button>
+          </div>
+          <div className={`flex justify-between items-center mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-800/50 font-semibold ${caixa >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+            <span className="text-sm">Caixa da empresa</span>
+            <span className="text-sm tabular-nums">{formatCurrency(caixa)}</span>
+          </div>
+        </div>
       </div>
     </div>
   )
