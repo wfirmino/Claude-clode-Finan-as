@@ -605,76 +605,70 @@ export default function Transactions() {
 
       {/* Summary cards */}
       {activePerfil === 'empresarial' && empresarialTotals ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">Faturamento Total</span>
-            <p className="text-2xl font-bold text-indigo-600 tabular-nums">{formatCurrency(empresarialTotals.faturamento)}</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Faturamento Total</span>
+            <p className="text-2xl font-bold text-indigo-500 dark:text-indigo-400 tabular-nums">{formatCurrency(empresarialTotals.faturamento)}</p>
           </div>
-
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Sua Parte</span>
-            <p className="text-2xl font-bold text-purple-600 tabular-nums">{formatCurrency(empresarialTotals.suaParte)}</p>
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Sua Parte</span>
+            <p className="text-2xl font-bold text-purple-500 dark:text-purple-400 tabular-nums">{formatCurrency(empresarialTotals.suaParte)}</p>
           </div>
-
-          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center ${empresarialTotals.liquidoPessoal >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
-            <span className={`text-xs font-semibold uppercase tracking-wide mb-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600' : 'text-red-400'}`}>Líquido Pessoal</span>
-            <p className={`text-2xl font-bold tabular-nums ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(empresarialTotals.liquidoPessoal))}</p>
-            <p className={`text-xs mt-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-400'}`}>após MEI e pró-labore</p>
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Líquido Pessoal</span>
+            <p className={`text-2xl font-bold tabular-nums ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-500'}`}>{formatCurrency(Math.abs(empresarialTotals.liquidoPessoal))}</p>
+            <p className="text-xs text-gray-400 mt-1">após MEI e pró-labore</p>
           </div>
         </div>
       ) : kommoTotals ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">Valor Total Bruto</span>
-            <p className="text-2xl font-bold text-indigo-600 tabular-nums">{formatCurrency(kommoTotals.totalAssinaturas)}</p>
-            <p className="text-xs text-indigo-400 mt-1">{kommoTotals.count} assinaturas</p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Valor Total Bruto</span>
+            <p className="text-2xl font-bold text-indigo-500 dark:text-indigo-400 tabular-nums">{formatCurrency(kommoTotals.totalAssinaturas)}</p>
+            <p className="text-xs text-gray-400 mt-1">{kommoTotals.count} assinaturas</p>
           </div>
-
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Líquido pós-taxas</span>
-            <p className="text-2xl font-bold text-purple-600 tabular-nums">{formatCurrency(kommoTotals.totalLiquido)}</p>
-            <p className="text-xs text-purple-400 mt-1">após taxas da maquininha</p>
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Líquido pós-taxas</span>
+            <p className="text-2xl font-bold text-purple-500 dark:text-purple-400 tabular-nums">{formatCurrency(kommoTotals.totalLiquido)}</p>
+            <p className="text-xs text-gray-400 mt-1">após taxas da maquininha</p>
           </div>
-
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/30 px-5 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
-            <span className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Comissão</span>
-            <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(kommoTotals.valorFinal)}</p>
-            <p className="text-xs text-green-500 mt-1">após todos os descontos</p>
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Comissão</span>
+            <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(kommoTotals.valorFinal)}</p>
+            <p className="text-xs text-gray-400 mt-1">após todos os descontos</p>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/30 px-5 py-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
-              <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Receitas</span>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Receitas</span>
             </div>
-            <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(totalIncome)}</p>
-            <p className="text-xs text-green-500 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
+            <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(totalIncome)}</p>
+            <p className="text-xs text-gray-400 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
           </div>
-
-          <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/30 px-5 py-4">
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
-              <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Despesas</span>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Despesas</span>
             </div>
-            <p className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency(totalExpense)}</p>
-            <p className="text-xs text-red-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
+            <p className="text-2xl font-bold text-red-500 tabular-nums">{formatCurrency(totalExpense)}</p>
+            <p className="text-xs text-gray-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
           </div>
-
-          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${balance >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
+          <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-2">
-              <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
-              <span className={`text-xs font-semibold uppercase tracking-wide ${balance >= 0 ? 'text-green-600' : 'text-red-400'}`}>Saldo</span>
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Saldo</span>
             </div>
-            <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(balance))}</p>
-            <p className={`text-xs mt-1 ${balance >= 0 ? 'text-green-500' : 'text-red-400'}`}>{balance >= 0 ? 'positivo' : 'negativo'}</p>
+            <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-500' : 'text-red-500'}`}>{formatCurrency(Math.abs(balance))}</p>
+            <p className="text-xs text-gray-400 mt-1">{balance >= 0 ? 'positivo' : 'negativo'}</p>
           </div>
         </div>
       )}
@@ -869,7 +863,7 @@ export default function Transactions() {
 
       {/* Mobile card list — hidden on desktop */}
       {!loading && (
-        <div className="md:hidden space-y-3 mb-4">
+        <div className="md:hidden divide-y divide-gray-100 dark:divide-white/10 mb-4">
           {paginated.length === 0 && (
             <p className="text-sm text-gray-400 text-center py-8">Nenhuma transação encontrada</p>
           )}
@@ -877,25 +871,22 @@ export default function Transactions() {
             <button
               key={t.id}
               onClick={() => setSheetTx(t)}
-              className="w-full text-left bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-[#2a2a2a] rounded-xl p-4 space-y-2"
+              className="w-full text-left py-4 flex items-center gap-3"
             >
-              <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-500">
-                <span>{formatDate(t.date)}</span>
-                <span>⋮</span>
+              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-lg flex-shrink-0">
+                {t.type === 'income' ? '💰' : '💸'}
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-lg flex-shrink-0">
-                  {t.type === 'income' ? '💰' : '💸'}
-                </div>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">{t.title}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{t.title}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                  {t.categories?.name ?? '—'} · {formatDate(t.date)}
+                </p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${t.type === 'income' ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400'}`}>
-                  {t.categories?.name ?? '—'}
-                </span>
-                <span className={`text-sm font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+              <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                <span className={`text-base font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
                   {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                 </span>
+                <span className="text-gray-400 dark:text-gray-500 text-sm font-bold tracking-widest">···</span>
               </div>
             </button>
           ))}
