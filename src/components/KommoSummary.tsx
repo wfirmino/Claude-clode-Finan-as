@@ -44,7 +44,7 @@ export default function KommoSummary({ transactions, periodo }: Props) {
   )
 
   return (
-    <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/50 rounded-xl mb-6 overflow-hidden">
+    <div className="border border-gray-200 dark:border-white/10 rounded-xl mb-6 overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"

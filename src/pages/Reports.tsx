@@ -133,19 +133,19 @@ export default function Reports() {
         <>
           {/* Totals */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+            <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Receitas</p>
-              <p className="text-2xl font-bold text-green-600">{formatCurrency(totalIncome)}</p>
+              <p className="text-2xl font-bold text-green-500">{formatCurrency(totalIncome)}</p>
             </div>
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+            <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Despesas</p>
-              <p className="text-2xl font-bold text-red-600">{formatCurrency(totalExpense)}</p>
+              <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpense)}</p>
             </div>
           </div>
 
           {/* Category chart */}
           {categoryTotals.length > 0 && (
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+            <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Despesas por categoria</p>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={categoryTotals} layout="vertical">
@@ -163,16 +163,16 @@ export default function Reports() {
           )}
 
           {/* Transactions table */}
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] overflow-hidden">
+          <div className="rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-[#111111] border-b border-gray-200 dark:border-[#2a2a2a]">
+              <thead className="border-b border-gray-100 dark:border-white/[0.06]">
                 <tr>
                   {['Data', 'Título', 'Categoria', 'Tipo', 'Valor'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-[#2a2a2a]">
+              <tbody className="divide-y divide-gray-100 dark:divide-white/[0.06]">
                 {allTransactions.length === 0 && (
                   <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400 dark:text-gray-500">Nenhuma transação no período.</td></tr>
                 )}

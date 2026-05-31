@@ -173,7 +173,7 @@ export default function Cartao() {
               </p>
             )}
             {cardTxs.map(t => (
-              <div key={t.id} className="flex items-center justify-between bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-[#2a2a2a] rounded-xl px-4 py-3">
+              <div key={t.id} className="flex items-center justify-between border border-gray-100 dark:border-white/[0.08] rounded-xl px-4 py-3">
                 <div className="flex items-center gap-3">
                   <span className="text-lg">{t.type === 'income' ? '✅' : '🛍️'}</span>
                   <div>

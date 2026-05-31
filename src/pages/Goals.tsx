@@ -97,7 +97,7 @@ export default function Goals() {
           const progress = calculateGoalProgress(g)
           const atRisk = isGoalAtRisk(g)
           return (
-            <div key={g.id} className={`bg-white dark:bg-[#1a1a1a] rounded-xl border p-5 ${atRisk ? 'border-amber-300 dark:border-amber-700' : 'border-gray-200 dark:border-[#2a2a2a]'}`}>
+            <div key={g.id} className={`rounded-xl border p-5 ${atRisk ? 'border-amber-300 dark:border-amber-700' : 'border-gray-200 dark:border-white/10'}`}>
               {atRisk && (
                 <span className="inline-block mb-2 text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full">
                   Atenção: prazo próximo
@@ -128,7 +128,7 @@ export default function Goals() {
                   <span>{formatCurrency(g.current)} de {formatCurrency(g.target)}</span>
                   <span>{progress}%</span>
                 </div>
-                <div className="w-full bg-gray-100 dark:bg-[#2a2a2a] rounded-full h-2">
+                <div className="w-full bg-gray-100 dark:bg-white/10 rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${progress >= 100 ? 'bg-green-500' : atRisk ? 'bg-amber-400' : 'bg-indigo-500'}`}
                     style={{ width: `${progress}%` }}

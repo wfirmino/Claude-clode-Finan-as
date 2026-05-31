@@ -41,11 +41,11 @@ export default function Dashboard() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
-          { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600' },
-          { label: 'Receitas do mês', value: income, color: 'text-green-600' },
-          { label: 'Despesas do mês', value: expense, color: 'text-red-600' },
+          { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-500' },
+          { label: 'Receitas do mês', value: income, color: 'text-green-500' },
+          { label: 'Despesas do mês', value: expense, color: 'text-red-500' },
         ].map((card, i) => (
-          <div key={card.label} className={`bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5 ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
+          <div key={card.label} className={`rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
           </div>
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Gastos por categoria (mês atual)</p>
           {categoryTotals.length === 0 ? (
             <p className="text-sm text-gray-400 text-center py-8">Sem dados</p>
@@ -70,7 +70,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Receitas vs Despesas (6 meses)</p>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={monthly}>
@@ -86,7 +86,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent transactions */}
-      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] p-5">
+      <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Últimas transações</p>
           <Link to="/transactions" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Ver todas</Link>
@@ -94,7 +94,7 @@ export default function Dashboard() {
         {recent.length === 0 ? (
           <p className="text-sm text-gray-400 text-center py-4">Nenhuma transação registrada.</p>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-[#2a2a2a]">
+          <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
             {recent.map(t => (
               <div key={t.id} className="flex items-center justify-between py-3">
                 <div>

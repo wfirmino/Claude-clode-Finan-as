@@ -40,7 +40,7 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
   )
 
   return (
-    <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl mb-6 overflow-hidden">
+    <div className="border border-gray-200 dark:border-white/10 rounded-xl mb-6 overflow-hidden">
       <button
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"

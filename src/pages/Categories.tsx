@@ -84,7 +84,7 @@ export default function Categories() {
         </div>
       )}
 
-      <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-gray-200 dark:border-[#2a2a2a] divide-y divide-gray-100 dark:divide-[#2a2a2a]">
+      <div className="rounded-xl border border-gray-200 dark:border-white/10 divide-y divide-gray-100 dark:divide-white/[0.06]">
         {categories.length === 0 && (
           <p className="p-6 text-sm text-gray-400 text-center">Nenhuma categoria cadastrada.</p>
         )}
