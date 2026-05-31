@@ -5,6 +5,7 @@ import TopNav from './TopNav'
 const navItems = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/transactions', label: 'Transações', end: false },
+  { to: '/cartao', label: '💳 Cartão', end: false },
   { to: '/installments', label: 'Parcelamentos', end: false },
   { to: '/categories', label: 'Categorias', end: false },
   { to: '/goals', label: 'Metas', end: false },
