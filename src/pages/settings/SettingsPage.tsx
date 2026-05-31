@@ -15,14 +15,12 @@ export default function SettingsPage() {
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const ext = file.name.split('.').pop()
-    const path = `${user.id}/avatar.${ext}`
-    const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: true })
-    if (error) return
-    const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-    await updateProfile({ avatar_url: data.publicUrl })
+    const reader = new FileReader()
+    reader.onload = async () => {
+      const dataUrl = reader.result as string
+      await updateProfile({ avatar_url: dataUrl })
+    }
+    reader.readAsDataURL(file)
   }
 
   async function handleSignOut() {
