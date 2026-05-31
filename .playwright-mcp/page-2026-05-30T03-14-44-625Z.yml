@@ -1,0 +1,103 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]: FinanceApp
+    - navigation "Navegação principal" [ref=e6]:
+      - link "Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - link "Transações" [ref=e8] [cursor=pointer]:
+        - /url: /transactions
+      - link "Parcelamentos" [ref=e9] [cursor=pointer]:
+        - /url: /installments
+      - link "Categorias" [ref=e10] [cursor=pointer]:
+        - /url: /categories
+      - link "Metas" [ref=e11] [cursor=pointer]:
+        - /url: /goals
+      - link "Relatórios" [ref=e12] [cursor=pointer]:
+        - /url: /reports
+    - button "Sair da conta" [ref=e14] [cursor=pointer]
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - tablist [ref=e18]:
+        - tab "Pessoal" [ref=e19] [cursor=pointer]
+        - tab "Empresarial" [active] [selected] [ref=e20] [cursor=pointer]
+        - tab "Kommo" [ref=e21] [cursor=pointer]
+      - generic [ref=e71]:
+        - heading "Resumo Empresarial — 2026-05" [level=3] [ref=e72]
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - generic [ref=e75]: Faturamento total do mês
+            - generic [ref=e76]: R$ 2.700,00
+          - generic [ref=e77]:
+            - generic [ref=e78]: Total dividido com sócio
+            - generic [ref=e79]: R$ 1.350,00
+          - generic [ref=e80]:
+            - generic [ref=e81]: Despesa MEI
+            - generic [ref=e82]: R$ 0,00
+          - generic [ref=e83]:
+            - generic [ref=e84]: Lucro
+            - generic [ref=e85]: R$ 1.350,00
+        - generic [ref=e86]:
+          - generic [ref=e87]: "Pró-labore (R$):"
+          - spinbutton [ref=e88]: "0"
+          - button "Salvar" [ref=e89] [cursor=pointer]
+        - generic [ref=e90]:
+          - generic [ref=e91]: Caixa da empresa
+          - generic [ref=e92]: R$ 1.350,00
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - img
+          - textbox "Buscar transações..." [ref=e24]
+        - button "+ Nova Transação" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: +
+          - generic [ref=e27]: Nova Transação
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - generic [ref=e33]: Faturamento Total
+          - paragraph [ref=e34]: R$ 2.700,00
+          - paragraph [ref=e35]: receitas no período
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e40]: Sua Parte
+          - paragraph [ref=e41]: R$ 1.350,00
+          - paragraph [ref=e42]: após divisão com sócio
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e47]: Líquido Pessoal
+          - paragraph [ref=e48]: R$ 1.350,00
+          - paragraph [ref=e49]: após MEI e pró-labore
+      - generic [ref=e50]:
+        - button "Este mês" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic [ref=e55]: Este mês
+          - img [ref=e56]
+        - button "Todas as categorias" [ref=e60] [cursor=pointer]:
+          - generic [ref=e61]: Todas as categorias
+          - img [ref=e62]
+        - button "Data (mais recentes)" [ref=e65] [cursor=pointer]:
+          - img [ref=e66]
+          - text: Data (mais recentes)
+          - img [ref=e68]
+      - table [ref=e94]:
+        - rowgroup [ref=e95]:
+          - row "Data Título Categoria Tipo Valor" [ref=e96]:
+            - columnheader "Data" [ref=e97]
+            - columnheader "Título" [ref=e98]
+            - columnheader "Categoria" [ref=e99]
+            - columnheader "Tipo" [ref=e100]
+            - columnheader "Valor" [ref=e101]
+            - columnheader [ref=e102]
+        - rowgroup [ref=e103]:
+          - row "12/05/2026 Daniele Implementação do CRM Receita +R$ 2.700,00 Editar transação Daniele Excluir transação Daniele" [ref=e104]:
+            - cell "12/05/2026" [ref=e105]
+            - cell "Daniele" [ref=e106]
+            - cell "Implementação do CRM" [ref=e107]
+            - cell "Receita" [ref=e108]
+            - cell "+R$ 2.700,00" [ref=e109]
+            - cell "Editar transação Daniele Excluir transação Daniele" [ref=e110]:
+              - generic [ref=e111]:
+                - button "Editar transação Daniele" [ref=e112] [cursor=pointer]: Editar
+                - button "Excluir transação Daniele" [ref=e113] [cursor=pointer]: Excluir

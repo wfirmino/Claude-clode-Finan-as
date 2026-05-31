@@ -1,0 +1,157 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]: FinanceApp
+    - navigation "Navegação principal" [ref=e6]:
+      - link "Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /
+      - link "Transações" [ref=e8] [cursor=pointer]:
+        - /url: /transactions
+      - link "Parcelamentos" [ref=e9] [cursor=pointer]:
+        - /url: /installments
+      - link "Categorias" [ref=e10] [cursor=pointer]:
+        - /url: /categories
+      - link "Metas" [ref=e11] [cursor=pointer]:
+        - /url: /goals
+      - link "Relatórios" [ref=e12] [cursor=pointer]:
+        - /url: /reports
+    - button "Sair da conta" [ref=e14] [cursor=pointer]
+  - main [ref=e16]:
+    - generic [ref=e17]:
+      - tablist [ref=e18]:
+        - tab "Pessoal" [ref=e19] [cursor=pointer]
+        - tab "Empresarial" [ref=e20] [cursor=pointer]
+        - tab "Kommo" [selected] [ref=e21] [cursor=pointer]
+      - generic [ref=e85]:
+        - heading "Resumo Kommo — 2026-05" [level=3] [ref=e86]
+        - generic [ref=e87]:
+          - generic [ref=e88]:
+            - generic [ref=e89]: Total de assinaturas
+            - generic [ref=e90]: R$ 790,95
+          - generic [ref=e91]:
+            - generic [ref=e92]: Total taxas maquininha
+            - generic [ref=e93]: R$ 76,48
+          - generic [ref=e94]:
+            - generic [ref=e95]: Total pago ao Kommo
+            - generic [ref=e96]: R$ 492,02
+          - generic [ref=e97]:
+            - generic [ref=e98]: Total comissão líquida
+            - generic [ref=e99]: R$ 222,45
+          - generic [ref=e100]:
+            - generic [ref=e101]: Total pago ao sócio
+            - generic [ref=e102]: R$ 111,23
+          - generic [ref=e103]:
+            - generic [ref=e104]: Total final do usuário
+            - generic [ref=e105]: R$ 111,22
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - img
+          - textbox "Buscar transações..." [ref=e24]
+        - button "+ Nova Transação" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: +
+          - generic [ref=e27]: Nova Transação
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - generic [ref=e33]: Valor Total Bruto
+          - paragraph [ref=e34]: R$ 790,95
+          - paragraph [ref=e35]: 1 assinaturas
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - generic [ref=e40]: Líquido pós-taxas
+          - paragraph [ref=e41]: R$ 714,47
+          - paragraph [ref=e42]: após taxas da maquininha
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - img [ref=e45]
+            - generic [ref=e47]: Comissão
+          - paragraph [ref=e48]: R$ 111,22
+          - paragraph [ref=e49]: após todos os descontos
+      - generic [ref=e50]:
+        - button "Este mês" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic [ref=e55]: Este mês
+          - img [ref=e56]
+        - button "Todas as categorias" [ref=e60] [cursor=pointer]:
+          - generic [ref=e61]: Todas as categorias
+          - img [ref=e62]
+        - button "Data (mais recentes)" [ref=e65] [cursor=pointer]:
+          - img [ref=e66]
+          - text: Data (mais recentes)
+          - img [ref=e68]
+      - table [ref=e107]:
+        - rowgroup [ref=e108]:
+          - row "Data Título Categoria Tipo Valor" [ref=e109]:
+            - columnheader "Data" [ref=e110]
+            - columnheader "Título" [ref=e111]
+            - columnheader "Categoria" [ref=e112]
+            - columnheader "Tipo" [ref=e113]
+            - columnheader "Valor" [ref=e114]
+            - columnheader [ref=e115]
+        - rowgroup [ref=e116]:
+          - row "25/05/2026 DanieleUsr. adicional — Receita +R$ 790,95 Editar transação Daniele Excluir transação Daniele" [ref=e117]:
+            - cell "25/05/2026" [ref=e118]
+            - cell "DanieleUsr. adicional" [ref=e119]
+            - cell "—" [ref=e120]
+            - cell "Receita" [ref=e121]
+            - cell "+R$ 790,95" [ref=e122]
+            - cell "Editar transação Daniele Excluir transação Daniele" [ref=e123]:
+              - generic [ref=e124]:
+                - button "Editar transação Daniele" [ref=e125] [cursor=pointer]: Editar
+                - button "Excluir transação Daniele" [ref=e126] [cursor=pointer]: Excluir
+      - dialog "Nova Transação" [ref=e128]:
+        - heading "Nova Transação" [level=3] [ref=e129]
+        - generic [ref=e130]:
+          - button "pessoal" [active] [ref=e131] [cursor=pointer]
+          - button "empresarial" [ref=e132] [cursor=pointer]
+          - button "kommo" [ref=e133] [cursor=pointer]
+        - generic [ref=e134]:
+          - generic [ref=e135]:
+            - generic [ref=e136]: Nome do cliente
+            - textbox "Nome do cliente" [ref=e137]
+          - generic [ref=e138]:
+            - generic [ref=e139]: Nome da empresa
+            - textbox "Nome da empresa" [ref=e140]
+          - generic [ref=e141] [cursor=pointer]:
+            - checkbox "Lançamento simplificado" [ref=e143]
+            - generic [ref=e146]: Lançamento simplificado
+          - generic [ref=e147] [cursor=pointer]:
+            - checkbox "Apenas usuário adicional" [ref=e149]
+            - generic [ref=e152]: Apenas usuário adicional
+          - generic [ref=e153]:
+            - generic [ref=e154]:
+              - generic [ref=e155]: Plano
+              - combobox "Plano" [ref=e156]:
+                - option "3 meses"
+                - option "6 meses"
+                - option "9 meses"
+                - option "12 meses" [selected]
+                - option "24 meses"
+            - generic [ref=e157]:
+              - generic [ref=e158]: Nº de usuários
+              - spinbutton "Nº de usuários" [ref=e159]
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - generic [ref=e162]: Valor total assinatura (R$)
+              - textbox "Valor total assinatura (R$)" [ref=e163]:
+                - /placeholder: 0,00
+            - generic [ref=e164]:
+              - generic [ref=e165]: Líquido pós-taxas (R$)
+              - textbox "Líquido pós-taxas (R$)" [ref=e166]:
+                - /placeholder: 0,00
+          - generic [ref=e167]:
+            - generic [ref=e168]: Valor pago ao Kommo (R$)
+            - textbox "Valor pago ao Kommo (R$)" [ref=e169]:
+              - /placeholder: 0,00
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - generic [ref=e172]: Divisão com sócio (%)
+              - textbox "Divisão com sócio (%)" [ref=e173]:
+                - /placeholder: 0,00
+            - generic [ref=e174]:
+              - generic [ref=e175]: Data
+              - textbox "Data" [ref=e176]: 2026-05-30
+          - generic [ref=e177]:
+            - button "Cancelar" [ref=e178] [cursor=pointer]
+            - button "Criar Transação" [ref=e179] [cursor=pointer]

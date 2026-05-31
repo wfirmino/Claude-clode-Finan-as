@@ -1,0 +1,137 @@
+- generic [active] [ref=e1]:
+  - heading "Comparação de Abordagens — Schema para Perfis" [level=1] [ref=e2]
+  - paragraph [ref=e3]: Escolha como os dados de Pessoal, Empresarial e Kommo serão armazenados no banco
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: ✦ Recomendado
+      - generic [ref=e7]: Opção A
+      - generic [ref=e8]: Colunas adicionais na tabela transactions
+      - generic [ref=e9]:
+        - text: "-- tabela atual + novos campos"
+        - text: transactions
+        - text: id, user_id, title
+        - text: amount, type, date, notes
+        - text: perfil text -- novo
+        - text: nome_cliente text?
+        - text: nome_empresa text?
+        - text: divisao_socio numeric?
+        - text: plano int?
+        - text: num_usuarios int?
+        - text: valor_liquido numeric?
+        - text: divisao_pct numeric?
+        - text: prolabore numeric?
+        - text: "-- tabela para pró-labore mensal"
+        - text: empresarial_config
+        - text: user_id, mes text
+        - text: prolabore numeric
+      - generic [ref=e10]: Query — filtrar perfil Kommo
+      - generic [ref=e11]:
+        - text: select * from transactions
+        - text: where perfil = 'kommo'
+        - text: and user_id = auth.uid()
+      - generic [ref=e12]:
+        - generic [ref=e13]: Prós e contras
+        - generic [ref=e14]:
+          - generic [ref=e15]: ✅
+          - text: Uma tabela, queries simples e diretas
+        - generic [ref=e16]:
+          - generic [ref=e17]: ✅
+          - text: Hooks existentes funcionam com pequenos ajustes
+        - generic [ref=e18]:
+          - generic [ref=e19]: ✅
+          - text: TypeScript tipado campo a campo
+        - generic [ref=e20]:
+          - generic [ref=e21]: ⚠️
+          - text: ~10 colunas nullable (aceitável para 3 perfis fixos)
+      - generic [ref=e22]:
+        - generic [ref=e23]: Simples
+        - generic [ref=e24]: Rápido
+        - generic [ref=e25]: Tipado
+    - generic [ref=e26]:
+      - generic [ref=e27]: Opção B
+      - generic [ref=e28]: Coluna JSONB metadata
+      - generic [ref=e29]:
+        - text: "-- schema enxuto"
+        - text: transactions
+        - text: id, user_id, title
+        - text: amount, type, date, notes
+        - text: perfil text
+        - text: metadata jsonb
+        - text: "-- exemplos de metadata"
+        - text: "-- Empresarial:"
+        - text: "{ nome_cliente: \"...\","
+        - text: "divisao_socio: 500 }"
+        - text: "-- Kommo:"
+        - text: "{ plano: 12,"
+        - text: "num_usuarios: 3,"
+        - text: "divisao_pct: 50 }"
+      - generic [ref=e30]: Query — soma campo de JSONB
+      - generic [ref=e31]:
+        - text: select
+        - text: sum((metadata->>
+        - text: "'divisao_socio')::numeric)"
+        - text: from transactions
+        - text: where perfil = 'empresarial'
+      - generic [ref=e32]:
+        - generic [ref=e33]: Prós e contras
+        - generic [ref=e34]:
+          - generic [ref=e35]: ✅
+          - text: Schema enxuto, fácil de evoluir
+        - generic [ref=e36]:
+          - generic [ref=e37]: ✅
+          - text: Novos campos sem nova migration
+        - generic [ref=e38]:
+          - generic [ref=e39]: ⚠️
+          - text: Queries com cast explícito (menos ergonômico)
+        - generic [ref=e40]:
+          - generic [ref=e41]: ❌
+          - text: Sem type safety no TypeScript sem mapeamento manual
+        - generic [ref=e42]:
+          - generic [ref=e43]: ❌
+          - text: Mais difícil de indexar e filtrar
+      - generic [ref=e44]:
+        - generic [ref=e45]: Flexível
+        - generic [ref=e46]: Queries verbosas
+        - generic [ref=e47]: Sem tipos
+    - generic [ref=e48]:
+      - generic [ref=e49]: Opção C
+      - generic [ref=e50]: Tabelas separadas por perfil
+      - generic [ref=e51]:
+        - text: "-- 3 tabelas independentes"
+        - text: transactions_pessoal
+        - text: id, user_id, title
+        - text: amount, type, date, notes
+        - text: transactions_empresarial
+        - text: id, user_id
+        - text: nome_cliente, nome_empresa
+        - text: faturamento, divisao_socio
+        - text: type, date, notes
+        - text: transactions_kommo
+        - text: id, user_id
+        - text: nome_cliente, nome_empresa
+        - text: plano, num_usuarios
+        - text: valor_total, valor_liquido
+        - text: divisao_pct, date
+      - generic [ref=e52]: Query — ver todas as transações
+      - generic [ref=e53]: select * from transactions_pessoal union all select ...from transactions_empresarial union all select ...from transactions_kommo
+      - generic [ref=e54]:
+        - generic [ref=e55]: Prós e contras
+        - generic [ref=e56]:
+          - generic [ref=e57]: ✅
+          - text: Schema perfeitamente limpo por perfil
+        - generic [ref=e58]:
+          - generic [ref=e59]: ❌
+          - text: Quebra todos os hooks e páginas existentes
+        - generic [ref=e60]:
+          - generic [ref=e61]: ❌
+          - text: UNION ALL obrigatório para visão consolidada
+        - generic [ref=e62]:
+          - generic [ref=e63]: ❌
+          - text: 3× mais migrations, RLS policies e hooks
+        - generic [ref=e64]:
+          - generic [ref=e65]: ❌
+          - text: Muito trabalho extra sem benefício real
+      - generic [ref=e66]:
+        - generic [ref=e67]: Schema limpo
+        - generic [ref=e68]: Complexo
+        - generic [ref=e69]: Quebra tudo

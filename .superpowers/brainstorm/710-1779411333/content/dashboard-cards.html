@@ -1,0 +1,65 @@
+<h2>Cards do Dashboard no mobile</h2>
+<p class="subtitle">Como exibir os 3 cards (Saldo, Receitas, Despesas) em telas pequenas?</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">A — 1 coluna (empilhados)</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;">
+      <div style="width:180px;margin:0 auto;display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Saldo atual</div>
+          <div style="font-size:18px;font-weight:700;color:#111;">R$ 4.200,00</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Receitas do mês</div>
+          <div style="font-size:18px;font-weight:700;color:#16a34a;">R$ 6.000,00</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Despesas do mês</div>
+          <div style="font-size:18px;font-weight:700;color:#dc2626;">R$ 1.800,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">B — 2 colunas</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;">
+      <div style="width:180px;margin:0 auto;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px;">
+            <div style="font-size:8px;color:#94a3b8;text-transform:uppercase;margin-bottom:3px;">Saldo</div>
+            <div style="font-size:13px;font-weight:700;color:#111;">R$4.200</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px;">
+            <div style="font-size:8px;color:#94a3b8;text-transform:uppercase;margin-bottom:3px;">Receitas</div>
+            <div style="font-size:13px;font-weight:700;color:#16a34a;">R$6.000</div>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px;">
+          <div style="font-size:8px;color:#94a3b8;text-transform:uppercase;margin-bottom:3px;">Despesas do mês</div>
+          <div style="font-size:13px;font-weight:700;color:#dc2626;">R$ 1.800,00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="options" style="margin-top:24px;">
+  <div class="option" data-choice="1col" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>1 coluna</h3>
+      <p>Mais espaço, números maiores, mais fácil de ler</p>
+    </div>
+  </div>
+  <div class="option" data-choice="2col" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>2 colunas</h3>
+      <p>Mais compacto, vê tudo de uma vez</p>
+    </div>
+  </div>
+</div>

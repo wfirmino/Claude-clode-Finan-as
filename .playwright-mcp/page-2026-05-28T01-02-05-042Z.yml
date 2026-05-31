@@ -1,0 +1,113 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]: FinanceApp
+      - navigation "Navegação principal" [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Transações" [ref=e9] [cursor=pointer]:
+          - /url: /transactions
+        - link "Parcelamentos" [ref=e10] [cursor=pointer]:
+          - /url: /installments
+        - link "Categorias" [ref=e11] [cursor=pointer]:
+          - /url: /categories
+        - link "Metas" [ref=e12] [cursor=pointer]:
+          - /url: /goals
+        - link "Relatórios" [ref=e13] [cursor=pointer]:
+          - /url: /reports
+      - button "Sair da conta" [ref=e15] [cursor=pointer]
+    - main [ref=e17]:
+      - generic [ref=e120]:
+        - tablist [ref=e121]:
+          - tab "Pessoal" [ref=e122] [cursor=pointer]
+          - tab "Empresarial" [ref=e123] [cursor=pointer]
+          - tab "Kommo" [selected] [ref=e124] [cursor=pointer]
+        - generic [ref=e187]:
+          - heading "Resumo Kommo — 2026-05" [level=3] [ref=e188]
+          - generic [ref=e189]:
+            - generic [ref=e190]:
+              - generic [ref=e191]: Total de assinaturas
+              - generic [ref=e192]: R$ 0,00
+            - generic [ref=e193]:
+              - generic [ref=e194]: Total taxas maquininha
+              - generic [ref=e195]: R$ 0,00
+            - generic [ref=e196]:
+              - generic [ref=e197]: Total comissão Kommo (65%)
+              - generic [ref=e198]: R$ 0,00
+            - generic [ref=e199]:
+              - generic [ref=e200]: Total comissão bruta (35%)
+              - generic [ref=e201]: R$ 0,00
+            - generic [ref=e202]:
+              - generic [ref=e203]: Total comissão líquida
+              - generic [ref=e204]: R$ 0,00
+            - generic [ref=e205]:
+              - generic [ref=e206]: Total pago ao sócio
+              - generic [ref=e207]: R$ 0,00
+            - generic [ref=e208]:
+              - generic [ref=e209]: Total final do usuário
+              - generic [ref=e210]: R$ 0,00
+        - generic [ref=e125]:
+          - generic [ref=e126]:
+            - img
+            - textbox "Buscar transações..." [ref=e127]
+          - button "+ Nova Transação" [ref=e128] [cursor=pointer]:
+            - generic [ref=e129]: +
+            - generic [ref=e130]: Nova Transação
+        - generic [ref=e131]:
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - img [ref=e134]
+              - generic [ref=e136]: Receitas
+            - paragraph [ref=e137]: R$ 0,00
+            - paragraph [ref=e138]: 0 lançamentos
+          - generic [ref=e139]:
+            - generic [ref=e140]:
+              - img [ref=e141]
+              - generic [ref=e143]: Despesas
+            - paragraph [ref=e144]: R$ 0,00
+            - paragraph [ref=e145]: 0 lançamentos
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - img [ref=e148]
+              - generic [ref=e150]: Saldo
+            - paragraph [ref=e151]: R$ 0,00
+            - paragraph [ref=e152]: positivo
+        - generic [ref=e153]:
+          - generic [ref=e154]:
+            - button "Este mês" [active] [ref=e155] [cursor=pointer]:
+              - img [ref=e156]
+              - generic [ref=e158]: Este mês
+              - img [ref=e159]
+            - generic [ref=e226]:
+              - button "Todo período" [ref=e227] [cursor=pointer]
+              - button "Últimos 30 dias" [ref=e228] [cursor=pointer]
+              - button "Últimos 90 dias" [ref=e229] [cursor=pointer]
+              - button "Este mês" [ref=e230] [cursor=pointer]
+              - button "Mês passado" [ref=e231] [cursor=pointer]
+              - button "Últimos 6 meses" [ref=e232] [cursor=pointer]
+              - button "Este ano" [ref=e233] [cursor=pointer]
+              - button "Ano passado" [ref=e234] [cursor=pointer]
+              - button "Período personalizado" [ref=e236] [cursor=pointer]:
+                - img [ref=e237]
+                - text: Período personalizado
+          - button "Todas as categorias" [ref=e163] [cursor=pointer]:
+            - generic [ref=e164]: Todas as categorias
+            - img [ref=e165]
+          - button "Data (mais recentes)" [ref=e168] [cursor=pointer]:
+            - img [ref=e169]
+            - text: Data (mais recentes)
+            - img [ref=e171]
+        - table [ref=e212]:
+          - rowgroup [ref=e213]:
+            - row "Data Título Categoria Tipo Valor" [ref=e214]:
+              - columnheader "Data" [ref=e215]
+              - columnheader "Título" [ref=e216]
+              - columnheader "Categoria" [ref=e217]
+              - columnheader "Tipo" [ref=e218]
+              - columnheader "Valor" [ref=e219]
+              - columnheader [ref=e220]
+          - rowgroup [ref=e221]:
+            - row "Nenhuma transação encontrada" [ref=e222]:
+              - cell "Nenhuma transação encontrada" [ref=e223]:
+                - paragraph [ref=e224]: Nenhuma transação encontrada
+  - generic [ref=e119]: R$0

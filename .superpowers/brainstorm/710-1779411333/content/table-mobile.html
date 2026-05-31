@@ -1,0 +1,93 @@
+<h2>Tabelas no mobile</h2>
+<p class="subtitle">Como exibir Transações e Parcelamentos em telas pequenas?</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">A — Colunas reduzidas</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;">
+      <div style="width:200px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+        <div style="display:grid;grid-template-columns:1fr auto;padding:8px 12px;border-bottom:1px solid #f1f5f9;font-size:9px;font-weight:600;color:#94a3b8;text-transform:uppercase;">
+          <span>Título</span><span>Valor</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;border-bottom:1px solid #f8fafc;align-items:center;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#111;">Mercado</div>
+            <div style="font-size:10px;color:#94a3b8;">Alimentação</div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#dc2626;">-R$320</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;border-bottom:1px solid #f8fafc;align-items:center;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#111;">Salário</div>
+            <div style="font-size:10px;color:#94a3b8;">Receita</div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#16a34a;">+R$5.000</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto;padding:10px 12px;align-items:center;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#111;">Netflix</div>
+            <div style="font-size:10px;color:#94a3b8;">Lazer</div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#dc2626;">-R$55</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">B — Card por linha</div>
+    <div class="mockup-body" style="background:#f8fafc;padding:12px;">
+      <div style="width:200px;margin:0 auto;display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span style="font-size:13px;font-weight:600;color:#111;">Mercado</span>
+            <span style="font-size:13px;font-weight:600;color:#dc2626;">-R$320</span>
+          </div>
+          <div style="display:flex;gap:8px;font-size:10px;color:#94a3b8;">
+            <span>📁 Alimentação</span>
+            <span>📅 21/05</span>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span style="font-size:13px;font-weight:600;color:#111;">Salário</span>
+            <span style="font-size:13px;font-weight:600;color:#16a34a;">+R$5.000</span>
+          </div>
+          <div style="display:flex;gap:8px;font-size:10px;color:#94a3b8;">
+            <span>📁 Receita</span>
+            <span>📅 01/05</span>
+          </div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+            <span style="font-size:13px;font-weight:600;color:#111;">Netflix</span>
+            <span style="font-size:13px;font-weight:600;color:#dc2626;">-R$55</span>
+          </div>
+          <div style="display:flex;gap:8px;font-size:10px;color:#94a3b8;">
+            <span>📁 Lazer</span>
+            <span>📅 15/05</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="options" style="margin-top:24px;">
+  <div class="option" data-choice="cols" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Colunas reduzidas</h3>
+      <p>Compacto, lista longa sem ocupar muito espaço</p>
+    </div>
+  </div>
+  <div class="option" data-choice="cards" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Card por linha</h3>
+      <p>Mais informações visíveis, visual moderno</p>
+    </div>
+  </div>
+</div>

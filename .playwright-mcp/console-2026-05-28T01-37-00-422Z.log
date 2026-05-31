@@ -1,0 +1,28 @@
+[     230ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:14336
+[     545ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[     576ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  619720ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  625090ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  629482ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  635414ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  643085ms] TypeError: Cannot read properties of undefined (reading 'replace')
+    at parseBR (http://localhost:5173/src/pages/Transactions.tsx?t=1779932863234:135:27)
+    at http://localhost:5173/src/pages/Transactions.tsx?t=1779932863234:545:14
+    at updateMemo (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:4947:16)
+    at Object.useMemo (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:13275:13)
+    at exports.useMemo (http://localhost:5173/node_modules/.vite/deps/react-B35R_oEX.js?v=034daa0a:767:31)
+    at Transactions (http://localhost:5173/src/pages/Transactions.tsx?t=1779932863234:541:20)
+    at Object.react_stack_bottom_frame (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:12867:12)
+    at renderWithHooks (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:4212:19)
+    at updateFunctionComponent (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:5568:16)
+    at beginWork (http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:6139:20)
+[  643020ms] [WARNING] %s
+
+%s
+ An error occurred in the <Transactions> component. Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries. @ http://localhost:5173/@vite/client:509
+[  651926ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  651972ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  657936ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  673114ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  680215ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0

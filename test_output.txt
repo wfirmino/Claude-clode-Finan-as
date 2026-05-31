@@ -1,0 +1,9 @@
+
+ RUN  v4.1.6 C:/Users/Pichau/Desktop/teste
+
+
+ Test Files  14 passed (14)
+      Tests  81 passed (81)
+   Start at  23:09:39
+   Duration  20.27s (transform 5.53s, setup 7.47s, import 25.16s, tests 19.20s, environment 66.96s)
+

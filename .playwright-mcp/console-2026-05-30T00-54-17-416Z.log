@@ -1,0 +1,4 @@
+[     176ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=034daa0a:14336
+[     360ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[     419ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
+[  239425ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://gxolmjdjwoubidqmqwxq.supabase.co/rest/v1/empresarial_config?select=*&user_id=eq.d39bcfa2-1e6c-4d41-a0bc-4298583b87a2&mes=eq.2026-05:0
