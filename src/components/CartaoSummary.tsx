@@ -65,19 +65,19 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
 
       {/* 3 cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-xl px-4 py-3">
-          <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">💳 FATURA</p>
-          <p className="text-xl font-bold text-indigo-700 dark:text-indigo-400 tabular-nums">{compras}</p>
-          <p className="text-xs text-indigo-400 mt-0.5">compra{compras !== 1 ? 's' : ''}</p>
+        <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Fatura</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">{compras}</p>
+          <p className="text-xs text-gray-400 mt-0.5">compra{compras !== 1 ? 's' : ''}</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/50 rounded-xl px-4 py-3">
-          <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">✅ PAGO</p>
-          <p className="text-xl font-bold text-green-700 dark:text-green-400 tabular-nums">{formatCurrency(pago)}</p>
-          <p className="text-xs text-green-400 mt-0.5">{pagamentos} pagamento{pagamentos !== 1 ? 's' : ''}</p>
+        <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Pago</p>
+          <p className="text-xl font-bold text-green-500 tabular-nums">{formatCurrency(pago)}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{pagamentos} pgto{pagamentos !== 1 ? 's' : ''}</p>
         </div>
-        <div className={`border rounded-xl px-4 py-3 ${emAberto > 0 ? 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/50' : 'bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700'}`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${emAberto > 0 ? 'text-red-500' : 'text-gray-400'}`}>⏳ EM ABERTO</p>
-          <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-600' : 'text-gray-400'}`}>{formatCurrency(emAberto)}</p>
+        <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Em aberto</p>
+          <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'}`}>{formatCurrency(emAberto)}</p>
           <p className={`text-xs mt-0.5 ${dueColor(daysUntil)}`}>vence em {daysUntil}d</p>
         </div>
       </div>
