@@ -606,35 +606,18 @@ export default function Transactions() {
       {/* Summary cards */}
       {activePerfil === 'empresarial' && empresarialTotals ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Faturamento Total</span>
-            </div>
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-1">Faturamento Total</span>
             <p className="text-2xl font-bold text-indigo-600 tabular-nums">{formatCurrency(empresarialTotals.faturamento)}</p>
-            <p className="text-xs text-indigo-400 mt-1">receitas no período</p>
           </div>
 
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4">
-            <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Sua Parte</span>
-            </div>
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800/30 px-5 py-4 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Sua Parte</span>
             <p className="text-2xl font-bold text-purple-600 tabular-nums">{formatCurrency(empresarialTotals.suaParte)}</p>
-            <p className="text-xs text-purple-400 mt-1">após divisão com sócio</p>
           </div>
 
-          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
-            <div className="flex items-center gap-2 mb-2">
-              <svg className={`w-4 h-4 shrink-0 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className={`text-xs font-semibold uppercase tracking-wide ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600' : 'text-red-400'}`}>Líquido Pessoal</span>
-            </div>
+          <div className={`rounded-xl border px-5 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center ${empresarialTotals.liquidoPessoal >= 0 ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/30'}`}>
+            <span className={`text-xs font-semibold uppercase tracking-wide mb-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600' : 'text-red-400'}`}>Líquido Pessoal</span>
             <p className={`text-2xl font-bold tabular-nums ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600' : 'text-red-600'}`}>{formatCurrency(Math.abs(empresarialTotals.liquidoPessoal))}</p>
             <p className={`text-xs mt-1 ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-400'}`}>após MEI e pró-labore</p>
           </div>
