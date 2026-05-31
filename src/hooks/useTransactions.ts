@@ -60,5 +60,17 @@ export function useTransactions(filters: TransactionFilters = {}) {
     await fetchAll()
   }
 
-  return { transactions, totalCount, loading, error, createTransaction, updateTransaction, deleteTransaction, refetch: fetchAll }
+  async function bulkCreateTransactions(
+    rows: Array<Omit<Transaction, 'id' | 'user_id' | 'created_at' | 'categories'>>
+  ) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Não autenticado')
+    const { error } = await supabase
+      .from('transactions')
+      .insert(rows.map(r => ({ ...r, user_id: user.id })))
+    if (error) throw error
+    await fetchAll()
+  }
+
+  return { transactions, totalCount, loading, error, createTransaction, updateTransaction, deleteTransaction, bulkCreateTransactions, refetch: fetchAll }
 }
