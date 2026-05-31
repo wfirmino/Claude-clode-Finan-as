@@ -16,9 +16,19 @@ export default function SettingsPage() {
     const file = e.target.files?.[0]
     if (!file) return
     const reader = new FileReader()
-    reader.onload = async () => {
-      const dataUrl = reader.result as string
-      await updateProfile({ avatar_url: dataUrl })
+    reader.onload = () => {
+      const img = new Image()
+      img.onload = async () => {
+        const MAX = 300
+        const ratio = Math.min(MAX / img.width, MAX / img.height, 1)
+        const canvas = document.createElement('canvas')
+        canvas.width = Math.round(img.width * ratio)
+        canvas.height = Math.round(img.height * ratio)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82)
+        await updateProfile({ avatar_url: dataUrl })
+      }
+      img.src = reader.result as string
     }
     reader.readAsDataURL(file)
   }
