@@ -863,66 +863,57 @@ export default function Transactions() {
 
       {/* Mobile card list — hidden on desktop */}
       {!loading && (
-        <div className="md:hidden mb-4">
+        <div className="md:hidden space-y-3 mb-4">
           {paginated.length === 0 && (
             <p className="text-sm text-gray-400 text-center py-8">Nenhuma transação encontrada</p>
           )}
 
-          {paginated.length > 0 && (
-            <div
-              className="rounded-xl overflow-hidden"
-              style={{ border: '1px solid rgba(255,255,255,0.1)' }}
+          {paginated.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setSheetTx(t)}
+              className="w-full text-left rounded-2xl p-4 bg-gray-100 dark:bg-[#1a1a1a]"
             >
-              {paginated.map((t, idx) => (
-                <button
-                  key={t.id}
-                  onClick={() => setSheetTx(t)}
-                  className="w-full text-left bg-transparent px-4 pt-4 pb-4"
-                  style={idx < paginated.length - 1 ? { borderBottom: '1px solid rgba(255,255,255,0.06)' } : undefined}
-                >
-                  {/* Date + dots */}
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(t.date)}</span>
-                    <span className="text-gray-400 text-xl leading-none font-bold">⋮</span>
-                  </div>
+              {/* Date + dots */}
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(t.date)}</span>
+                <span className="text-gray-400 text-xl leading-none font-bold">⋮</span>
+              </div>
 
-                  {/* Icon + title */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 bg-gray-100 dark:bg-white/10">
-                      {t.type === 'income' ? '💰' : '💸'}
-                    </div>
-                    <span className="text-base font-semibold text-gray-900 dark:text-white">{t.title}</span>
-                  </div>
+              {/* Icon + title */}
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 bg-gray-200 dark:bg-white/10">
+                  {t.type === 'income' ? '💰' : '💸'}
+                </div>
+                <span className="text-base font-semibold text-gray-900 dark:text-white">{t.title}</span>
+              </div>
 
-                  {/* Category badge */}
-                  <div className="flex items-center gap-2 mb-4">
-                    {t.categories && (
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${t.type === 'income' ? 'bg-green-900/40 text-green-400 border border-green-800/50' : 'bg-gray-200 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600'}`}>
-                        {t.categories.name}
-                      </span>
-                    )}
-                  </div>
+              {/* Category badge */}
+              <div className="flex items-center gap-2 mb-4">
+                {t.categories && (
+                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${t.type === 'income' ? 'bg-green-900/40 text-green-400 border border-green-800/50' : 'bg-gray-200 dark:bg-gray-700/60 text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600'}`}>
+                    {t.categories.name}
+                  </span>
+                )}
+              </div>
 
-                  {/* Value — large, bottom right */}
-                  <div className="flex justify-end">
-                    <span className={`text-xl font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                      {t.type === 'income' ? '' : '-'}{formatCurrency(t.amount)}
-                    </span>
-                  </div>
-                </button>
-              ))}
-
-              {/* Footer */}
-              <div className="px-4 py-3 text-center">
-                <span className="text-xs text-gray-500 dark:text-gray-600">
-                  {totalPages <= 1 ? 'Todas as transações carregadas' : `Página ${page + 1} de ${totalPages}`}
+              {/* Value — large, bottom right */}
+              <div className="flex justify-end">
+                <span className={`text-xl font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                  {t.type === 'income' ? '' : '-'}{formatCurrency(t.amount)}
                 </span>
               </div>
-            </div>
+            </button>
+          ))}
+
+          {paginated.length > 0 && (
+            <p className="text-xs text-gray-500 dark:text-gray-600 text-center py-2">
+              {totalPages <= 1 ? 'Todas as transações carregadas' : `Página ${page + 1} de ${totalPages}`}
+            </p>
           )}
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-3">
+            <div className="flex items-center justify-between">
               <button disabled={page === 0} onClick={() => setPage(p => p - 1)} className="text-sm text-indigo-600 disabled:opacity-40">← Anterior</button>
               <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="text-sm text-indigo-600 disabled:opacity-40">Próxima →</button>
             </div>
