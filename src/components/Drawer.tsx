@@ -19,7 +19,7 @@ export default function Drawer({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 md:hidden">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="absolute left-0 top-0 bottom-0 w-72 bg-[#111] flex flex-col shadow-2xl">
+      <div className="absolute left-0 top-0 bottom-0 right-0 w-full bg-[#111] flex flex-col">
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-12 pb-4">
@@ -36,12 +36,12 @@ export default function Drawer({ open, onClose }: Props) {
         </div>
 
         {/* Banner */}
-        <div className="mx-5 mb-4 rounded-2xl overflow-hidden flex bg-indigo-900">
-          <div className="flex-1 p-4">
+        <div className="mx-5 mb-4 rounded-2xl overflow-hidden flex bg-indigo-900 min-h-[120px]">
+          <div className="w-1/2 p-5 flex flex-col justify-center">
             <p className="text-white font-bold text-base leading-tight">Bem-vindo ao FinanceApp</p>
-            <p className="text-indigo-300 text-xs mt-1">Controle suas finanças</p>
+            <p className="text-indigo-300 text-sm mt-2">Controle suas finanças</p>
           </div>
-          <div className="w-20 bg-indigo-700 flex items-center justify-center text-4xl select-none">
+          <div className="w-1/2 bg-indigo-700 flex items-center justify-center text-5xl select-none">
             💰
           </div>
         </div>
