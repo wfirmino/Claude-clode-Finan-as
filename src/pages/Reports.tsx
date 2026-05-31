@@ -135,11 +135,11 @@ export default function Reports() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Receitas</p>
-              <p className="text-2xl font-bold text-green-500">{formatCurrency(totalIncome)}</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">{formatCurrency(totalIncome)}</p>
             </div>
             <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Total de Despesas</p>
-              <p className="text-2xl font-bold text-red-500">{formatCurrency(totalExpense)}</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{formatCurrency(totalExpense)}</p>
             </div>
           </div>
 
@@ -165,7 +165,7 @@ export default function Reports() {
           {/* Transactions table */}
           <div className="rounded-xl border border-gray-200 dark:border-white/10 overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="border-b border-gray-100 dark:border-white/[0.06]">
+              <thead className="bg-gray-50 dark:bg-white/[0.04] border-b border-gray-100 dark:border-white/[0.06]">
                 <tr>
                   {['Data', 'Título', 'Categoria', 'Tipo', 'Valor'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{h}</th>
