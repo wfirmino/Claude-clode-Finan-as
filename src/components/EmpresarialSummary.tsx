@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import type { Transaction } from '../types'
-import { formatCurrency } from '../utils/formatters'
+import { formatCurrency, numToStr, parseBR, maskCurrency } from '../utils/formatters'
 
 interface Props {
   transactions: Transaction[]
@@ -11,11 +11,11 @@ interface Props {
 }
 
 export default function EmpresarialSummary({ transactions, mes, periodo, prolabore: initialProlabore, onSaveProlabore }: Props) {
-  const [prolaboreInput, setProlaboreInput] = useState(String(initialProlabore))
+  const [prolaboreInput, setProlaboreInput] = useState(numToStr(initialProlabore))
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    setProlaboreInput(String(initialProlabore))
+    setProlaboreInput(numToStr(initialProlabore))
   }, [initialProlabore])
 
   const { faturamento, totalSocio, despesaMEI, lucro } = useMemo(() => {
@@ -25,7 +25,7 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
     return { faturamento: fat, totalSocio: soc, despesaMEI: mei, lucro: fat - soc - mei }
   }, [transactions])
 
-  const currentProlabore = parseFloat(prolaboreInput) || 0
+  const currentProlabore = parseBR(prolaboreInput) || 0
   const caixa = lucro - currentProlabore
 
   async function handleSave() {
@@ -52,11 +52,11 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-indigo-100">
         <label className="text-sm text-gray-600 shrink-0">Pró-labore (R$):</label>
         <input
-          type="number"
-          min="0"
-          step="0.01"
+          type="text"
+          inputMode="decimal"
+          placeholder="0,00"
           value={prolaboreInput}
-          onChange={e => setProlaboreInput(e.target.value)}
+          onChange={e => setProlaboreInput(maskCurrency(e.target.value))}
           className="w-32 rounded border border-indigo-200 text-sm px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
         />
         <button

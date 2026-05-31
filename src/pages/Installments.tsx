@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useInstallments, getNextDueDate, getStatus, type Installment, type InstallmentInput } from '../hooks/useInstallments'
-import { formatCurrency } from '../utils/formatters'
+import { formatCurrency, numToStr, parseBR, maskCurrency } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Modal from '../components/Modal'
 import Toast from '../components/Toast'
@@ -67,8 +67,8 @@ export default function Installments() {
   const toastId = useRef(0)
 
   const derived = useMemo(() => {
-    const original = parseFloat(form.original_amount)
-    const interest = parseFloat(form.interest_amount) || 0
+    const original = parseBR(form.original_amount)
+    const interest = parseBR(form.interest_amount) || 0
     const count = parseInt(form.total_installments)
     const total = !isNaN(original) && original > 0 ? original + interest : NaN
     const perInstallment = !isNaN(total) && !isNaN(count) && count > 0 ? total / count : null
@@ -104,8 +104,8 @@ export default function Installments() {
   function openEdit(inst: Installment) {
     setForm({
       name: inst.name,
-      original_amount: inst.original_amount != null ? String(inst.original_amount) : String(inst.total_amount),
-      interest_amount: inst.interest_amount != null ? String(inst.interest_amount) : '',
+      original_amount: numToStr(inst.original_amount ?? inst.total_amount),
+      interest_amount: inst.interest_amount != null ? numToStr(inst.interest_amount) : '',
       total_installments: String(inst.total_installments),
       first_payment_date: inst.first_payment_date,
       category: inst.category ?? '',
@@ -119,8 +119,8 @@ export default function Installments() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (submitting) return
-    const original = parseFloat(form.original_amount)
-    const interest = parseFloat(form.interest_amount) || 0
+    const original = parseBR(form.original_amount)
+    const interest = parseBR(form.interest_amount) || 0
     const count = parseInt(form.total_installments)
     if (isNaN(original) || original <= 0 || isNaN(count) || count <= 0) {
       showToast('Preencha valor original e número de parcelas corretamente.', 'error')
@@ -495,13 +495,12 @@ export default function Installments() {
               <label htmlFor="inst-original" className="block text-sm font-medium text-gray-700 mb-1">Valor original (R$)</label>
               <input
                 id="inst-original"
-                type="number"
+                type="text"
+                inputMode="decimal"
                 required
-                min="0.01"
-                step="0.01"
                 placeholder="0,00"
                 value={form.original_amount}
-                onChange={e => setForm(f => ({ ...f, original_amount: e.target.value }))}
+                onChange={e => setForm(f => ({ ...f, original_amount: maskCurrency(e.target.value) }))}
                 className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>
@@ -511,12 +510,11 @@ export default function Installments() {
               </label>
               <input
                 id="inst-interest"
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
                 placeholder="0,00"
                 value={form.interest_amount}
-                onChange={e => setForm(f => ({ ...f, interest_amount: e.target.value }))}
+                onChange={e => setForm(f => ({ ...f, interest_amount: maskCurrency(e.target.value) }))}
                 className="w-full rounded-lg border-gray-300 text-sm focus:ring-indigo-500 focus:border-indigo-500"
               />
             </div>

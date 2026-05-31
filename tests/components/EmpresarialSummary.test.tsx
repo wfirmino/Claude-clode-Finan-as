@@ -36,8 +36,8 @@ describe('EmpresarialSummary', () => {
 
   it('calls onSaveProlabore when Salvar is clicked', async () => {
     render(<EmpresarialSummary transactions={txs} mes="2026-05" periodo="Este mês" prolabore={0} onSaveProlabore={onSaveProlabore} />)
-    const input = screen.getByRole('spinbutton')
-    fireEvent.change(input, { target: { value: '1000' } })
+    const input = screen.getByPlaceholderText('0,00')
+    fireEvent.change(input, { target: { value: '1.000' } })
     fireEvent.click(screen.getByRole('button', { name: /salvar/i }))
     await waitFor(() => expect(onSaveProlabore).toHaveBeenCalledWith(1000, '2026-05'))
   })

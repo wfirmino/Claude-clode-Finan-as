@@ -18,6 +18,21 @@ export function numToStr(n: number | null | undefined): string {
   return n.toFixed(2).replace('.', ',')
 }
 
+/**
+ * Máscara de moeda em tempo real para inputs pt-BR.
+ * Mantém apenas dígitos e vírgula, adiciona pontos de milhar.
+ * ex: "30000" → "30.000" | "30000,5" → "30.000,5" | "30000,50" → "30.000,50"
+ */
+export function maskCurrency(raw: string): string {
+  const hasSep = raw.includes(',')
+  const clean = raw.replace(/[^\d,]/g, '')
+  const [intRaw = '', decRaw = ''] = clean.split(',')
+  const cleanInt = intRaw.replace(/^0+(\d)/, '$1') || (hasSep ? '0' : '')
+  const formattedInt = cleanInt.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  if (hasSep) return `${formattedInt},${decRaw.slice(0, 2)}`
+  return formattedInt
+}
+
 /** Normaliza entrada pt-BR/US para float. Aceita: 1.234,56 | 1,234.56 | 497,88 | 497.88 */
 export function parseBR(value: string): number {
   const s = value.trim()
