@@ -869,15 +869,14 @@ export default function Transactions() {
           )}
 
           {paginated.length > 0 && (
-            /* Retângulo externo: borda sutil, sem fundo, padding generoso */
-            <div className="rounded-2xl p-3" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-              <div className="space-y-3">
+            <div className="p-3 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div className="space-y-2">
                 {paginated.map(t => (
-                  /* Retângulo interno: fundo próprio por transação */
                   <button
                     key={t.id}
                     onClick={() => setSheetTx(t)}
-                    className="w-full text-left rounded-xl p-4 bg-gray-100 dark:bg-[#1a1a1a]"
+                    className="w-full text-left p-4 rounded-lg bg-transparent"
+                    style={{ border: '1px solid rgba(255,255,255,0.08)' }}
                   >
                     {/* Date + dots */}
                     <div className="flex justify-between items-center mb-3">
@@ -912,8 +911,7 @@ export default function Transactions() {
                 ))}
               </div>
 
-              {/* Rodapé dentro do container */}
-              <p className="text-xs text-gray-500 dark:text-gray-600 text-center pt-4 pb-1">
+              <p className="text-xs text-gray-500 dark:text-gray-600 text-center py-3">
                 {totalPages <= 1 ? 'Todas as transações carregadas' : `Página ${page + 1} de ${totalPages}`}
               </p>
             </div>
