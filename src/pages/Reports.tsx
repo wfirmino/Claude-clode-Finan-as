@@ -24,6 +24,7 @@ function getPeriodDates(period: Period): { startDate: string; endDate: string } 
 export default function Reports() {
   const [period, setPeriod] = useState<Period>('month')
   const [custom, setCustom] = useState({ startDate: '', endDate: '' })
+  const [includeCards, setIncludeCards] = useState(false)
 
   const filters = useMemo<TransactionFilters>(() => {
     const today = new Date().toISOString().split('T')[0]
@@ -36,20 +37,52 @@ export default function Reports() {
 
   const { transactions, loading, error } = useTransactions(filters)
 
-  const categoryTotals = useMemo(() => calculateCategoryTotals(transactions), [transactions])
-  const totalExpense = useMemo(() => transactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0), [transactions])
-  const totalIncome = useMemo(() => transactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0), [transactions])
+  const cardFilters = useMemo<TransactionFilters>(() => ({
+    ...filters,
+    perfil: 'cartao',
+  }), [filters])
+  const { transactions: cardTxs } = useTransactions(includeCards ? cardFilters : { perfil: 'cartao', noLimit: false, startDate: '1900-01-01', endDate: '1900-01-01' })
+  const allTransactions = useMemo(
+    () => includeCards ? [...transactions, ...cardTxs] : transactions,
+    [transactions, cardTxs, includeCards]
+  )
+
+  const categoryTotals = useMemo(() => calculateCategoryTotals(allTransactions), [allTransactions])
+  const totalExpense = useMemo(() => allTransactions.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0), [allTransactions])
+  const totalIncome = useMemo(() => allTransactions.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0), [allTransactions])
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-900">Relatórios</h2>
         <button
-          onClick={() => exportTransactionsToCSV(transactions)}
+          onClick={() => exportTransactionsToCSV(allTransactions)}
           className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
         >
           Exportar CSV
         </button>
+      </div>
+
+      {/* Card toggle */}
+      <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <div className="relative">
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={includeCards}
+              onChange={e => setIncludeCards(e.target.checked)}
+            />
+            <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-indigo-600 transition-colors" />
+            <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4" />
+          </div>
+          <span className="text-sm font-medium text-gray-700">Incluir transações de cartão</span>
+        </label>
+        {includeCards && (
+          <p className="text-xs text-amber-600">
+            ⚠️ Pode duplicar valores se o pagamento da fatura já está em Pessoal.
+          </p>
+        )}
       </div>
 
       {/* Period selector */}
@@ -90,7 +123,7 @@ export default function Reports() {
         </div>
       )}
 
-      {transactions.length >= 500 && !loading && (
+      {allTransactions.length >= 500 && !loading && (
         <div className="px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
           Mostrando os 500 registros mais recentes. Os totais do período podem estar incompletos.
         </div>
@@ -140,10 +173,10 @@ export default function Reports() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {transactions.length === 0 && (
+                {allTransactions.length === 0 && (
                   <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">Nenhuma transação no período.</td></tr>
                 )}
-                {transactions.map(t => (
+                {allTransactions.map(t => (
                   <tr key={t.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-gray-500">{formatDate(t.date)}</td>
                     <td className="px-4 py-3 font-medium text-gray-800">{t.title}</td>
