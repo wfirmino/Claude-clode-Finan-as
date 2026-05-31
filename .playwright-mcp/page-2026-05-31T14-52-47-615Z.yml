@@ -1,0 +1,23 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - button "Abrir menu" [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+      - generic [ref=e10]: FinanceApp
+    - navigation "Navegação principal" [ref=e11]:
+      - link "Dashboard" [ref=e12] [cursor=pointer]:
+        - /url: /
+      - link "Transações" [ref=e13] [cursor=pointer]:
+        - /url: /transactions
+      - link "💳 Cartão" [ref=e14] [cursor=pointer]:
+        - /url: /cartao
+      - link "Parcelamentos" [ref=e15] [cursor=pointer]:
+        - /url: /installments
+      - link "Metas" [ref=e16] [cursor=pointer]:
+        - /url: /goals
+      - link "Relatórios" [ref=e17] [cursor=pointer]:
+        - /url: /reports
+      - link "Categorias" [ref=e18] [cursor=pointer]:
+        - /url: /categories
+  - main [ref=e19]:
+    - paragraph [ref=e20]: Carregando...

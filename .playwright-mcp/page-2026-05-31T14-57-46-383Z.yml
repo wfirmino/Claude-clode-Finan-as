@@ -1,0 +1,50 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]:
+      - button "Abrir menu" [ref=e7] [cursor=pointer]:
+        - img [ref=e8]
+      - generic [ref=e10]: FinanceApp
+    - navigation "Navegação principal" [ref=e11]:
+      - link "Dashboard" [ref=e12] [cursor=pointer]:
+        - /url: /
+      - link "Transações" [ref=e13] [cursor=pointer]:
+        - /url: /transactions
+      - link "💳 Cartão" [ref=e14] [cursor=pointer]:
+        - /url: /cartao
+      - link "Parcelamentos" [ref=e15] [cursor=pointer]:
+        - /url: /installments
+      - link "Metas" [ref=e16] [cursor=pointer]:
+        - /url: /goals
+      - link "Relatórios" [ref=e17] [cursor=pointer]:
+        - /url: /reports
+      - link "Categorias" [ref=e18] [cursor=pointer]:
+        - /url: /categories
+  - main [ref=e19]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Parcelamentos" [level=2] [ref=e23]
+        - button "+" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: +
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - img [ref=e29]
+            - generic [ref=e31]: Total em aberto
+          - paragraph [ref=e32]: R$ 0,00
+          - paragraph [ref=e33]: parcelas pendentes
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - img [ref=e36]
+            - generic [ref=e38]: Total já pago
+          - paragraph [ref=e39]: R$ 0,00
+          - paragraph [ref=e40]: valor quitado
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e43]
+            - generic [ref=e45]: Ativos
+          - paragraph [ref=e46]: "0"
+          - paragraph [ref=e47]: parcelamentos
+      - generic [ref=e48]:
+        - heading "Impacto nos próximos 6 meses" [level=3] [ref=e49]
+        - paragraph [ref=e50]: Nenhum parcelamento para exibir
+      - paragraph [ref=e51]: Carregando...
