@@ -97,21 +97,21 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
         role="dialog"
         aria-modal="true"
         aria-label="Detalhes da transação"
-        className="fixed bottom-0 left-0 right-0 z-50 bg-[#111] rounded-t-2xl shadow-xl"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#111] rounded-t-2xl shadow-xl"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-9 h-1 bg-white/20 rounded-full" />
+          <div className="w-9 h-1 bg-gray-300 dark:bg-white/20 rounded-full" />
         </div>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-base font-semibold text-white">Detalhes da Transação</span>
+          <span className="text-base font-semibold text-gray-900 dark:text-white">Detalhes da Transação</span>
           <div className="flex items-center gap-3">
             <button
               onClick={() => { onEdit(transaction); handleClose() }}
-              className="flex items-center gap-1.5 text-gray-400 hover:text-gray-200 transition-colors"
+              className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
               aria-label="Editar"
             >
               <IconEdit />
@@ -119,16 +119,16 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
             </button>
             {confirmDelete ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Confirmar?</span>
+                <span className="text-xs text-gray-500 dark:text-gray-500">Confirmar?</span>
                 <button
                   onClick={() => { onDelete(transaction.id); handleClose() }}
-                  className="text-xs font-medium text-red-400"
+                  className="text-xs font-medium text-red-500 dark:text-red-400"
                 >
                   Sim
                 </button>
                 <button
                   onClick={() => setConfirmDelete(false)}
-                  className="text-xs text-gray-500"
+                  className="text-xs text-gray-500 dark:text-gray-500"
                 >
                   Não
                 </button>
@@ -136,7 +136,7 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
             ) : (
               <button
                 onClick={() => setConfirmDelete(true)}
-                className="flex items-center gap-1.5 text-gray-400 hover:text-gray-200 transition-colors"
+                className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
                 aria-label="Excluir"
               >
                 <IconTrash />
@@ -148,11 +148,11 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
 
         {/* Main block */}
         <div className="flex items-center gap-4 px-5 py-4">
-          <div className="w-14 h-14 rounded-xl bg-[#2a2a2a] flex items-center justify-center text-2xl flex-shrink-0">
+          <div className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-[#2a2a2a] flex items-center justify-center text-2xl flex-shrink-0">
             {isIncome ? '💰' : '💸'}
           </div>
           <div className="min-w-0">
-            <p className="text-sm text-gray-400 mb-0.5 truncate">{transaction.title}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-0.5 truncate">{transaction.title}</p>
             <p className={`text-2xl font-bold tabular-nums ${isIncome ? 'text-green-400' : 'text-red-400'}`}>
               {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
             </p>
@@ -160,38 +160,38 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
         </div>
 
         {/* Detail rows */}
-        <div className="divide-y mx-5 rounded-xl overflow-hidden" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="flex justify-between items-center py-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="divide-y divide-gray-100 dark:divide-white/[0.06] mx-5 border-t border-b border-gray-100 dark:border-white/[0.06]">
+          <div className="flex justify-between items-center py-3">
             <div className="flex items-center gap-2">
               <IconCalendar />
-              <span className="text-sm text-gray-400">Data</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Data</span>
             </div>
-            <span className="text-sm text-white">{formatDate(transaction.date)}</span>
+            <span className="text-sm text-gray-900 dark:text-white">{formatDate(transaction.date)}</span>
           </div>
 
-          <div className="flex justify-between items-center py-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+          <div className="flex justify-between items-center py-3">
             <div className="flex items-center gap-2">
               <IconTag />
-              <span className="text-sm text-gray-400">Categoria</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Categoria</span>
             </div>
-            <span className="text-sm text-white">{transaction.categories?.name ?? '—'}</span>
+            <span className="text-sm text-gray-900 dark:text-white">{transaction.categories?.name ?? '—'}</span>
           </div>
 
-          <div className="flex justify-between items-center py-3" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+          <div className="flex justify-between items-center py-3">
             <div className="flex items-center gap-2">
               <IconType />
-              <span className="text-sm text-gray-400">Tipo</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">Tipo</span>
             </div>
-            <span className="text-sm text-white">{isIncome ? 'Receita' : 'Despesa'}</span>
+            <span className="text-sm text-gray-900 dark:text-white">{isIncome ? 'Receita' : 'Despesa'}</span>
           </div>
 
           {transaction.notes && (
-            <div className="flex justify-between items-start py-3 gap-4" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+            <div className="flex justify-between items-start py-3 gap-4">
               <div className="flex items-center gap-2 shrink-0">
                 <IconNote />
-                <span className="text-sm text-gray-400">Observação</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Observação</span>
               </div>
-              <span className="text-sm text-white text-right">{transaction.notes}</span>
+              <span className="text-sm text-gray-900 dark:text-white text-right max-w-[200px] break-words">{transaction.notes}</span>
             </div>
           )}
         </div>
@@ -200,9 +200,9 @@ export default function TransactionSheet({ transaction, onClose, onEdit, onDelet
         <div className="px-5 pt-5">
           <div className="flex items-center gap-2 mb-3">
             <IconRefresh />
-            <span className="text-sm font-medium text-gray-400">Transações semelhantes</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Transações semelhantes</span>
           </div>
-          <p className="text-sm text-gray-600 text-center py-4">Nenhuma transação semelhante encontrada</p>
+          <p className="text-sm text-gray-400 dark:text-gray-600 text-center py-4">Nenhuma transação semelhante encontrada</p>
         </div>
       </div>
     </>

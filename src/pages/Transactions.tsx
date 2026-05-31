@@ -869,14 +869,13 @@ export default function Transactions() {
           )}
 
           {paginated.length > 0 && (
-            <div className="p-3 rounded-xl" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="p-3 rounded-xl border border-gray-200 dark:border-white/10">
               <div className="space-y-2">
                 {paginated.map(t => (
                   <button
                     key={t.id}
                     onClick={() => setSheetTx(t)}
-                    className="w-full text-left p-4 rounded-lg bg-transparent"
-                    style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+                    className="w-full text-left p-4 rounded-lg bg-transparent border border-gray-100 dark:border-white/[0.08]"
                   >
                     {/* Date + dots */}
                     <div className="flex justify-between items-center mb-3">
