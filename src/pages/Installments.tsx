@@ -203,37 +203,22 @@ export default function Installments() {
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-100 dark:border-red-800/50 px-5 py-4">
-          <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-xs font-semibold text-red-400 dark:text-red-400 uppercase tracking-wide">Total em aberto</span>
-          </div>
-          <p className="text-2xl font-bold text-red-600 tabular-nums">{formatCurrency(summary.totalAberto)}</p>
-          <p className="text-xs text-red-400 mt-1">parcelas pendentes</p>
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 px-4 py-4 flex flex-col items-center justify-center text-center">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Em aberto</p>
+          <p className="text-2xl font-bold text-red-500 tabular-nums">{formatCurrency(summary.totalAberto)}</p>
+          <p className="text-xs text-gray-400 mt-1">parcelas pendentes</p>
         </div>
 
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800/50 px-5 py-4">
-          <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Total já pago</span>
-          </div>
-          <p className="text-2xl font-bold text-green-600 tabular-nums">{formatCurrency(summary.totalPago)}</p>
-          <p className="text-xs text-green-500 mt-1">valor quitado</p>
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 px-4 py-4 flex flex-col items-center justify-center text-center">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total pago</p>
+          <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(summary.totalPago)}</p>
+          <p className="text-xs text-gray-400 mt-1">valor quitado</p>
         </div>
 
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50 px-5 py-4 col-span-2 md:col-span-1">
-          <div className="flex items-center gap-2 mb-2">
-            <svg className="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-            <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wide">Ativos</span>
-          </div>
-          <p className="text-2xl font-bold text-indigo-600 tabular-nums">{summary.ativos}</p>
-          <p className="text-xs text-indigo-500 mt-1">parcelamentos</p>
+        <div className="rounded-xl border border-gray-200 dark:border-white/10 px-4 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Ativos</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">{summary.ativos}</p>
+          <p className="text-xs text-gray-400 mt-1">parcelamentos</p>
         </div>
       </div>
 
