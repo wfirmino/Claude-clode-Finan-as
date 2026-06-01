@@ -158,8 +158,8 @@ export default function Dashboard() {
           {[
             { label: 'Receitas do mês', value: empresarial.income, color: 'text-green-600 dark:text-green-400' },
             { label: 'Despesas do mês', value: empresarial.expense, color: 'text-red-600 dark:text-red-400' },
+            { label: 'Saldo do mês', value: empresarial.balance, color: empresarial.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
             { label: 'Pró-labore', value: prolabore, color: 'text-indigo-600 dark:text-indigo-400' },
-            { label: 'Líquido pessoal', value: empresarial.balance - prolabore, color: (empresarial.balance - prolabore) >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
           ].map(card => (
             <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
