@@ -205,13 +205,13 @@ export default function Installments() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div className="rounded-xl border border-gray-200 dark:border-white/10 px-4 py-4 flex flex-col items-center justify-center text-center">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Em aberto</p>
-          <p className="text-2xl font-bold text-red-500 tabular-nums">{formatCurrency(summary.totalAberto)}</p>
+          <p className="text-2xl font-bold text-red-600 dark:text-red-400 tabular-nums">{formatCurrency(summary.totalAberto)}</p>
           <p className="text-xs text-gray-400 mt-1">parcelas pendentes</p>
         </div>
 
         <div className="rounded-xl border border-gray-200 dark:border-white/10 px-4 py-4 flex flex-col items-center justify-center text-center">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total pago</p>
-          <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(summary.totalPago)}</p>
+          <p className="text-2xl font-bold text-green-600 dark:text-green-400 tabular-nums">{formatCurrency(summary.totalPago)}</p>
           <p className="text-xs text-gray-400 mt-1">valor quitado</p>
         </div>
 

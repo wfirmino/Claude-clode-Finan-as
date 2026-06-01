@@ -72,12 +72,12 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
         </div>
         <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Pago</p>
-          <p className="text-xl font-bold text-green-500 tabular-nums">{formatCurrency(pago)}</p>
+          <p className="text-xl font-bold text-green-600 dark:text-green-400 tabular-nums">{formatCurrency(pago)}</p>
           <p className="text-xs text-gray-400 mt-0.5">{pagamentos} pgto{pagamentos !== 1 ? 's' : ''}</p>
         </div>
         <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Em aberto</p>
-          <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-500'}`}>{formatCurrency(emAberto)}</p>
+          <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`}>{formatCurrency(emAberto)}</p>
           <p className={`text-xs mt-0.5 ${dueColor(daysUntil)}`}>vence em {daysUntil}d</p>
         </div>
       </div>
