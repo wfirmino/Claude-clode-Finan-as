@@ -38,7 +38,9 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
       setSaveOk(true)
       setTimeout(() => setSaveOk(false), 3000)
     } catch (e) {
-      setSaveError(e instanceof Error ? e.message : 'Erro ao salvar')
+      const msg = e instanceof Error ? e.message : (e as { message?: string })?.message ?? 'Erro desconhecido'
+      console.error('[EmpresarialSummary] saveProlabore error:', e)
+      setSaveError(msg)
     } finally {
       setSaving(false)
     }
