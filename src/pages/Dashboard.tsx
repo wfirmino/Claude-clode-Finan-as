@@ -4,8 +4,6 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 import { useTransactions } from '../hooks/useTransactions'
 import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import {
-  calculateBalance,
-  calculateCurrentMonthTotals,
   calculateMonthlyTotals,
   calculateCategoryTotals,
   filterCurrentMonth,
@@ -18,8 +16,6 @@ export default function Dashboard() {
   const { transactions, totalCount, loading, error } = useTransactions({ noLimit: true })
   const [activeTab, setActiveTab] = useState<'geral' | 'pessoal' | 'empresarial' | 'kommo'>('geral')
 
-  const balance = useMemo(() => calculateBalance(transactions), [transactions])
-  const { income, expense } = useMemo(() => calculateCurrentMonthTotals(transactions), [transactions])
   const monthly = useMemo(() => calculateMonthlyTotals(transactions, 6), [transactions])
   const categoryTotals = useMemo(() => calculateCategoryTotals(filterCurrentMonth(transactions)), [transactions])
   const recent = useMemo(() => transactions.slice(0, 5), [transactions])
@@ -58,22 +54,23 @@ export default function Dashboard() {
 
       {totalCount !== null && transactions.length < totalCount && (
         <div className="px-4 py-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-800 dark:text-amber-400">
-          Saldo calculado sobre {transactions.length.toLocaleString('pt-BR')} de {totalCount.toLocaleString('pt-BR')} transações. O limite do servidor foi atingido — o saldo pode divergir do total real.
+          Valores calculados sobre {transactions.length.toLocaleString('pt-BR')} de {totalCount.toLocaleString('pt-BR')} transações. O limite do servidor foi atingido — os totais podem divergir do real.
         </div>
       )}
 
       {activeTab === 'geral' && (
         <>
-          {/* Summary cards */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {/* Summary cards por perfil */}
+          <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Saldo atual', value: balance, color: balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
-              { label: 'Receitas do mês', value: income, color: 'text-green-600 dark:text-green-400' },
-              { label: 'Despesas do mês', value: expense, color: 'text-red-600 dark:text-red-400' },
-            ].map((card, i) => (
-              <div key={card.label} className={`rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center ${i === 2 ? 'col-span-2 md:col-span-1' : ''}`}>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
-                <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
+              { label: 'Pessoal', value: pessoal.balance, color: pessoal.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
+              { label: 'Empresa', value: empresarial.balance, color: empresarial.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
+              { label: 'Kommo', value: kommo.balance, color: kommo.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
+            ].map(card => (
+              <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-4 flex flex-col items-center justify-center text-center">
+                <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
+                <p className={`text-lg font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
+                <p className="text-[10px] text-gray-400 mt-1">30 dias</p>
               </div>
             ))}
           </div>

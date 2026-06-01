@@ -45,13 +45,12 @@ function mockFrom(data: object[], count: number | null = null) {
 describe('Dashboard page', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('renders summary cards with balance, income and expense', async () => {
+  it('renders per-perfil summary cards in Geral tab', async () => {
     mockFrom(mockTransactions)
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => {
-      expect(screen.getByText(/saldo atual/i)).toBeInTheDocument()
-      expect(screen.getByText(/receitas do mês/i)).toBeInTheDocument()
-      expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/^empresa$/i)).toBeInTheDocument()
+      expect(screen.getAllByText(/30 dias/i).length).toBeGreaterThanOrEqual(3)
     })
   })
 
@@ -105,14 +104,14 @@ describe('Dashboard page', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => {
       expect(screen.getByText(/o limite do servidor foi atingido/i)).toBeInTheDocument()
-      expect(screen.getByText(/saldo calculado sobre/i)).toBeInTheDocument()
+      expect(screen.getByText(/valores calculados sobre/i)).toBeInTheDocument()
     })
   })
 
   it('does not show truncation warning when all rows are fetched', async () => {
     mockFrom(mockTransactions, mockTransactions.length)
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
-    await waitFor(() => screen.getByText(/saldo atual/i))
+    await waitFor(() => screen.getAllByText(/30 dias/i))
     expect(screen.queryByText(/o limite do servidor foi atingido/i)).not.toBeInTheDocument()
   })
 })
@@ -142,7 +141,8 @@ describe('Dashboard tabs', () => {
     mockFrom(mockTransactionsComPerfil)
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => {
-      expect(screen.getByText(/saldo atual/i)).toBeInTheDocument()
+      expect(screen.getByText(/^empresa$/i)).toBeInTheDocument()
+      expect(screen.getAllByText(/30 dias/i).length).toBeGreaterThanOrEqual(3)
     })
   })
 
