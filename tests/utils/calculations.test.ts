@@ -129,16 +129,22 @@ describe('isGoalAtRisk', () => {
   })
 })
 
+function daysAgo(n: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return d.toISOString().split('T')[0]
+}
+
 const txPessoal: Transaction[] = [
-  { id: 'p1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'pessoal' },
-  { id: 'p2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: `${YEAR}-${MONTH}-05`, notes: null, created_at: '', perfil: 'pessoal' },
+  { id: 'p1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: daysAgo(5), notes: null, created_at: '', perfil: 'pessoal' },
+  { id: 'p2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: daysAgo(3), notes: null, created_at: '', perfil: 'pessoal' },
 ]
 const txEmpresarial: Transaction[] = [
-  { id: 'e1', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 10000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'empresarial' },
-  { id: 'e2', user_id: 'u1', category_id: null, title: 'Despesa empresa', amount: 2000, type: 'expense', date: `${YEAR}-${MONTH}-10`, notes: null, created_at: '', perfil: 'empresarial' },
+  { id: 'e1', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 10000, type: 'income', date: daysAgo(7), notes: null, created_at: '', perfil: 'empresarial' },
+  { id: 'e2', user_id: 'u1', category_id: null, title: 'Despesa empresa', amount: 2000, type: 'expense', date: daysAgo(2), notes: null, created_at: '', perfil: 'empresarial' },
 ]
 const txKommo: Transaction[] = [
-  { id: 'k1', user_id: 'u1', category_id: null, title: 'Assinatura Kommo', amount: 5000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'kommo', valor_pago_kommo: 1500, valor_liquido_recebido: 3500 },
+  { id: 'k1', user_id: 'u1', category_id: null, title: 'Assinatura Kommo', amount: 5000, type: 'income', date: daysAgo(1), notes: null, created_at: '', perfil: 'kommo', valor_pago_kommo: 1500, valor_liquido_recebido: 3500 },
 ]
 const allPerfilTx = [...txPessoal, ...txEmpresarial, ...txKommo]
 
@@ -179,7 +185,7 @@ describe('calculateKommoMonthTotals', () => {
   })
   it('trata transações sem valor_pago_kommo como zero', () => {
     const txSemCampos: Transaction[] = [
-      { id: 'k2', user_id: 'u1', category_id: null, title: 'Kommo sem campos', amount: 1000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'kommo' },
+      { id: 'k2', user_id: 'u1', category_id: null, title: 'Kommo sem campos', amount: 1000, type: 'income', date: daysAgo(1), notes: null, created_at: '', perfil: 'kommo' },
     ]
     const r = calculateKommoMonthTotals(txSemCampos)
     expect(r.income).toBe(1000)

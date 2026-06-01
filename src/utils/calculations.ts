@@ -22,6 +22,15 @@ export function filterCurrentMonth(transactions: Transaction[]): Transaction[] {
   })
 }
 
+export function filterLast30Days(transactions: Transaction[]): Transaction[] {
+  const now = new Date()
+  const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29)
+  return transactions.filter(t => {
+    const d = parseDateLocal(t.date)
+    return d >= cutoff && d <= now
+  })
+}
+
 export function calculateCurrentMonthTotals(transactions: Transaction[]): { income: number; expense: number } {
   const filtered = filterCurrentMonth(transactions)
   return {
@@ -97,7 +106,7 @@ export function calculatePerfilMonthTotals(
   transactions: Transaction[],
   perfil: Perfil,
 ): { income: number; expense: number; balance: number } {
-  const filtered = filterCurrentMonth(transactions).filter(t => t.perfil === perfil)
+  const filtered = filterLast30Days(transactions).filter(t => t.perfil === perfil)
   const income = filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
   const expense = filtered.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
   return { income, expense, balance: income - expense }
@@ -106,7 +115,7 @@ export function calculatePerfilMonthTotals(
 export function calculateKommoMonthTotals(
   transactions: Transaction[],
 ): { income: number; valorPagoKommo: number; valorLiquidoRecebido: number; balance: number } {
-  const filtered = filterCurrentMonth(transactions).filter(t => t.perfil === 'kommo')
+  const filtered = filterLast30Days(transactions).filter(t => t.perfil === 'kommo')
   const income = filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
   const valorPagoKommo = filtered.reduce((a, t) => a + (t.valor_pago_kommo ?? 0), 0)
   const valorLiquidoRecebido = filtered.reduce((a, t) => a + (t.valor_liquido_recebido ?? 0), 0)
