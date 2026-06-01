@@ -616,7 +616,7 @@ export default function Transactions() {
           </div>
           <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Líquido Pessoal</span>
-            <p className={`text-2xl font-bold tabular-nums ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-500' : 'text-red-500'}`}>{formatCurrency(Math.abs(empresarialTotals.liquidoPessoal))}</p>
+            <p className={`text-2xl font-bold tabular-nums ${empresarialTotals.liquidoPessoal >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{formatCurrency(Math.abs(empresarialTotals.liquidoPessoal))}</p>
             <p className="text-xs text-gray-400 mt-1">após MEI e pró-labore</p>
           </div>
         </div>
@@ -634,7 +634,7 @@ export default function Transactions() {
           </div>
           <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1 flex flex-col items-center justify-center text-center">
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Comissão</span>
-            <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(kommoTotals.valorFinal)}</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400 tabular-nums">{formatCurrency(kommoTotals.valorFinal)}</p>
             <p className="text-xs text-gray-400 mt-1">após todos os descontos</p>
           </div>
         </div>
@@ -902,7 +902,7 @@ export default function Transactions() {
 
                     {/* Value — large, bottom right */}
                     <div className="flex justify-end">
-                      <span className={`text-xl font-bold tabular-nums ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                      <span className={`text-xl font-bold tabular-nums ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                         {t.type === 'income' ? '' : '-'}{formatCurrency(t.amount)}
                       </span>
                     </div>
