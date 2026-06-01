@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import Dashboard from '../../src/pages/Dashboard'
@@ -110,5 +111,49 @@ describe('Dashboard page', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => screen.getByText(/saldo atual/i))
     expect(screen.queryByText(/o limite do servidor foi atingido/i)).not.toBeInTheDocument()
+  })
+})
+
+const currentMonthPad = new Date().toISOString().split('T')[0].slice(0, 7)
+
+const mockTransactionsComPerfil = [
+  { id: 't1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
+  { id: 't2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: `${currentMonthPad}-05`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
+  { id: 't3', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 8000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'empresarial' },
+  { id: 't4', user_id: 'u1', category_id: null, title: 'Kommo cliente', amount: 5000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'kommo', valor_pago_kommo: 1200, valor_liquido_recebido: 3800 },
+]
+
+describe('Dashboard tabs', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('renderiza as quatro abas', async () => {
+    mockFrom(mockTransactionsComPerfil)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /geral/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /pessoal/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /empresarial/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /kommo/i })).toBeInTheDocument()
+    })
+  })
+
+  it('abre na aba Geral por padrão', async () => {
+    mockFrom(mockTransactionsComPerfil)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => {
+      expect(screen.getByText(/saldo atual/i)).toBeInTheDocument()
+    })
+  })
+
+  it('aba Pessoal exibe receitas, despesas e saldo do mês filtrados por pessoal', async () => {
+    mockFrom(mockTransactionsComPerfil)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('button', { name: /pessoal/i }))
+    fireEvent.click(screen.getByRole('button', { name: /pessoal/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/receitas do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/saldo do mês/i)).toBeInTheDocument()
+    })
   })
 })
