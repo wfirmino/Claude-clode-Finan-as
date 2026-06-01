@@ -642,32 +642,32 @@ export default function Transactions() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
           <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-green-600 dark:text-green-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
               </svg>
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Receitas</span>
             </div>
-            <p className="text-2xl font-bold text-green-500 tabular-nums">{formatCurrency(totalIncome)}</p>
+            <p className="text-2xl font-bold text-green-600 dark:text-green-400 tabular-nums">{formatCurrency(totalIncome)}</p>
             <p className="text-xs text-gray-400 mt-1">{transactions.filter(t => t.type === 'income').length} lançamentos</p>
           </div>
           <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Despesas</span>
             </div>
-            <p className="text-2xl font-bold text-red-500 tabular-nums">{formatCurrency(totalExpense)}</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400 tabular-nums">{formatCurrency(totalExpense)}</p>
             <p className="text-xs text-gray-400 mt-1">{transactions.filter(t => t.type === 'expense').length} lançamentos</p>
           </div>
           <div className="bg-transparent rounded-xl border border-gray-200 dark:border-white/15 px-4 py-4 col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-2">
-              <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-500' : 'text-red-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 shrink-0 ${balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
               </svg>
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Saldo</span>
             </div>
-            <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-500' : 'text-red-500'}`}>{formatCurrency(Math.abs(balance))}</p>
+            <p className={`text-2xl font-bold tabular-nums ${balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>{formatCurrency(Math.abs(balance))}</p>
             <p className="text-xs text-gray-400 mt-1">{balance >= 0 ? 'positivo' : 'negativo'}</p>
           </div>
         </div>
@@ -875,7 +875,7 @@ export default function Transactions() {
                   <button
                     key={t.id}
                     onClick={() => setSheetTx(t)}
-                    className="w-full text-left p-4 rounded-lg bg-transparent border border-gray-100 dark:border-white/[0.08]"
+                    className="w-full text-left p-4 rounded-lg bg-transparent border border-gray-200 dark:border-white/[0.08]"
                   >
                     {/* Date + dots */}
                     <div className="flex justify-between items-center mb-3">
@@ -964,7 +964,7 @@ export default function Transactions() {
                       {t.type === 'income' ? 'Receita' : 'Despesa'}
                     </span>
                   </td>
-                  <td className={`px-6 py-4 font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                  <td className={`px-6 py-4 font-semibold tabular-nums ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                   </td>
                   <td className="px-6 py-4">

@@ -186,7 +186,7 @@ export default function Reports() {
                         {t.type === 'income' ? 'Receita' : 'Despesa'}
                       </span>
                     </td>
-                    <td className={`px-4 py-3 font-medium ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    <td className={`px-4 py-3 font-medium ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                       {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                     </td>
                   </tr>

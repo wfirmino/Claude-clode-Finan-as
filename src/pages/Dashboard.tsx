@@ -101,7 +101,7 @@ export default function Dashboard() {
                   <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{t.title}</p>
                   <p className="text-xs text-gray-400">{t.categories?.name ?? '—'} · {formatDate(t.date)}</p>
                 </div>
-                <span className={`text-sm font-medium ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                <span className={`text-sm font-medium ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                   {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                 </span>
               </div>
