@@ -158,7 +158,7 @@ describe('Dashboard tabs', () => {
     })
   })
 
-  it('aba Empresarial exibe receitas, despesas, saldo e pró-labore', async () => {
+  it('aba Empresarial exibe receitas, despesas, pró-labore e líquido pessoal', async () => {
     mockFrom(mockTransactionsComPerfil)
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     await waitFor(() => screen.getByRole('button', { name: /empresarial/i }))
@@ -166,8 +166,8 @@ describe('Dashboard tabs', () => {
     await waitFor(() => {
       expect(screen.getByText(/receitas do mês/i)).toBeInTheDocument()
       expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
-      expect(screen.getByText(/saldo do mês/i)).toBeInTheDocument()
       expect(screen.getByText(/pró-labore/i)).toBeInTheDocument()
+      expect(screen.getByText(/líquido pessoal/i)).toBeInTheDocument()
     })
   })
 
