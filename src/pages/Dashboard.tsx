@@ -1,24 +1,20 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useTransactions } from '../hooks/useTransactions'
 import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import {
-  calculateMonthlyTotals,
   calculateCategoryTotals,
   filterCurrentMonth,
   calculatePerfilMonthTotals,
   calculateKommoMonthTotals,
 } from '../utils/calculations'
-import { formatCurrency, formatDate } from '../utils/formatters'
+import { formatCurrency } from '../utils/formatters'
 
 export default function Dashboard() {
   const { transactions, totalCount, loading, error } = useTransactions({ noLimit: true })
   const [activeTab, setActiveTab] = useState<'geral' | 'pessoal' | 'empresarial' | 'kommo'>('geral')
 
-  const monthly = useMemo(() => calculateMonthlyTotals(transactions, 6), [transactions])
   const categoryTotals = useMemo(() => calculateCategoryTotals(filterCurrentMonth(transactions)), [transactions])
-  const recent = useMemo(() => transactions.slice(0, 5), [transactions])
   const pessoal = useMemo(() => calculatePerfilMonthTotals(transactions, 'pessoal'), [transactions])
   const { prolabore } = useEmpresarialConfig()
   const empresarial = useMemo(() => calculatePerfilMonthTotals(transactions, 'empresarial'), [transactions])
@@ -75,61 +71,20 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Gastos por categoria (mês atual)</p>
-              {categoryTotals.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-8">Sem dados</p>
-              ) : (
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart>
-                    <Pie data={categoryTotals} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name }) => name}>
-                      {categoryTotals.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
-                    </Pie>
-                    <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-
-            <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Receitas vs Despesas (6 meses)</p>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={monthly}>
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#9ca3af' }} />
-                  <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} tickFormatter={v => { const n = Number(v); return n >= 1000 ? `R$${(n / 1000).toFixed(0)}k` : `R$${n}` }} />
-                  <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                  <Legend />
-                  <Bar dataKey="income" name="Receita" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="expense" name="Despesa" fill="#ef4444" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Recent transactions */}
+          {/* Gastos por categoria */}
           <div className="rounded-xl border border-gray-200 dark:border-white/10 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Últimas transações</p>
-              <Link to="/transactions" className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Ver todas</Link>
-            </div>
-            {recent.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center py-4">Nenhuma transação registrada.</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Gastos por categoria (mês atual)</p>
+            {categoryTotals.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-8">Sem dados</p>
             ) : (
-              <div className="divide-y divide-gray-100 dark:divide-white/[0.06]">
-                {recent.map(t => (
-                  <div key={t.id} className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{t.title}</p>
-                      <p className="text-xs text-gray-400">{t.categories?.name ?? '—'} · {formatDate(t.date)}</p>
-                    </div>
-                    <span className={`text-sm font-medium ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie data={categoryTotals} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name }) => name}>
+                    {categoryTotals.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => formatCurrency(Number(v))} />
+                </PieChart>
+              </ResponsiveContainer>
             )}
           </div>
         </>

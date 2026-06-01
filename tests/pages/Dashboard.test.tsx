@@ -54,23 +54,6 @@ describe('Dashboard page', () => {
     })
   })
 
-  it('renders recent transactions section', async () => {
-    mockFrom(mockTransactions)
-    render(<MemoryRouter><Dashboard /></MemoryRouter>)
-    await waitFor(() => {
-      expect(screen.getByText('Salário')).toBeInTheDocument()
-      expect(screen.getByText('Mercado')).toBeInTheDocument()
-    })
-  })
-
-  it('shows "Nenhuma transação" when there are no transactions', async () => {
-    mockFrom([])
-    render(<MemoryRouter><Dashboard /></MemoryRouter>)
-    await waitFor(() => {
-      expect(screen.getByText(/nenhuma transação registrada/i)).toBeInTheDocument()
-    })
-  })
-
   it('shows error banner when fetch fails', async () => {
     const resolved = { data: null, error: { message: 'Conexão recusada' } }
     const chain: any = {
@@ -90,14 +73,7 @@ describe('Dashboard page', () => {
     })
   })
 
-  it('renders the "Ver todas" link pointing to /transactions', async () => {
-    mockFrom(mockTransactions)
-    render(<MemoryRouter><Dashboard /></MemoryRouter>)
-    await waitFor(() => {
-      const link = screen.getByRole('link', { name: /ver todas/i })
-      expect(link).toHaveAttribute('href', '/transactions')
-    })
-  })
+
 
   it('shows truncation warning when server count exceeds fetched rows', async () => {
     mockFrom(mockTransactions, 5000)
