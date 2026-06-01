@@ -1,4 +1,4 @@
-import type { Transaction, Goal, MonthlyTotals, CategoryTotal } from '../types'
+import type { Transaction, Goal, MonthlyTotals, CategoryTotal, Perfil } from '../types'
 
 export function calculateBalance(transactions: Transaction[]): number {
   return transactions.reduce(
@@ -91,4 +91,24 @@ export function isGoalAtRisk(goal: Goal): boolean {
   const expectedProgress = 1 - daysLeft / totalDays
   const actualProgress = goal.target > 0 ? goal.current / goal.target : 1
   return daysLeft <= 30 && actualProgress < expectedProgress
+}
+
+export function calculatePerfilMonthTotals(
+  transactions: Transaction[],
+  perfil: Perfil,
+): { income: number; expense: number; balance: number } {
+  const filtered = filterCurrentMonth(transactions).filter(t => t.perfil === perfil)
+  const income = filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+  const expense = filtered.filter(t => t.type === 'expense').reduce((a, t) => a + t.amount, 0)
+  return { income, expense, balance: income - expense }
+}
+
+export function calculateKommoMonthTotals(
+  transactions: Transaction[],
+): { income: number; valorPagoKommo: number; valorLiquidoRecebido: number } {
+  const filtered = filterCurrentMonth(transactions).filter(t => t.perfil === 'kommo')
+  const income = filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
+  const valorPagoKommo = filtered.reduce((a, t) => a + (t.valor_pago_kommo ?? 0), 0)
+  const valorLiquidoRecebido = filtered.reduce((a, t) => a + (t.valor_liquido_recebido ?? 0), 0)
+  return { income, valorPagoKommo, valorLiquidoRecebido }
 }

@@ -6,6 +6,8 @@ import {
   calculateCategoryTotals,
   calculateGoalProgress,
   isGoalAtRisk,
+  calculatePerfilMonthTotals,
+  calculateKommoMonthTotals,
 } from '../../src/utils/calculations'
 import type { Transaction, Goal } from '../../src/types'
 
@@ -124,5 +126,63 @@ describe('isGoalAtRisk', () => {
       created_at: '2026-01-01',
     }
     expect(isGoalAtRisk(goal)).toBe(false)
+  })
+})
+
+const txPessoal: Transaction[] = [
+  { id: 'p1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'pessoal' },
+  { id: 'p2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: `${YEAR}-${MONTH}-05`, notes: null, created_at: '', perfil: 'pessoal' },
+]
+const txEmpresarial: Transaction[] = [
+  { id: 'e1', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 10000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'empresarial' },
+  { id: 'e2', user_id: 'u1', category_id: null, title: 'Despesa empresa', amount: 2000, type: 'expense', date: `${YEAR}-${MONTH}-10`, notes: null, created_at: '', perfil: 'empresarial' },
+]
+const txKommo: Transaction[] = [
+  { id: 'k1', user_id: 'u1', category_id: null, title: 'Assinatura Kommo', amount: 5000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'kommo', valor_pago_kommo: 1500, valor_liquido_recebido: 3500 },
+]
+const allPerfilTx = [...txPessoal, ...txEmpresarial, ...txKommo]
+
+describe('calculatePerfilMonthTotals', () => {
+  it('retorna income, expense e balance para pessoal', () => {
+    const r = calculatePerfilMonthTotals(allPerfilTx, 'pessoal')
+    expect(r.income).toBe(3000)
+    expect(r.expense).toBe(500)
+    expect(r.balance).toBe(2500)
+  })
+  it('retorna zeros quando não há transações para o perfil', () => {
+    const r = calculatePerfilMonthTotals(allPerfilTx, 'cartao')
+    expect(r.income).toBe(0)
+    expect(r.expense).toBe(0)
+    expect(r.balance).toBe(0)
+  })
+  it('não inclui transações de outros perfis', () => {
+    const r = calculatePerfilMonthTotals(allPerfilTx, 'empresarial')
+    expect(r.income).toBe(10000)
+    expect(r.expense).toBe(2000)
+    expect(r.balance).toBe(8000)
+  })
+})
+
+describe('calculateKommoMonthTotals', () => {
+  it('retorna income, valorPagoKommo e valorLiquidoRecebido', () => {
+    const r = calculateKommoMonthTotals(allPerfilTx)
+    expect(r.income).toBe(5000)
+    expect(r.valorPagoKommo).toBe(1500)
+    expect(r.valorLiquidoRecebido).toBe(3500)
+  })
+  it('retorna zeros para array vazio', () => {
+    const r = calculateKommoMonthTotals([])
+    expect(r.income).toBe(0)
+    expect(r.valorPagoKommo).toBe(0)
+    expect(r.valorLiquidoRecebido).toBe(0)
+  })
+  it('trata transações sem valor_pago_kommo como zero', () => {
+    const txSemCampos: Transaction[] = [
+      { id: 'k2', user_id: 'u1', category_id: null, title: 'Kommo sem campos', amount: 1000, type: 'income', date: `${YEAR}-${MONTH}-01`, notes: null, created_at: '', perfil: 'kommo' },
+    ]
+    const r = calculateKommoMonthTotals(txSemCampos)
+    expect(r.income).toBe(1000)
+    expect(r.valorPagoKommo).toBe(0)
+    expect(r.valorLiquidoRecebido).toBe(0)
   })
 })
