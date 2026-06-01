@@ -14,6 +14,8 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
   const [open, setOpen] = useState(false)
   const [prolaboreInput, setProlaboreInput] = useState(numToStr(initialProlabore))
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [saveOk, setSaveOk] = useState(false)
 
   useEffect(() => { setProlaboreInput(numToStr(initialProlabore)) }, [initialProlabore])
 
@@ -29,7 +31,17 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
 
   async function handleSave() {
     setSaving(true)
-    try { await onSaveProlabore(currentProlabore, mes) } finally { setSaving(false) }
+    setSaveError(null)
+    setSaveOk(false)
+    try {
+      await onSaveProlabore(currentProlabore, mes)
+      setSaveOk(true)
+      setTimeout(() => setSaveOk(false), 3000)
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : 'Erro ao salvar')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const row = (label: string, value: number, highlight = false) => (
@@ -79,9 +91,12 @@ export default function EmpresarialSummary({ transactions, mes, periodo, prolabo
               disabled={saving}
               className="px-3 py-1 text-xs font-medium bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-60"
             >
-              {saving ? 'Salvando...' : 'Salvar'}
+              {saving ? 'Salvando...' : saveOk ? 'Salvo ✓' : 'Salvar'}
             </button>
           </div>
+          {saveError && (
+            <p className="text-xs text-red-500 dark:text-red-400 mt-1">{saveError}</p>
+          )}
           <div className={`flex justify-between items-center mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-800/50 font-semibold ${caixa >= 0 ? 'text-green-700 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
             <span className="text-sm">Caixa da empresa</span>
             <span className="text-sm tabular-nums">{formatCurrency(caixa)}</span>
