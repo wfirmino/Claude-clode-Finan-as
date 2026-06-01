@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { useTransactions } from '../hooks/useTransactions'
+import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import {
   calculateBalance,
   calculateCurrentMonthTotals,
@@ -22,6 +23,8 @@ export default function Dashboard() {
   const categoryTotals = useMemo(() => calculateCategoryTotals(filterCurrentMonth(transactions)), [transactions])
   const recent = useMemo(() => transactions.slice(0, 5), [transactions])
   const pessoal = useMemo(() => calculatePerfilMonthTotals(transactions, 'pessoal'), [transactions])
+  const { prolabore } = useEmpresarialConfig()
+  const empresarial = useMemo(() => calculatePerfilMonthTotals(transactions, 'empresarial'), [transactions])
 
   if (loading) return <p className="text-sm text-gray-400">Carregando...</p>
 
@@ -141,6 +144,22 @@ export default function Dashboard() {
             { label: 'Saldo do mês', value: pessoal.balance, color: pessoal.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
           ].map((card, i) => (
             <div key={card.label} className={`rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center ${i === 2 ? 'col-span-2' : ''}`}>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
+              <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === 'empresarial' && (
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { label: 'Receitas do mês', value: empresarial.income, color: 'text-green-600 dark:text-green-400' },
+            { label: 'Despesas do mês', value: empresarial.expense, color: 'text-red-600 dark:text-red-400' },
+            { label: 'Saldo do mês', value: empresarial.balance, color: empresarial.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
+            { label: 'Pró-labore', value: prolabore, color: 'text-indigo-600 dark:text-indigo-400' },
+          ].map(card => (
+            <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
               <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
             </div>

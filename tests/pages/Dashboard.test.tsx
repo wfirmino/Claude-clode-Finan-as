@@ -1,5 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import { fireEvent } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import Dashboard from '../../src/pages/Dashboard'
@@ -12,6 +11,10 @@ vi.mock('../../src/lib/supabase', () => ({
     },
     from: vi.fn(),
   },
+}))
+
+vi.mock('../../src/hooks/useEmpresarialConfig', () => ({
+  useEmpresarialConfig: () => ({ prolabore: 2000, saveProlabore: vi.fn(), loading: false }),
 }))
 
 import { supabase } from '../../src/lib/supabase'
@@ -114,13 +117,11 @@ describe('Dashboard page', () => {
   })
 })
 
-const currentMonthPad = new Date().toISOString().split('T')[0].slice(0, 7)
-
 const mockTransactionsComPerfil = [
-  { id: 't1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
-  { id: 't2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: `${currentMonthPad}-05`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
-  { id: 't3', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 8000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'empresarial' },
-  { id: 't4', user_id: 'u1', category_id: null, title: 'Kommo cliente', amount: 5000, type: 'income', date: `${currentMonthPad}-01`, notes: null, created_at: '', categories: null, perfil: 'kommo', valor_pago_kommo: 1200, valor_liquido_recebido: 3800 },
+  { id: 't1', user_id: 'u1', category_id: null, title: 'Salário pessoal', amount: 3000, type: 'income', date: `${currentMonth}-01`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
+  { id: 't2', user_id: 'u1', category_id: null, title: 'Supermercado', amount: 500, type: 'expense', date: `${currentMonth}-05`, notes: null, created_at: '', categories: null, perfil: 'pessoal' },
+  { id: 't3', user_id: 'u1', category_id: null, title: 'Receita empresa', amount: 8000, type: 'income', date: `${currentMonth}-01`, notes: null, created_at: '', categories: null, perfil: 'empresarial' },
+  { id: 't4', user_id: 'u1', category_id: null, title: 'Kommo cliente', amount: 5000, type: 'income', date: `${currentMonth}-01`, notes: null, created_at: '', categories: null, perfil: 'kommo', valor_pago_kommo: 1200, valor_liquido_recebido: 3800 },
 ]
 
 describe('Dashboard tabs', () => {
@@ -154,6 +155,19 @@ describe('Dashboard tabs', () => {
       expect(screen.getByText(/receitas do mês/i)).toBeInTheDocument()
       expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
       expect(screen.getByText(/saldo do mês/i)).toBeInTheDocument()
+    })
+  })
+
+  it('aba Empresarial exibe receitas, despesas, saldo e pró-labore', async () => {
+    mockFrom(mockTransactionsComPerfil)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('button', { name: /empresarial/i }))
+    fireEvent.click(screen.getByRole('button', { name: /empresarial/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/receitas do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/saldo do mês/i)).toBeInTheDocument()
+      expect(screen.getByText(/pró-labore/i)).toBeInTheDocument()
     })
   })
 })
