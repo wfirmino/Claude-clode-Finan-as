@@ -105,10 +105,10 @@ export function calculatePerfilMonthTotals(
 
 export function calculateKommoMonthTotals(
   transactions: Transaction[],
-): { income: number; valorPagoKommo: number; valorLiquidoRecebido: number } {
+): { income: number; valorPagoKommo: number; valorLiquidoRecebido: number; balance: number } {
   const filtered = filterCurrentMonth(transactions).filter(t => t.perfil === 'kommo')
   const income = filtered.filter(t => t.type === 'income').reduce((a, t) => a + t.amount, 0)
   const valorPagoKommo = filtered.reduce((a, t) => a + (t.valor_pago_kommo ?? 0), 0)
   const valorLiquidoRecebido = filtered.reduce((a, t) => a + (t.valor_liquido_recebido ?? 0), 0)
-  return { income, valorPagoKommo, valorLiquidoRecebido }
+  return { income, valorPagoKommo, valorLiquidoRecebido, balance: income - valorPagoKommo }
 }

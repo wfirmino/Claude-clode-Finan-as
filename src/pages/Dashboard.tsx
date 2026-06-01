@@ -175,7 +175,7 @@ export default function Dashboard() {
             { label: 'Receitas brutas', value: kommo.income, color: 'text-green-600 dark:text-green-400' },
             { label: 'Valor pago Kommo', value: kommo.valorPagoKommo, color: 'text-red-600 dark:text-red-400' },
             { label: 'Líquido recebido', value: kommo.valorLiquidoRecebido, color: 'text-blue-600 dark:text-blue-400' },
-            { label: 'Saldo do mês', value: kommo.income - kommo.valorPagoKommo, color: (kommo.income - kommo.valorPagoKommo) >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
+            { label: 'Saldo do mês', value: kommo.balance, color: kommo.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
           ].map(card => (
             <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>

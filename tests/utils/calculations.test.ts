@@ -169,6 +169,7 @@ describe('calculateKommoMonthTotals', () => {
     expect(r.income).toBe(5000)
     expect(r.valorPagoKommo).toBe(1500)
     expect(r.valorLiquidoRecebido).toBe(3500)
+    expect(r.balance).toBe(3500) // 5000 - 1500
   })
   it('retorna zeros para array vazio', () => {
     const r = calculateKommoMonthTotals([])
