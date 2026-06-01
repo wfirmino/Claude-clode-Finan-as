@@ -170,4 +170,17 @@ describe('Dashboard tabs', () => {
       expect(screen.getByText(/pró-labore/i)).toBeInTheDocument()
     })
   })
+
+  it('aba Kommo exibe receitas, valor pago, líquido e saldo', async () => {
+    mockFrom(mockTransactionsComPerfil)
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    await waitFor(() => screen.getByRole('button', { name: /kommo/i }))
+    fireEvent.click(screen.getByRole('button', { name: /kommo/i }))
+    await waitFor(() => {
+      expect(screen.getByText(/receitas brutas/i)).toBeInTheDocument()
+      expect(screen.getByText(/valor pago kommo/i)).toBeInTheDocument()
+      expect(screen.getByText(/líquido recebido/i)).toBeInTheDocument()
+      expect(screen.getByText(/saldo do mês/i)).toBeInTheDocument()
+    })
+  })
 })

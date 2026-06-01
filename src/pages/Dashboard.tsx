@@ -10,6 +10,7 @@ import {
   calculateCategoryTotals,
   filterCurrentMonth,
   calculatePerfilMonthTotals,
+  calculateKommoMonthTotals,
 } from '../utils/calculations'
 import { formatCurrency, formatDate } from '../utils/formatters'
 
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const pessoal = useMemo(() => calculatePerfilMonthTotals(transactions, 'pessoal'), [transactions])
   const { prolabore } = useEmpresarialConfig()
   const empresarial = useMemo(() => calculatePerfilMonthTotals(transactions, 'empresarial'), [transactions])
+  const kommo = useMemo(() => calculateKommoMonthTotals(transactions), [transactions])
 
   if (loading) return <p className="text-sm text-gray-400">Carregando...</p>
 
@@ -158,6 +160,22 @@ export default function Dashboard() {
             { label: 'Despesas do mês', value: empresarial.expense, color: 'text-red-600 dark:text-red-400' },
             { label: 'Saldo do mês', value: empresarial.balance, color: empresarial.balance >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
             { label: 'Pró-labore', value: prolabore, color: 'text-indigo-600 dark:text-indigo-400' },
+          ].map(card => (
+            <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
+              <p className={`text-2xl font-bold ${card.color}`}>{formatCurrency(card.value)}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === 'kommo' && (
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { label: 'Receitas brutas', value: kommo.income, color: 'text-green-600 dark:text-green-400' },
+            { label: 'Valor pago Kommo', value: kommo.valorPagoKommo, color: 'text-red-600 dark:text-red-400' },
+            { label: 'Líquido recebido', value: kommo.valorLiquidoRecebido, color: 'text-blue-600 dark:text-blue-400' },
+            { label: 'Saldo do mês', value: kommo.income - kommo.valorPagoKommo, color: (kommo.income - kommo.valorPagoKommo) >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600 dark:text-red-400' },
           ].map(card => (
             <div key={card.label} className="rounded-xl border border-gray-200 dark:border-white/10 p-5 flex flex-col items-center justify-center text-center">
               <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
