@@ -17,6 +17,8 @@ function getDaysUntilDue(dueDay: number): number {
   return Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 }
 
+const toCents = (n: number) => Math.round(n * 100)
+
 function dueColor(days: number) {
   if (days <= 3) return 'text-red-600'
   if (days <= 7) return 'text-amber-500'
@@ -25,11 +27,10 @@ function dueColor(days: number) {
 
 export default function CartaoSummary({ transactions, installments, dueDay, periodo }: Props) {
   const { fatura, pago, emAberto, compras, pagamentos } = useMemo(() => {
-    const c = (n: number) => Math.round(n * 100)
     let faturaC = 0, pagoC = 0, compras = 0, pagamentos = 0
     for (const t of transactions) {
-      if (t.type === 'expense') { faturaC += c(t.amount); compras++ }
-      else { pagoC += c(t.amount); pagamentos++ }
+      if (t.type === 'expense') { faturaC += toCents(t.amount); compras++ }
+      else { pagoC += toCents(t.amount); pagamentos++ }
     }
     return {
       fatura: faturaC / 100,
@@ -41,13 +42,12 @@ export default function CartaoSummary({ transactions, installments, dueDay, peri
   }, [transactions])
 
   const { ativos, totalEmAberto } = useMemo(() => {
-    const c = (n: number) => Math.round(n * 100)
     let ativos = 0, totalC = 0
     for (const inst of installments) {
       const restantes = inst.total_installments - inst.paid_installments
       if (restantes > 0) {
         ativos++
-        totalC += c(inst.installment_amount) * restantes
+        totalC += toCents(inst.installment_amount) * restantes
       }
     }
     return { ativos, totalEmAberto: totalC / 100 }

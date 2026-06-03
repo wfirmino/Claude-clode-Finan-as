@@ -33,12 +33,14 @@ export function getStatus(inst: Installment): 'quitado' | 'vencido' | 'em_dia' {
   return next < today ? 'vencido' : 'em_dia'
 }
 
-export function useInstallments(cardId?: string) {
+// cardId=string → fetch by card | cardId=undefined → fetch null card_id (Parcelamentos page) | cardId=null → skip query (no card selected)
+export function useInstallments(cardId?: string | null) {
   const [installments, setInstallments] = useState<Installment[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(cardId !== null)
   const [error, setError] = useState<string | null>(null)
 
   const fetchAll = useCallback(async () => {
+    if (cardId === null) { setInstallments([]); setLoading(false); return }
     setLoading(true)
     setError(null)
     let q = supabase.from('installments').select('*').order('created_at', { ascending: false })

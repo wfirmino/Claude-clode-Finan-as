@@ -30,7 +30,7 @@ function defaultInstForm(): InstForm {
 }
 
 export default function Cartao() {
-  const { cards, loading: cardsLoading, createCard, updateCard } = useCards()
+  const { cards, loading: cardsLoading, createCard, updateCard, deleteCard } = useCards()
   const [activeCardId, setActiveCardId] = useState<string | null>(null)
   const activeCard = useMemo(
     () => cards.find(c => c.id === activeCardId) ?? cards[0] ?? null,
@@ -45,7 +45,7 @@ export default function Cartao() {
     [transactions, activeCard]
   )
 
-  const { installments, createInstallment, updateInstallment, deleteInstallment, payNext } = useInstallments(activeCard?.id)
+  const { installments, createInstallment, updateInstallment, deleteInstallment, payNext } = useInstallments(activeCard?.id ?? null)
 
   const [activeTab, setActiveTab] = useState<'lancamentos' | 'parcelamentos'>('lancamentos')
 
@@ -55,8 +55,7 @@ export default function Cartao() {
   const [txForm, setTxForm] = useState<TxForm>(defaultTxForm())
   const [instModal, setInstModal] = useState<{ open: boolean; editing: Installment | null }>({ open: false, editing: null })
   const [instForm, setInstForm] = useState<InstForm>(defaultInstForm())
-  const [confirmDeleteTx, setConfirmDeleteTx] = useState<string | null>(null)
-  const [confirmDeleteInst, setConfirmDeleteInst] = useState<string | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<{ kind: 'tx' | 'inst' | 'card'; id: string } | null>(null)
   const [importOpen, setImportOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState<{ id: number; message: string; type: 'success' | 'error' } | null>(null)
@@ -143,7 +142,7 @@ export default function Cartao() {
   }
 
   async function handleDeleteTx(id: string) {
-    setConfirmDeleteTx(null)
+    setConfirmDelete(null)
     try { await deleteTransaction(id); showToast('Lançamento excluído.', 'success') }
     catch (err) { showToast(getErrorMessage(err), 'error') }
   }
@@ -186,8 +185,14 @@ export default function Cartao() {
   }
 
   async function handleDeleteInst(id: string) {
-    setConfirmDeleteInst(null)
+    setConfirmDelete(null)
     try { await deleteInstallment(id); showToast('Parcelamento excluído.', 'success') }
+    catch (err) { showToast(getErrorMessage(err), 'error') }
+  }
+
+  async function handleDeleteCard(id: string) {
+    setConfirmDelete(null)
+    try { await deleteCard(id); showToast('Cartão excluído.', 'success') }
     catch (err) { showToast(getErrorMessage(err), 'error') }
   }
 
@@ -222,6 +227,15 @@ export default function Cartao() {
     await bulkCreateTransactions(rows)
     showToast(`${rows.length} transação(ões) importada(s).`, 'success')
   }
+
+  const installmentRows = useMemo(() => installments.map(inst => {
+    const restantes = inst.total_installments - inst.paid_installments
+    const quitado = restantes <= 0
+    const proxVenc = quitado ? null : getNextDueDate(inst)
+    const totalRestante = Math.round(inst.installment_amount * restantes * 100) / 100
+    const pct = Math.round((inst.paid_installments / inst.total_installments) * 100)
+    return { inst, restantes, quitado, proxVenc, totalRestante, pct }
+  }), [installments])
 
   const selectedMes = useMemo(() => {
     const d = new Date()
@@ -289,7 +303,18 @@ export default function Cartao() {
 
           {/* Card actions */}
           {activeCard && (
-            <div className="flex items-center justify-end mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
+                {confirmDelete?.kind === 'card' && confirmDelete.id === activeCard.id ? (
+                  <span className="flex items-center gap-1.5">
+                    <span>Excluir cartão?</span>
+                    <button onClick={() => handleDeleteCard(activeCard.id)} className="text-red-500 font-medium hover:underline">Sim</button>
+                    <button onClick={() => setConfirmDelete(null)} className="hover:underline">Não</button>
+                  </span>
+                ) : (
+                  <button onClick={() => setConfirmDelete({ kind: 'card', id: activeCard.id })} className="hover:text-red-400 hover:underline">Excluir cartão</button>
+                )}
+              </div>
               <button
                 onClick={openCreateTx}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
@@ -350,14 +375,14 @@ export default function Cartao() {
                         {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
                       </span>
                       <button onClick={() => openEditTx(t)} className="text-xs text-indigo-500 hover:underline">Editar</button>
-                      {confirmDeleteTx === t.id ? (
+                      {confirmDelete?.kind === 'tx' && confirmDelete.id === t.id ? (
                         <span className="flex items-center gap-1 text-xs">
                           <button onClick={() => handleDeleteTx(t.id)} className="text-red-600 font-medium hover:underline">Sim</button>
                           <span className="text-gray-400">/</span>
-                          <button onClick={() => setConfirmDeleteTx(null)} className="text-gray-500 hover:underline">Não</button>
+                          <button onClick={() => setConfirmDelete(null)} className="text-gray-500 hover:underline">Não</button>
                         </span>
                       ) : (
-                        <button onClick={() => setConfirmDeleteTx(t.id)} className="text-xs text-red-400 hover:underline">Excluir</button>
+                        <button onClick={() => setConfirmDelete({ kind: 'tx', id: t.id })} className="text-xs text-red-400 hover:underline">Excluir</button>
                       )}
                     </div>
                   </div>
@@ -370,17 +395,12 @@ export default function Cartao() {
           {/* Parcelamentos list */}
           {activeTab === 'parcelamentos' && (
             <div className="space-y-2">
-              {installments.length === 0 && (
+              {installmentRows.length === 0 && (
                 <p className="text-sm text-gray-400 text-center py-8">
-                  Nenhum parcelamento. Use "+ Parcelamento" para adicionar.
+                  Nenhum parcelamento. Use "+ Lançamento" e marque como parcelamento.
                 </p>
               )}
-              {installments.map(inst => {
-                const restantes = inst.total_installments - inst.paid_installments
-                const quitado = restantes <= 0
-                const proxVenc = quitado ? null : getNextDueDate(inst)
-                const totalRestante = Math.round(inst.installment_amount * restantes * 100) / 100
-                return (
+              {installmentRows.map(({ inst, quitado, proxVenc, totalRestante, pct }) => (
                   <div key={inst.id} className={`border rounded-xl px-4 py-3 ${quitado ? 'border-gray-100 dark:border-white/[0.05] opacity-60' : 'border-amber-200 dark:border-amber-900/40'}`}>
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2 min-w-0">
@@ -401,10 +421,7 @@ export default function Cartao() {
                       </div>
                     </div>
                     <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5 mb-2">
-                      <div
-                        className="h-1.5 rounded-full bg-amber-400 transition-all"
-                        style={{ width: `${Math.round((inst.paid_installments / inst.total_installments) * 100)}%` }}
-                      />
+                      <div className="h-1.5 rounded-full bg-amber-400 transition-all" style={{ width: `${pct}%` }} />
                     </div>
                     <div className="flex items-center gap-3 text-xs">
                       {!quitado && (
@@ -413,19 +430,18 @@ export default function Cartao() {
                         </button>
                       )}
                       <button onClick={() => openEditInst(inst)} className="text-indigo-500 hover:underline">Editar</button>
-                      {confirmDeleteInst === inst.id ? (
+                      {confirmDelete?.kind === 'inst' && confirmDelete.id === inst.id ? (
                         <span className="flex items-center gap-1">
                           <button onClick={() => handleDeleteInst(inst.id)} className="text-red-600 font-medium hover:underline">Sim</button>
                           <span className="text-gray-400">/</span>
-                          <button onClick={() => setConfirmDeleteInst(null)} className="text-gray-500 hover:underline">Não</button>
+                          <button onClick={() => setConfirmDelete(null)} className="text-gray-500 hover:underline">Não</button>
                         </span>
                       ) : (
-                        <button onClick={() => setConfirmDeleteInst(inst.id)} className="text-red-400 hover:underline">Excluir</button>
+                        <button onClick={() => setConfirmDelete({ kind: 'inst', id: inst.id })} className="text-red-400 hover:underline">Excluir</button>
                       )}
                     </div>
                   </div>
-                )
-              })}
+              ))}
             </div>
           )}
         </>
