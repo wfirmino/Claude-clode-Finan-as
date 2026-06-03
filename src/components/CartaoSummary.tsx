@@ -68,25 +68,9 @@ export default function CartaoSummary({ transactions, installments, dueDay, peri
 
   return (
     <div className="mb-6">
-      {/* Painel resumo */}
-      <div className="relative border border-gray-200 dark:border-white/10 rounded-xl p-4 mb-4 mx-2 text-center">
-        {/* Editar · Excluir flutuando no canto superior direito */}
-        <div className="absolute top-6 right-14 flex items-center gap-2 text-[12px] text-gray-400 dark:text-gray-500">
-          <button onClick={onEditCard} className="hover:text-indigo-500 hover:underline">Editar</button>
-          <span>·</span>
-          {confirmDelete ? (
-            <span className="flex items-center gap-1.5">
-              <span>Excluir?</span>
-              <button onClick={() => { setConfirmDelete(false); onDeleteCard() }} className="text-red-500 font-medium hover:underline">Sim</button>
-              <button onClick={() => setConfirmDelete(false)} className="hover:underline">Não</button>
-            </span>
-          ) : (
-            <button onClick={() => setConfirmDelete(true)} className="hover:text-red-400 hover:underline">Excluir</button>
-          )}
-        </div>
-        {/* Título centralizado com margem para não sobrepor o Editar/Excluir */}
-        <p className="text-[22px] font-bold text-white leading-tight mt-7">Resumo {periodo}</p>
-        {/* Vencimento centralizado */}
+      {/* Painel resumo sem card */}
+      <div className="mb-4 text-center">
+        <p className="text-[22px] font-bold text-white leading-tight">Resumo {periodo}</p>
         <p className={`text-[13px] mt-1 ${dueColor(daysUntil)}`}>
           Vence em {daysUntil} dia{daysUntil !== 1 ? 's' : ''} (dia {dueDay})
         </p>
