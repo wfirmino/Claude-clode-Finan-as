@@ -3,7 +3,7 @@ import { useCards } from '../hooks/useCards'
 import { useTransactions } from '../hooks/useTransactions'
 import { useInstallments, type Installment, getNextDueDate } from '../hooks/useInstallments'
 import type { Card, Transaction } from '../types'
-import { formatCurrency, formatDate } from '../utils/formatters'
+import { formatCurrency, formatDate, parseBR, isValidCurrencyInput } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import CartaoSummary from '../components/CartaoSummary'
 import ImportModal from '../components/ImportModal'
@@ -85,8 +85,8 @@ export default function Cartao() {
 
   async function handleTxSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const amount = parseFloat(txForm.amount.replace(',', '.'))
-    if (isNaN(amount) || amount <= 0) { showToast('Valor inválido.', 'error'); return }
+    const amount = parseBR(txForm.amount)
+    if (isNaN(amount) || amount <= 0 || !isValidCurrencyInput(txForm.amount)) { showToast('Valor inválido.', 'error'); return }
     if (!txForm.title.trim()) { showToast('Informe a descrição.', 'error'); return }
     if (!activeCard) return
     if (submitting) return
@@ -149,9 +149,9 @@ export default function Cartao() {
 
   async function handleInstSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const total = parseFloat(instForm.total_amount.replace(',', '.'))
+    const total = parseBR(instForm.total_amount)
     const parcelas = parseInt(instForm.total_installments)
-    if (isNaN(total) || total <= 0) { showToast('Valor total inválido.', 'error'); return }
+    if (isNaN(total) || total <= 0 || !isValidCurrencyInput(instForm.total_amount)) { showToast('Valor total inválido.', 'error'); return }
     if (isNaN(parcelas) || parcelas < 1) { showToast('Número de parcelas inválido.', 'error'); return }
     if (!instForm.name.trim()) { showToast('Informe a descrição.', 'error'); return }
     if (!activeCard) return
@@ -192,8 +192,11 @@ export default function Cartao() {
 
   async function handleDeleteCard(id: string) {
     setConfirmDelete(null)
-    try { await deleteCard(id); showToast('Cartão excluído.', 'success') }
-    catch (err) { showToast(getErrorMessage(err), 'error') }
+    try {
+      await deleteCard(id)
+      setActiveCardId(null)
+      showToast('Cartão excluído.', 'success')
+    } catch (err) { showToast(getErrorMessage(err), 'error') }
   }
 
   async function handlePayNext(inst: Installment) {
@@ -535,9 +538,9 @@ export default function Cartao() {
                 </div>
               </div>
               {(() => {
-                const v = parseFloat(txForm.amount.replace(',', '.'))
+                const v = parseBR(txForm.amount)
                 const n = parseInt(txForm.total_installments)
-                if (!isNaN(v) && !isNaN(n) && n > 0 && v > 0)
+                if (!isNaN(v) && !isNaN(n) && n > 0 && v > 0 && isValidCurrencyInput(txForm.amount))
                   return <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">= {formatCurrency(Math.round(v / n * 100) / 100)}/mês</p>
               })()}
               <div>
@@ -624,9 +627,9 @@ export default function Cartao() {
             </div>
           </div>
           {instForm.total_amount && instForm.total_installments && (() => {
-            const v = parseFloat(instForm.total_amount.replace(',', '.'))
+            const v = parseBR(instForm.total_amount)
             const n = parseInt(instForm.total_installments)
-            if (!isNaN(v) && !isNaN(n) && n > 0 && v > 0) {
+            if (!isNaN(v) && !isNaN(n) && n > 0 && v > 0 && isValidCurrencyInput(instForm.total_amount)) {
               return (
                 <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
                   = {formatCurrency(Math.round(v / n * 100) / 100)}/mês

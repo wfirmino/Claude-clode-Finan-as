@@ -3,7 +3,7 @@ import { useTransactions, type TransactionFilters } from '../hooks/useTransactio
 import { useCategories } from '../hooks/useCategories'
 import { useEmpresarialConfig } from '../hooks/useEmpresarialConfig'
 import type { Transaction, DatePreset, Perfil } from '../types'
-import { formatCurrency, formatDate, numToStr, parseBR } from '../utils/formatters'
+import { formatCurrency, formatDate, numToStr, parseBR, isValidCurrencyInput } from '../utils/formatters'
 import { getErrorMessage, isCheckConstraintError } from '../utils/errors'
 import Toast from '../components/Toast'
 import Modal from '../components/Modal'
@@ -367,7 +367,7 @@ export default function Transactions() {
     try {
       if (form.perfil === 'pessoal') {
         const amount = parseBR(form.amount)
-        if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
+        if (isNaN(amount) || amount <= 0 || !isValidCurrencyInput(form.amount)) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
         let resolvedCategoryId: string | null = form.category_id || null
         if (!resolvedCategoryId && form.category_display_name) {
           const existing = categories.find(c => c.name.toLowerCase() === form.category_display_name.toLowerCase())
@@ -395,7 +395,7 @@ export default function Transactions() {
         }
       } else if (form.perfil === 'empresarial') {
         const amount = parseBR(form.amount)
-        if (isNaN(amount) || amount <= 0) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
+        if (isNaN(amount) || amount <= 0 || !isValidCurrencyInput(form.amount)) { showToast('Informe um valor numérico maior que zero.', 'error'); return }
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
         let resolvedCategoryId: string | null = form.category_id || null
         if (!resolvedCategoryId && form.category_display_name) {
@@ -428,6 +428,7 @@ export default function Transactions() {
       } else {
         // Kommo
         if (!form.nome_cliente.trim()) { showToast('Nome do cliente é obrigatório.', 'error'); return }
+        if (form.valor_total_assinatura && !isValidCurrencyInput(form.valor_total_assinatura)) { showToast('Valor total de assinatura inválido.', 'error'); return }
         let vt = parseBR(form.valor_total_assinatura)
         let vl: number | null = null
         let vk: number | null = null
@@ -436,12 +437,16 @@ export default function Transactions() {
         if (form.lancamento_simplificado) {
           if (isNaN(vt)) vt = 0
           else if (vt < 0) { showToast('Valor total não pode ser negativo.', 'error'); return }
+          if (form.valor_liquido && !isValidCurrencyInput(form.valor_liquido)) { showToast('Valor líquido inválido.', 'error'); return }
           const vlRaw = parseBR(form.valor_liquido)
           vl = (!isNaN(vlRaw) && vlRaw >= 0) ? vlRaw : null
+          if (form.valor_pago_kommo && !isValidCurrencyInput(form.valor_pago_kommo)) { showToast('Valor pago ao Kommo inválido.', 'error'); return }
           const vkRaw = parseBR(form.valor_pago_kommo)
           vk = (!isNaN(vkRaw) && vkRaw >= 0) ? vkRaw : null
           const raw = parseBR(form.divisao_socio_pct)
+          if (!form.sem_comissao && !isNaN(raw) && (raw < 0 || raw > 100)) { showToast('Divisão do sócio deve ser entre 0 e 100%.', 'error'); return }
           rawDivisaoSocioPct = form.sem_comissao ? null : (isNaN(raw) ? null : raw)
+          if (form.valor_liquido_recebido && !isValidCurrencyInput(form.valor_liquido_recebido)) { showToast('Valor líquido recebido inválido.', 'error'); return }
           const vlrRaw = parseBR(form.valor_liquido_recebido)
           rawValorLiquidoRecebido = !form.sem_comissao && (!isNaN(vlrRaw) && vlrRaw >= 0) ? vlrRaw : null
         } else {
@@ -449,15 +454,18 @@ export default function Transactions() {
           if (form.forma_pagamento === 'pix') {
             vl = vt
           } else {
+            if (form.valor_liquido && !isValidCurrencyInput(form.valor_liquido)) { showToast('Valor líquido inválido.', 'error'); return }
             const vlRaw = parseBR(form.valor_liquido)
             vl = (!isNaN(vlRaw) && vlRaw >= 0) ? vlRaw : vt
             if (vl <= 0) { showToast('Informe um valor líquido válido maior que zero.', 'error'); return }
             if (vl > vt) { showToast('Valor líquido não pode ser maior que o valor total da assinatura.', 'error'); return }
           }
+          if (!isValidCurrencyInput(form.valor_pago_kommo)) { showToast('Valor pago ao Kommo inválido.', 'error'); return }
           vk = parseBR(form.valor_pago_kommo)
           if (isNaN(vk) || vk < 0) { showToast('Informe o valor pago ao Kommo.', 'error'); return }
           if (!form.sem_comissao && vk >= vl) { showToast('Valor pago ao Kommo deve ser menor que o valor líquido.', 'error'); return }
           const raw = parseBR(form.divisao_socio_pct)
+          if (!form.sem_comissao && !isNaN(raw) && (raw < 0 || raw > 100)) { showToast('Divisão do sócio deve ser entre 0 e 100%.', 'error'); return }
           rawDivisaoSocioPct = form.sem_comissao ? null : (isNaN(raw) ? null : raw)
         }
         const rawPlano = parseInt(form.plano)

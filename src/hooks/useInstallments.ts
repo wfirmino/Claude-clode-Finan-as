@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 
 export interface Installment {
@@ -38,15 +38,18 @@ export function useInstallments(cardId?: string | null) {
   const [installments, setInstallments] = useState<Installment[]>([])
   const [loading, setLoading] = useState(cardId !== null)
   const [error, setError] = useState<string | null>(null)
+  const fetchVersion = useRef(0)
 
   const fetchAll = useCallback(async () => {
     if (cardId === null) { setInstallments([]); setLoading(false); return }
+    const version = ++fetchVersion.current
     setLoading(true)
     setError(null)
     let q = supabase.from('installments').select('*').order('created_at', { ascending: false })
     if (cardId) q = q.eq('card_id', cardId)
     else q = q.is('card_id', null)
     const { data, error } = await q
+    if (version !== fetchVersion.current) { setLoading(false); return } // resposta de query anterior, descarta
     if (error) { setError(error.message); setLoading(false); return }
     setInstallments(data)
     setLoading(false)

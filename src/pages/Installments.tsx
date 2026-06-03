@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useInstallments, getNextDueDate, getStatus, type Installment, type InstallmentInput } from '../hooks/useInstallments'
-import { formatCurrency, numToStr, parseBR, maskCurrency } from '../utils/formatters'
+import { formatCurrency, numToStr, parseBR, maskCurrency, isValidCurrencyInput } from '../utils/formatters'
 import { getErrorMessage } from '../utils/errors'
 import Modal from '../components/Modal'
 import Toast from '../components/Toast'
@@ -122,7 +122,7 @@ export default function Installments() {
     const original = parseBR(form.original_amount)
     const interest = parseBR(form.interest_amount) || 0
     const count = parseInt(form.total_installments)
-    if (isNaN(original) || original <= 0 || isNaN(count) || count <= 0) {
+    if (isNaN(original) || original <= 0 || !isValidCurrencyInput(form.original_amount) || isNaN(count) || count <= 0) {
       showToast('Preencha valor original e número de parcelas corretamente.', 'error')
       return
     }

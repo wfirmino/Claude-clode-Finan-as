@@ -33,6 +33,28 @@ export function maskCurrency(raw: string): string {
   return formattedInt
 }
 
+/**
+ * Valida se a string é um input de moeda bem formado antes de parsear.
+ * Rejeita: múltiplas vírgulas sem ponto ("1,2,3"), múltiplos pontos onde
+ * os segmentos não têm 3 dígitos ("1.2.3"), e caracteres não numéricos.
+ */
+export function isValidCurrencyInput(s: string): boolean {
+  const t = s.trim()
+  if (!t || !/^[\d.,]+$/.test(t)) return false
+  // rejeita separador no final ou início (ex: "10.", ",50")
+  if (/[.,]$/.test(t) || /^[.,]/.test(t)) return false
+  const commas = (t.match(/,/g) ?? []).length
+  const dots = (t.match(/\./g) ?? []).length
+  // múltiplas vírgulas sem ponto → inválido (ex: "1,2,3")
+  if (commas > 1 && dots === 0) return false
+  // múltiplos pontos sem vírgula → separadores de milhar; todos segmentos não-iniciais devem ter 3 dígitos
+  if (dots > 1 && commas === 0) {
+    const parts = t.split('.')
+    return parts.every((p, i) => i === 0 || p.length === 3)
+  }
+  return true
+}
+
 /** Normaliza entrada pt-BR/US para float. Aceita: 1.234,56 | 1,234.56 | 497,88 | 497.88 */
 export function parseBR(value: string): number {
   const s = value.trim()
