@@ -17,7 +17,7 @@ const makePayment = (amount: number): Transaction => ({
 describe('CartaoSummary', () => {
   it('renders fatura, pago and em aberto cards', () => {
     const txs = [makeExpense(1000), makeExpense(500), makePayment(800)]
-    render(<CartaoSummary transactions={txs} dueDay={10} periodo="Maio 2026" />)
+    render(<CartaoSummary transactions={txs} installments={[]} dueDay={10} periodo="Maio 2026" onEditCard={() => {}} onDeleteCard={() => {}} />)
     expect(screen.getByText(/FATURA/i)).toBeInTheDocument()
     expect(screen.getAllByText(/PAGO/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/ABERTO/i)).toBeInTheDocument()
@@ -25,20 +25,20 @@ describe('CartaoSummary', () => {
 
   it('calculates fatura = sum of expenses', () => {
     const txs = [makeExpense(1000), makeExpense(500)]
-    render(<CartaoSummary transactions={txs} dueDay={10} periodo="Maio 2026" />)
+    render(<CartaoSummary transactions={txs} installments={[]} dueDay={10} periodo="Maio 2026" onEditCard={() => {}} onDeleteCard={() => {}} />)
     expect(screen.getByText('R$ 1.500,00')).toBeInTheDocument()
   })
 
   it('calculates em aberto = fatura - pago', () => {
     const txs = [makeExpense(1000), makePayment(600)]
-    render(<CartaoSummary transactions={txs} dueDay={10} periodo="Maio 2026" />)
+    render(<CartaoSummary transactions={txs} installments={[]} dueDay={10} periodo="Maio 2026" onEditCard={() => {}} onDeleteCard={() => {}} />)
     // fatura=1000, pago=600, aberto=400
     expect(screen.getByText('R$ 400,00')).toBeInTheDocument()
   })
 
   it('shows 100% pago when fully paid', () => {
     const txs = [makeExpense(500), makePayment(500)]
-    render(<CartaoSummary transactions={txs} dueDay={10} periodo="Maio 2026" />)
+    render(<CartaoSummary transactions={txs} installments={[]} dueDay={10} periodo="Maio 2026" onEditCard={() => {}} onDeleteCard={() => {}} />)
     expect(screen.getByText('100% pago')).toBeInTheDocument()
   })
 })

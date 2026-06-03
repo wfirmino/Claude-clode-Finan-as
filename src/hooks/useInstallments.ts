@@ -14,6 +14,7 @@ export interface Installment {
   paid_installments: number
   category: string | null
   notes: string | null
+  card_id: string | null
   created_at: string
 }
 
@@ -32,7 +33,7 @@ export function getStatus(inst: Installment): 'quitado' | 'vencido' | 'em_dia' {
   return next < today ? 'vencido' : 'em_dia'
 }
 
-export function useInstallments() {
+export function useInstallments(cardId?: string) {
   const [installments, setInstallments] = useState<Installment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -40,14 +41,14 @@ export function useInstallments() {
   const fetchAll = useCallback(async () => {
     setLoading(true)
     setError(null)
-    const { data, error } = await supabase
-      .from('installments')
-      .select('*')
-      .order('created_at', { ascending: false })
+    let q = supabase.from('installments').select('*').order('created_at', { ascending: false })
+    if (cardId) q = q.eq('card_id', cardId)
+    else q = q.is('card_id', null)
+    const { data, error } = await q
     if (error) { setError(error.message); setLoading(false); return }
     setInstallments(data)
     setLoading(false)
-  }, [])
+  }, [cardId])
 
   useEffect(() => { fetchAll() }, [fetchAll])
 

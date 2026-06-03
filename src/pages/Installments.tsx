@@ -138,6 +138,7 @@ export default function Installments() {
       paid_installments: modal.editing?.paid_installments ?? 0,
       category: form.category || null,
       notes: form.notes || null,
+      card_id: null,
     }
     setSubmitting(true)
     try {

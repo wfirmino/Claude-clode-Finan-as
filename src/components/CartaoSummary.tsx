@@ -1,11 +1,15 @@
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import type { Transaction } from '../types'
+import type { Installment } from '../hooks/useInstallments'
 import { formatCurrency } from '../utils/formatters'
 
 interface Props {
   transactions: Transaction[]
+  installments: Installment[]
   dueDay: number
   periodo: string
+  onEditCard: () => void
+  onDeleteCard: () => void
 }
 
 function getDaysUntilDue(dueDay: number): number {
@@ -27,7 +31,9 @@ function barColor(pct: number) {
   return 'bg-red-500'
 }
 
-export default function CartaoSummary({ transactions, dueDay, periodo }: Props) {
+export default function CartaoSummary({ transactions, installments, dueDay, periodo, onEditCard, onDeleteCard }: Props) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
   const { fatura, pago, emAberto, compras, pagamentos } = useMemo(() => {
     const c = (n: number) => Math.round(n * 100)
     let faturaC = 0, pagoC = 0, compras = 0, pagamentos = 0
@@ -44,31 +50,54 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
     }
   }, [transactions])
 
+  const { ativos, totalEmAberto } = useMemo(() => {
+    const c = (n: number) => Math.round(n * 100)
+    let ativos = 0, totalC = 0
+    for (const inst of installments) {
+      const restantes = inst.total_installments - inst.paid_installments
+      if (restantes > 0) {
+        ativos++
+        totalC += c(inst.installment_amount) * restantes
+      }
+    }
+    return { ativos, totalEmAberto: totalC / 100 }
+  }, [installments])
+
   const pct = fatura > 0 ? Math.min(100, Math.round((pago / fatura) * 100)) : 0
   const daysUntil = getDaysUntilDue(dueDay)
 
   return (
     <div className="mb-6">
-      {/* Progress bar panel */}
-      <div className="border border-gray-200 dark:border-white/10 rounded-xl px-5 py-4 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Resumo {periodo}</span>
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 tabular-nums">{pct}% pago</span>
+      {/* Painel resumo */}
+      <div className="relative border border-gray-200 dark:border-white/10 rounded-xl p-4 mb-4 mx-2 text-center">
+        {/* Editar · Excluir flutuando no canto superior direito */}
+        <div className="absolute top-6 right-14 flex items-center gap-2 text-[12px] text-gray-400 dark:text-gray-500">
+          <button onClick={onEditCard} className="hover:text-indigo-500 hover:underline">Editar</button>
+          <span>·</span>
+          {confirmDelete ? (
+            <span className="flex items-center gap-1.5">
+              <span>Excluir?</span>
+              <button onClick={() => { setConfirmDelete(false); onDeleteCard() }} className="text-red-500 font-medium hover:underline">Sim</button>
+              <button onClick={() => setConfirmDelete(false)} className="hover:underline">Não</button>
+            </span>
+          ) : (
+            <button onClick={() => setConfirmDelete(true)} className="hover:text-red-400 hover:underline">Excluir</button>
+          )}
         </div>
-        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5 mb-2">
-          <div className={`h-2.5 rounded-full transition-all ${barColor(pct)}`} style={{ width: `${pct}%` }} />
-        </div>
-        <p className={`text-xs ${dueColor(daysUntil)}`}>
+        {/* Título centralizado com margem para não sobrepor o Editar/Excluir */}
+        <p className="text-[22px] font-bold text-white leading-tight mt-7">Resumo {periodo}</p>
+        {/* Vencimento centralizado */}
+        <p className={`text-[13px] mt-1 ${dueColor(daysUntil)}`}>
           Vence em {daysUntil} dia{daysUntil !== 1 ? 's' : ''} (dia {dueDay})
         </p>
       </div>
 
-      {/* 3 cards */}
-      <div className="grid grid-cols-3 gap-3">
+      {/* 3 cards fatura */}
+      <div className="grid grid-cols-3 gap-3 mb-3">
         <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Fatura</p>
-          <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">{compras}</p>
-          <p className="text-xs text-gray-400 mt-0.5">compra{compras !== 1 ? 's' : ''}</p>
+          <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">{formatCurrency(fatura)}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{compras} compra{compras !== 1 ? 's' : ''}</p>
         </div>
         <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-gray-200 dark:border-white/10">
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Pago</p>
@@ -79,6 +108,20 @@ export default function CartaoSummary({ transactions, dueDay, periodo }: Props) 
           <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Em aberto</p>
           <p className={`text-xl font-bold tabular-nums ${emAberto > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400 dark:text-gray-500'}`}>{formatCurrency(emAberto)}</p>
           <p className={`text-xs mt-0.5 ${dueColor(daysUntil)}`}>vence em {daysUntil}d</p>
+        </div>
+      </div>
+
+      {/* 2 cards parcelamentos */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-indigo-100 dark:border-indigo-900/40 bg-indigo-50/50 dark:bg-indigo-900/10">
+          <p className="text-xs font-medium text-indigo-500 dark:text-indigo-400 uppercase tracking-wide mb-1">Parcelamentos ativos</p>
+          <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-300 tabular-nums">{ativos}</p>
+          <p className="text-xs text-indigo-400 mt-0.5">em andamento</p>
+        </div>
+        <div className="rounded-xl px-3 py-4 flex flex-col items-center justify-center text-center border border-amber-100 dark:border-amber-900/40 bg-amber-50/50 dark:bg-amber-900/10">
+          <p className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">Total em aberto</p>
+          <p className={`text-xl font-bold tabular-nums ${totalEmAberto > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-gray-400 dark:text-gray-500'}`}>{formatCurrency(totalEmAberto)}</p>
+          <p className="text-xs text-amber-400 mt-0.5">parcelamentos</p>
         </div>
       </div>
     </div>
