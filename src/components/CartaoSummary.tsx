@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { Transaction } from '../types'
 import type { Installment } from '../hooks/useInstallments'
 import { formatCurrency } from '../utils/formatters'
@@ -8,8 +8,6 @@ interface Props {
   installments: Installment[]
   dueDay: number
   periodo: string
-  onEditCard: () => void
-  onDeleteCard: () => void
 }
 
 function getDaysUntilDue(dueDay: number): number {
@@ -25,15 +23,7 @@ function dueColor(days: number) {
   return 'text-gray-500'
 }
 
-function barColor(pct: number) {
-  if (pct >= 80) return 'bg-green-500'
-  if (pct >= 40) return 'bg-amber-400'
-  return 'bg-red-500'
-}
-
-export default function CartaoSummary({ transactions, installments, dueDay, periodo, onEditCard, onDeleteCard }: Props) {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-
+export default function CartaoSummary({ transactions, installments, dueDay, periodo }: Props) {
   const { fatura, pago, emAberto, compras, pagamentos } = useMemo(() => {
     const c = (n: number) => Math.round(n * 100)
     let faturaC = 0, pagoC = 0, compras = 0, pagamentos = 0
@@ -63,7 +53,6 @@ export default function CartaoSummary({ transactions, installments, dueDay, peri
     return { ativos, totalEmAberto: totalC / 100 }
   }, [installments])
 
-  const pct = fatura > 0 ? Math.min(100, Math.round((pago / fatura) * 100)) : 0
   const daysUntil = getDaysUntilDue(dueDay)
 
   return (

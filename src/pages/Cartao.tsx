@@ -30,7 +30,7 @@ function defaultInstForm(): InstForm {
 }
 
 export default function Cartao() {
-  const { cards, loading: cardsLoading, createCard, updateCard, deleteCard } = useCards()
+  const { cards, loading: cardsLoading, createCard, updateCard } = useCards()
   const [activeCardId, setActiveCardId] = useState<string | null>(null)
   const activeCard = useMemo(
     () => cards.find(c => c.id === activeCardId) ?? cards[0] ?? null,
@@ -67,10 +67,6 @@ export default function Cartao() {
   }
 
   function openCreate() { setCardForm(defaultCardForm); setCardModal({ open: true, editing: null }) }
-  function openEdit(c: Card) {
-    setCardForm({ name: c.name, due_day: String(c.due_day), color: c.color })
-    setCardModal({ open: true, editing: c })
-  }
 
   function openCreateTx() { setTxForm(defaultTxForm()); setTxModal({ open: true, editing: null }) }
   function openEditTx(t: Transaction) {
@@ -221,10 +217,6 @@ export default function Cartao() {
     finally { setSubmitting(false) }
   }
 
-  async function handleDelete(id: string) {
-    try { await deleteCard(id); showToast('Cartão excluído.', 'success') }
-    catch (err) { showToast(getErrorMessage(err), 'error') }
-  }
 
   async function handleImport(rows: Parameters<typeof bulkCreateTransactions>[0]) {
     await bulkCreateTransactions(rows)
@@ -314,8 +306,6 @@ export default function Cartao() {
               installments={installments}
               dueDay={activeCard.due_day}
               periodo={selectedMes}
-              onEditCard={() => openEdit(activeCard)}
-              onDeleteCard={() => handleDelete(activeCard.id)}
             />
           )}
 

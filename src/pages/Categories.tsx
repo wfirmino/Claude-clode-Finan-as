@@ -89,18 +89,16 @@ export default function Categories() {
           <p className="p-6 text-sm text-gray-400 text-center">Nenhuma categoria cadastrada.</p>
         )}
         {categories.map(cat => (
-          <div key={cat.id} className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-3">
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{cat.name}</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.type === 'income' ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400'}`}>
-                {cat.type === 'income' ? 'Receita' : 'Despesa'}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
+          <div key={cat.id} className="flex items-center px-6 py-4 gap-3">
+            <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200 flex-1 truncate">{cat.name}</span>
+            <span className={`w-16 text-center text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${cat.type === 'income' ? 'bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400'}`}>
+              {cat.type === 'income' ? 'Receita' : 'Despesa'}
+            </span>
+            <div className="flex items-center gap-2 shrink-0">
               {confirmDelete === cat.id ? (
                 <>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Confirmar exclusão?</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Confirmar?</span>
                   <button onClick={() => handleDelete(cat.id)} className="text-sm text-red-600 font-medium hover:underline">Sim</button>
                   <button onClick={() => setConfirmDelete(null)} className="text-sm text-gray-500 hover:underline">Não</button>
                 </>
